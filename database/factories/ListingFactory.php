@@ -1,0 +1,106 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Enums\BathroomType;
+use App\Enums\ListingCategory;
+use App\Models\Listing;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Listing>
+ */
+class ListingFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::factory(),
+            'category' => ListingCategory::Apartment,
+            'title' => fake()->sentence(4),
+            'description' => fake()->paragraph(),
+            'rent_amount' => 12000,
+            'currency' => 'MXN',
+            'is_furnished' => false,
+            'pets_allowed' => false,
+            'bathroom_type' => null,
+            'bedrooms' => 2,
+            'bathrooms' => 1,
+            'area_m2' => 75,
+            'has_parking' => true,
+            'country' => 'MX',
+            'state' => 'Ciudad de México',
+            'city' => 'Ciudad de México',
+            'neighborhood' => 'Roma Norte',
+            'postal_code' => '06700',
+            'street_address' => 'Calle Orizaba 123',
+            'latitude' => '19.4194000',
+            'longitude' => '-99.1603000',
+            'contact_via_whatsapp' => true,
+            'contact_via_phone' => true,
+            'is_published' => true,
+            'published_at' => now(),
+        ];
+    }
+
+    /**
+     * Indicate that the listing is a room.
+     */
+    public function room(BathroomType $bathroomType = BathroomType::Own): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'category' => ListingCategory::Room,
+            'bathroom_type' => $bathroomType,
+            'bedrooms' => null,
+            'bathrooms' => null,
+            'area_m2' => null,
+            'has_parking' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the listing is an apartment.
+     */
+    public function apartment(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'category' => ListingCategory::Apartment,
+            'bathroom_type' => null,
+            'bedrooms' => 2,
+            'bathrooms' => 1,
+            'area_m2' => 75,
+            'has_parking' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the listing is a house.
+     */
+    public function house(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'category' => ListingCategory::House,
+            'bathroom_type' => null,
+            'bedrooms' => 3,
+            'bathrooms' => 2,
+            'area_m2' => 140,
+            'has_parking' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the listing is unpublished.
+     */
+    public function unpublished(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'is_published' => false,
+        ]);
+    }
+}

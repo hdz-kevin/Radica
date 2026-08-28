@@ -12,7 +12,7 @@ No implementamos Socialite + mapa + CRUD + catálogo en un solo PR. El orden de 
 | --- | --- | --- |
 | 0. Fundamento de datos | Enums, migraciones, `users.phone_number`, modelo `Listing`, factory, tests de visibilidad | Migraciones, Eloquent, scopes, enums PHP, por qué el esquema va primero |
 | 1. Catálogo público | Listado + ficha sin mapa | Rutas, controladores, Inertia, policies, queries |
-| 2. Publicar / editar / rentar | Un usuario logueado publica y marca rentado | Form requests, autorización, soft deletes, teléfono del dueño + canales |
+| 2. Publicar / editar / despublicar | Un usuario logueado crea, edita y publica/despublica | Form requests, autorización, `is_published`, teléfono del dueño + canales |
 | 3. Fotos | Galería 1–10, obligatoria al publicar | Uploads, disco `public`, relaciones hasMany, validación min/max |
 | 4. Filtros “en vivo” | Buscador ciudad/colonia actualiza el listado | Debounce, Inertia partial reloads / `useHttp` |
 | 5. Mapa | Pines que siguen el filtro, un solo map load | Mapbox, GeoJSON, no remount |
@@ -31,13 +31,15 @@ Cada rebanada incluye tests Pest de lo que acaba de nacer, no de todo el product
 
 **Geografía (decidido):** el esquema es para México (`country = MX`) y se puede acotar después por estado/ciudad (config o query). No hay catálogo nacional de colonias en el MVP: ciudad y colonia se guardan como texto + coordenadas.
 
+**Ubicación permanece en `listings` (decidido):** no hay modelo/tabla `Location`. Es un *valor* del anuncio (texto + pin), no una entidad con vida propia. Extraer 1:1 duplicaría filas y obligaría JOIN/`with('location')` en el catálogo, que es la query más caliente. Extraer de verdad (catálogo de colonias, varios anuncios por edificio) sería aditivo: `places` + `listings.place_id`. En la rebanada 1 se puede agrupar al serializar a Inertia (`location: { city, neighborhood, lat, lng }`) sin cambiar el esquema.
+
 ### En alcance
 
 - Catálogo público (sin login) de viviendas **visibles**
 - Filtros de ubicación (texto: ciudad, colonia, etc.) que refrescan listado **y** pines del mapa sin recargar la página
 - Mapa con un pin por vivienda visible
-- Publicar / editar / marcar rentado / eliminar **las propias** publicaciones (requiere login)
-- Estados `disponible` y `rentado`; las rentadas dejan de verse en el catálogo público a los **7 días** (configurable)
+- Publicar / editar / despublicar / eliminar **las propias** publicaciones (requiere login)
+- `is_published`: al crear está publicado; el dueño despublica a mano (p.ej. cuando se renta). No hay estado disponible/rentado ni ocultado a 7 días
 - Auth: email+contraseña (Fortify) + Google + Facebook
 - Rol `admin` solo para tu usuario, sin panel de administración todavía (solo el flag y un Gate para el futuro)
 
@@ -46,7 +48,7 @@ Cada rebanada incluye tests Pest de lo que acaba de nacer, no de todo el product
 - Chat, favoritos, reseñas, pagos, contratos, calendario, destacados de pago
 - Roles arrendador/inquilino, verificación de identidad, reportes de anuncios
 - Actualización “en vivo” cuando *otro* usuario publica (eso sería WebSockets / Reverb)
-- Panel admin (moderar, borrar ajenos, cambiar el plazo de ocultado desde UI)
+- Panel admin (moderar, borrar ajenos)
 
 ---
 
@@ -70,7 +72,7 @@ flowchart LR
 ```
 
 - Visitante: ver catálogo, ficha, mapa, filtros.
-- Usuario: lo mismo + CRUD de **sus** listings + marcar rentado/disponible.
+- Usuario: lo mismo + CRUD de **sus** listings + publicar/despublicar.
 - Admin: `users.is_admin = true`. En el MVP no hay pantallas extra; el Gate `admin` queda listo. Un seeder/`ADMIN_EMAIL` en `.env` marca tu cuenta.
 
 Cualquier usuario autenticado puede publicar. No hay tabla `roles` ni Spatie Permission: un boolean basta para “solo yo”.
@@ -97,14 +99,14 @@ No hay depósito, ni piso, ni jardín. El cuarto no usa recámaras/baños-cantid
 
 **Fotos:** obligatorias, mínimo 1 y máximo 10; `is_cover` (o la de `position` más baja) es portada. Disco `public` de Laravel (sin Spatie Media). No se puede publicar sin al menos una imagen (la regla de producto se cierra en la rebanada 3; las 0–2 pueden usar factories sin fotos).
 
-**Visibilidad pública** (no columna `hidden_at`):
+**Visibilidad pública:**
 
-- `available` → visible
-- `rented` y `rented_at + N días > now` → visible con badge “Rentado” (N default 7, `config/listings.php` → `hide_rented_after_days`)
-- `rented` y ya pasaron N días → **oculto en catálogo/mapa**; el dueño (y un admin futuro) sigue viéndolo en “Mis publicaciones”
-- soft delete (`deleted_at`) = el dueño la quitó; no aparece en ningún listado público
+- `is_published = true` → catálogo (y mapa). Al crear, default `true`.
+- `is_published = false` → el dueño lo sigue viendo en “Mis publicaciones”; el catálogo no. UI: **Publicar / Despublicar** (verbos). No se llama “visible”: eso lo calcula el query.
+- `published_at` ordena el catálogo (cuándo salió). Despublicar no la borra.
+- soft delete (`deleted_at`) = el dueño **eliminó** el anuncio (papelera), no es lo mismo que despublicar.
 
-Cambiar N en config aplica de inmediato (se calcula en query). Más adelante el admin puede persistir N en una tabla `settings`.
+`visibleInCatalog()`: `where('is_published', true)` AND not trashed.
 
 **“Tiempo real” de filtros:** debounce (~300 ms) + petición Inertia/`useHttp` que devuelve listado + GeoJSON. El mapa **no se destruye**: solo se actualiza la source de pines. Eso es lo que el usuario percibe como tiempo real y, además, no consume map loads extra.
 
@@ -182,7 +184,7 @@ erDiagram
     bigint id PK
     bigint user_id FK
     string category
-    string status
+    boolean is_published
     string title
     text description
     unsignedInteger rent_amount
@@ -193,7 +195,7 @@ erDiagram
     string neighborhood
     boolean contact_via_whatsapp
     boolean contact_via_phone
-    datetime rented_at
+    datetime published_at
     datetime deleted_at
   }
 
@@ -228,7 +230,7 @@ Esta tabla se crea en la **rebanada 6**, no en la 0. En la 0 sí alteramos `user
 
 - `user_id` FK (restrict o cascade: **cascade** si se borra la cuenta)
 - `category`: string/enum `room|apartment|house`
-- `status`: string/enum `available|rented` (default `available`)
+- `is_published` boolean default `true` (no Fillable: lo cambia una acción Publicar/Despublicar). No hay `status` available/rented ni `rented_at`
 - `title`, `description`
 - `rent_amount` unsignedInteger (pesos enteros MXN; más simple que centavos)
 - `currency` char(3) default `MXN`
@@ -236,22 +238,21 @@ Esta tabla se crea en la **rebanada 6**, no en la 0. En la 0 sí alteramos `user
 - Cuarto: `bathroom_type` nullable string/enum `own|shared` (obligatorio si `category = room`; `null` en depa/casa)
 - Depa y casa: `bedrooms` y `bathrooms` unsignedTinyInteger nullable (obligatorios si apartment/house); `area_m2` unsignedInteger nullable (opcional); `has_parking` boolean nullable (obligatorio si apartment/house). En cuarto estas cuatro quedan `null`
 - No hay `floor` ni `has_garden`
-- Ubicación: `country` char(2) default `MX`, `state` string, `city` string, `neighborhood` string (colonia), `postal_code` nullable, `street_address` nullable (mostrar en ficha; el pin usa coords)
+- Ubicación **en `listings`**, no en un modelo `Location`: `country` char(2) default `MX`, `state` string, `city` string, `neighborhood` string (colonia), `postal_code` nullable, `street_address` nullable (mostrar en ficha; el pin usa coords). No hay tabla `locations` en el MVP.
 - `latitude` / `longitude` `decimal(10, 7)` not null
 - Contacto: `contact_via_whatsapp` y `contact_via_phone` boolean, default `true`. Constraint: `contact_via_whatsapp OR contact_via_phone`. El número no se duplica aquí; se lee de `users.phone_number`
-- `published_at` (default now al crear; sirve para ordenar)
-- `rented_at` nullable
+- `published_at` (default now al crear; sirve para ordenar; despublicar no la limpia)
 - timestamps + `softDeletes`
 
 **Índices alineados a queries reales:**
 
-- `(status, rented_at, published_at)` — catálogo público
+- `(is_published, published_at)` — catálogo público
 - `(city, neighborhood)` — filtro texto
 - `(latitude, longitude)` — bounds del mapa
 - `category`
 - `user_id`
 
-Scope Eloquent `visibleInCatalog()`: `available` OR (`rented` AND `rented_at >= now - N days`) AND not trashed.
+Scope Eloquent `visibleInCatalog()`: `is_published` AND not trashed.
 
 ### `listing_images`
 
@@ -264,23 +265,23 @@ Scope Eloquent `visibleInCatalog()`: `available` OR (`rented` AND `rented_at >= 
 
 Esta tabla se crea en la **rebanada 3**. Las rebanadas 0–2 pueden usar factories sin fotos; publicar de verdad exige 1–10.
 
-No hay tablas `categories`, `roles`, `conversations` ni `settings` en el MVP.
+No hay tablas `categories`, `roles`, `conversations`, `locations` ni `settings` en el MVP.
 
 ---
 
 ## 7. Pantallas (para cerrar el MVP de producto)
 
 - **Inicio / catálogo:** buscador de ubicación, chips de categoría, listado + mapa; vacío si no hay resultados
-- **Ficha:** galería, datos, badge de estado, botones WhatsApp y/o Llamar según flags (número del dueño), pin o dirección; 404 si está oculta/eliminada (el dueño sí la ve)
+- **Ficha:** galería, datos, botones WhatsApp y/o Llamar según flags (número del dueño), pin o dirección; 404 si está despublicada/eliminada (el dueño sí la ve)
 - **Publicar / editar:** formulario único; campos extra según categoría (baño propio/compartido vs recámaras/baños/m²/estacionamiento); 1–10 fotos; teléfono del perfil (obligatorio) + checkboxes de canal (default ambos, mínimo uno); mapa para soltar pin
 - **Perfil:** editar `phone_number` (afecta todos los anuncios)
-- **Mis publicaciones:** todas las propias, incluidas rentadas y ya ocultas al público
+- **Mis publicaciones:** todas las propias, publicadas y despublicadas (no las soft-deleted, salvo una papelera futura)
 - **Login/registro:** botones Google y Facebook junto al formulario Fortify existente (`resources/js/pages/auth/login.tsx`)
 
-Policies: `view` público si `visibleInCatalog` o es dueño/admin; `update`/`delete`/`markRented` dueño o admin.
+Policies: `view` público si `visibleInCatalog` o es dueño/admin; `update`/`delete`/publicar/despublicar dueño o admin.
 
 ---
 
 ## 8. Estado de implementación
 
-Especificación aprobada para ir rebanada a rebanada. Siguiente paso: **rebanada 0** (fundamento de datos: enums, `listings`, factory, tests de visibilidad). No Socialite ni Mapbox todavía.
+Especificación vigente. **Rebanada 0 hecha:** enums de categoría/baño, `users.phone_number`, tabla `listings` con `is_published`, modelo, factory, tests de visibilidad (publicado / despublicado / soft-deleted). Siguiente: **rebanada 1** (catálogo público: listado + ficha, sin mapa).
