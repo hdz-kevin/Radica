@@ -18,15 +18,15 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->unsignedInteger('rent_amount');
-            $table->char('currency', 3)->default('MXN');
+            $table->string('currency', 3)->default('MXN');
             $table->boolean('is_furnished')->default(false);
             $table->boolean('pets_allowed')->default(false);
             $table->string('bathroom_type')->nullable();
             $table->unsignedTinyInteger('bedrooms')->nullable();
             $table->unsignedTinyInteger('bathrooms')->nullable();
-            $table->unsignedInteger('area_m2')->nullable();
+            $table->unsignedInteger('square_meters')->nullable();
             $table->boolean('has_parking')->nullable();
-            $table->char('country', 2)->default('MX');
+            $table->string('country', 2)->default('MX');
             $table->string('state');
             $table->string('city');
             $table->string('neighborhood');

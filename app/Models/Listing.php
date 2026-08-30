@@ -27,7 +27,7 @@ use Illuminate\Support\Carbon;
  * @property BathroomType|null $bathroom_type
  * @property int|null $bedrooms
  * @property int|null $bathrooms
- * @property int|null $area_m2
+ * @property int|null $square_meters
  * @property bool|null $has_parking
  * @property string $country
  * @property string $state
@@ -57,7 +57,7 @@ use Illuminate\Support\Carbon;
     'bathroom_type',
     'bedrooms',
     'bathrooms',
-    'area_m2',
+    'square_meters',
     'has_parking',
     'country',
     'state',
@@ -106,7 +106,7 @@ class Listing extends Model
             'rent_amount' => 'integer',
             'bedrooms' => 'integer',
             'bathrooms' => 'integer',
-            'area_m2' => 'integer',
+            'square_meters' => 'integer',
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'published_at' => 'datetime',

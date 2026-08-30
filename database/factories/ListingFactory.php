@@ -32,7 +32,7 @@ class ListingFactory extends Factory
             'bathroom_type' => null,
             'bedrooms' => 2,
             'bathrooms' => 1,
-            'area_m2' => 75,
+            'square_meters' => 75,
             'has_parking' => true,
             'country' => 'MX',
             'state' => 'Ciudad de México',
@@ -59,7 +59,7 @@ class ListingFactory extends Factory
             'bathroom_type' => $bathroomType,
             'bedrooms' => null,
             'bathrooms' => null,
-            'area_m2' => null,
+            'square_meters' => null,
             'has_parking' => null,
         ]);
     }
@@ -74,7 +74,7 @@ class ListingFactory extends Factory
             'bathroom_type' => null,
             'bedrooms' => 2,
             'bathrooms' => 1,
-            'area_m2' => 75,
+            'square_meters' => 75,
             'has_parking' => true,
         ]);
     }
@@ -89,7 +89,7 @@ class ListingFactory extends Factory
             'bathroom_type' => null,
             'bedrooms' => 3,
             'bathrooms' => 2,
-            'area_m2' => 140,
+            'square_meters' => 140,
             'has_parking' => true,
         ]);
     }

@@ -85,7 +85,7 @@ Cualquier usuario autenticado puede publicar. No hay tabla `roles` ni Spatie Per
 
 | Compartido | Cuarto | Departamento y casa |
 | --- | --- | --- |
-| título, descripción, renta mensual MXN, fotos (1–10), canales de contacto, ubicación, amueblado, mascotas | `bathroom_type`: `own` \| `shared` (baño propio o compartido) | `bedrooms` (int), `bathrooms` (int), `area_m2` (int, opcional), `has_parking` (bool) |
+| título, descripción, renta mensual MXN, fotos (1–10), canales de contacto, ubicación, amueblado, mascotas | `bathroom_type`: `own` \| `shared` (baño propio o compartido) | `bedrooms` (int), `bathrooms` (int), `square_meters` (int, opcional), `has_parking` (bool) |
 
 No hay depósito, ni piso, ni jardín. El cuarto no usa recámaras/baños-cantidad/m²/estacionamiento: esa pregunta no aplica (el baño es propio o compartido, no un conteo).
 
@@ -236,7 +236,7 @@ Esta tabla se crea en la **rebanada 6**, no en la 0. En la 0 sí alteramos `user
 - `currency` char(3) default `MXN`
 - `is_furnished` boolean default false, `pets_allowed` boolean default false
 - Cuarto: `bathroom_type` nullable string/enum `own|shared` (obligatorio si `category = room`; `null` en depa/casa)
-- Depa y casa: `bedrooms` y `bathrooms` unsignedTinyInteger nullable (obligatorios si apartment/house); `area_m2` unsignedInteger nullable (opcional); `has_parking` boolean nullable (obligatorio si apartment/house). En cuarto estas cuatro quedan `null`
+- Depa y casa: `bedrooms` y `bathrooms` unsignedTinyInteger nullable (obligatorios si apartment/house); `square_meters` unsignedInteger nullable (opcional); `has_parking` boolean nullable (obligatorio si apartment/house). En cuarto estas cuatro quedan `null`
 - No hay `floor` ni `has_garden`
 - Ubicación **en `listings`**, no en un modelo `Location`: `country` char(2) default `MX`, `state` string, `city` string, `neighborhood` string (colonia), `postal_code` nullable, `street_address` nullable (mostrar en ficha; el pin usa coords). No hay tabla `locations` en el MVP.
 - `latitude` / `longitude` `decimal(10, 7)` not null
