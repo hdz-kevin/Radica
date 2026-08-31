@@ -6,7 +6,9 @@ use App\Enums\BathroomType;
 use App\Enums\ListingCategory;
 use App\Models\Listing;
 use App\Models\User;
+use App\Support\TeziutlanNeighborhoods;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use RuntimeException;
 
 /**
  * @extends Factory<Listing>
@@ -20,6 +22,10 @@ class ListingFactory extends Factory
      */
     public function definition(): array
     {
+        $city = TeziutlanNeighborhoods::city();
+        $centro = TeziutlanNeighborhoods::find('centro')
+            ?? throw new RuntimeException('The centro neighborhood is missing from config/locations.php.');
+
         return [
             'user_id' => User::factory(),
             'category' => ListingCategory::Apartment,
@@ -34,14 +40,14 @@ class ListingFactory extends Factory
             'bathrooms' => 1,
             'square_meters' => 75,
             'has_parking' => true,
-            'country' => 'MX',
-            'state' => 'Ciudad de México',
-            'city' => 'Ciudad de México',
-            'neighborhood' => 'Roma Norte',
-            'postal_code' => '06700',
-            'street_address' => 'Calle Orizaba 123',
-            'latitude' => '19.4194000',
-            'longitude' => '-99.1603000',
+            'country' => $city['country'],
+            'state' => $city['state'],
+            'city' => $city['name'],
+            'neighborhood' => $centro['name'],
+            'postal_code' => null,
+            'street_address' => null,
+            'latitude' => $centro['latitude'],
+            'longitude' => $centro['longitude'],
             'contact_via_whatsapp' => true,
             'contact_via_phone' => true,
             'is_published' => true,

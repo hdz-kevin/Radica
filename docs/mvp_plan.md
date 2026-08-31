@@ -14,7 +14,7 @@ No implementamos Socialite + mapa + CRUD + catálogo en un solo PR. El orden de 
 | 1. Catálogo público | Listado + ficha sin mapa | Rutas, controladores, Inertia, policies, queries |
 | 2. Publicar / editar / despublicar | Un usuario logueado crea, edita y publica/despublica | Form requests, autorización, `is_published`, teléfono del dueño + canales |
 | 3. Fotos | Galería 1–10, obligatoria al publicar | Uploads, disco `public`, relaciones hasMany, validación min/max |
-| 4. Filtros “en vivo” | Buscador ciudad/colonia actualiza el listado | Debounce, Inertia partial reloads / `useHttp` |
+| 4. Filtros “en vivo” | Buscador de colonia actualiza el listado (ciudad fija: Teziutlán) | Debounce, Inertia partial reloads / `useHttp` |
 | 5. Mapa | Pines que siguen el filtro, un solo map load | Mapbox, GeoJSON, no remount |
 | 6. Google + Facebook | Tres formas de entrar | OAuth, Socialite, password nullable, vincular cuentas |
 | 7. Admin mínimo | `is_admin` + Gate; tu usuario vía `ADMIN_EMAIL` | Gates vs policies vs roles |
@@ -29,14 +29,14 @@ Cada rebanada incluye tests Pest de lo que acaba de nacer, no de todo el product
 
 **Contacto (decidido):** el número vive en el **usuario** (`users.phone_number`). Cada publicación elige *cómo* se puede usar ese número: WhatsApp y/o llamada. Por defecto las dos; al menos una. El interesado contacta al dueño (`wa.me` y/o `tel:`). No hay chat interno. El teléfono no es obligatorio al registrarse (sobre todo con Google/Facebook); sí lo es para **publicar**.
 
-**Geografía (decidido):** el esquema es para México (`country = MX`) y se puede acotar después por estado/ciudad (config o query). No hay catálogo nacional de colonias en el MVP: ciudad y colonia se guardan como texto + coordenadas.
+**Geografía (decidido):** el MVP es **Teziutlán, Puebla** (`country = MX`, `state = Puebla`, `city = Teziutlán`). No hay campo ciudad en el formulario. Las colonias para autocompletar y centrar el mapa viven en `config/locations.php` + `App\Support\TeziutlanNeighborhoods` (no hay tabla `neighborhoods` / `locations`). Al guardar, el anuncio copia `city`, `neighborhood` y las coords del pin en `listings`. Si el usuario no encuentra su zona: pin obligatorio + nombre a mano; la lista curada **no crece sola**. Los filtros (rebanada 4) pueden mostrar `lista curada ∪ DISTINCT neighborhood` de listings. Extraer un catálogo compartido (`places` + `listings.place_id`) es aditivo, para cuando haya varias ciudades o CRUD de zonas.
 
-**Ubicación permanece en `listings` (decidido):** no hay modelo/tabla `Location`. Es un *valor* del anuncio (texto + pin), no una entidad con vida propia. Extraer 1:1 duplicaría filas y obligaría JOIN/`with('location')` en el catálogo, que es la query más caliente. Extraer de verdad (catálogo de colonias, varios anuncios por edificio) sería aditivo: `places` + `listings.place_id`. En la rebanada 1 se puede agrupar al serializar a Inertia (`location: { city, neighborhood, lat, lng }`) sin cambiar el esquema.
+**Ubicación permanece en `listings` (decidido):** no hay modelo/tabla `Location`. Es un *valor* del anuncio (texto + pin), no una entidad con vida propia. Extraer 1:1 duplicaría filas y obligaría JOIN/`with('location')` en el catálogo, que es la query más caliente. En la rebanada 1 se puede agrupar al serializar a Inertia (`location: { city, neighborhood, latitude, longitude }`) sin cambiar el esquema. En la rebanada 2 se comparte el array de colonias como prop de Inertia (no un endpoint de búsqueda).
 
 ### En alcance
 
 - Catálogo público (sin login) de viviendas **visibles**
-- Filtros de ubicación (texto: ciudad, colonia, etc.) que refrescan listado **y** pines del mapa sin recargar la página
+- Filtros de colonia (ciudad fija Teziutlán) que refrescan listado **y** pines del mapa sin recargar la página
 - Mapa con un pin por vivienda visible
 - Publicar / editar / despublicar / eliminar **las propias** publicaciones (requiere login)
 - `is_published`: al crear está publicado; el dueño despublica a mano (p.ej. cuando se renta). No hay estado disponible/rentado ni ocultado a 7 días
@@ -118,7 +118,7 @@ No hay depósito, ni piso, ni jardín. El cuarto no usa recámaras/baños-cantid
 
 Comparación relevante para un arranque sin cobro:
 
-- **Mapbox GL JS:** 50 000 *map loads* web/mes gratis; luego ~$5 / 1 000. Un map load = cada vez que se hace `new mapboxgl.Map(...)`. Geocoding/Search es **otro** cupo (~100 000 temporales/mes). Mejor calidad de mapa y de búsqueda de colonia/ciudad en México que Nominatim.
+- **Mapbox GL JS:** 50 000 *map loads* web/mes gratis; luego ~$5 / 1 000. Un map load = cada vez que se hace `new mapboxgl.Map(...)`. Geocoding/Search es **otro** cupo; **no lo usamos en el MVP** (colonias en `config/locations.php`). Mejor calidad de mapa que teselas OSM públicas.
 - **Google Maps:** más caro; no encaja con “no gastar al principio”.
 - **Leaflet + teselas OSM públicas:** la librería es gratis, pero las teselas de osm.org no están pensadas para producción.
 - **MapLibre + OpenFreeMap:** $0, API parecida a Mapbox. Teselas comunitarias (menos control de uptime). Geocoding hay que resolverlo aparte (Nominatim con rate limit, o Photon). Mejor **plan B** que alternativa día uno.
@@ -127,8 +127,8 @@ Comparación relevante para un arranque sin cobro:
 
 - Un solo mapa en el catálogo; filtros = `setData` en GeoJSON, nunca remount.
 - La ficha puede reutilizar mapa o no cargar mapa (ahorra loads). Preferencia MVP: mapa solo en el catálogo; en la ficha un estático o el mismo criterio de un load.
-- Autocompletar ubicación con Mapbox Search **session token** (una sesión de tipeo ≈ 1 request facturable, no una por tecla).
-- Al publicar: el usuario escribe ciudad/colonia y **suelta el pin**. Se guardan `latitude`/`longitude` propias. Así no dependemos de geocoding “permanente” (más caro) para cada anuncio.
+- Autocompletar colonia **sin Mapbox Search**: combobox sobre `config/locations.php` (~30 strings en el cliente). Al elegir, el mapa vuela al centroide de esa colonia.
+- Al publicar: ciudad fija (Teziutlán) + colonia del catálogo (o “No encuentro mi zona”: pin + nombre escrito) + **soltar/ajustar el pin**. Se guardan `latitude`/`longitude` propias. No hay reverse geocoding ni geocoding permanente de Mapbox.
 - Coordenadas viven en *nuestra* BD. El componente de mapa queda aislado (`ListingMap`) para poder cambiar a MapLibre + OpenFreeMap si el dashboard de Mapbox se acerca al límite.
 
 50 000 loads/mes es razonable para los primeros meses sin cobro (~1 600 visitas/día al catálogo con mapa). Hay que mirar el dashboard de Mapbox; no hace falta pagar hasta rebasar el free tier.
@@ -154,7 +154,7 @@ Cuentas sociales no usan contraseña hasta que el usuario la defina en settings 
 
 ## 6. Diseño de base de datos
 
-Motor actual: SQLite. El esquema debe ser portable a MySQL/PostgreSQL. Sin PostGIS en el MVP: filtros geo = texto (`city`, `neighborhood`) + bounding box opcional del mapa (`lat`/`lng` decimales).
+Motor actual: SQLite. El esquema debe ser portable a MySQL/PostgreSQL. Sin PostGIS en el MVP: filtros geo = texto (`city`, `neighborhood`) + bounding box opcional del mapa (`latitude`/`longitude` decimales).
 
 ```mermaid
 erDiagram
@@ -238,7 +238,7 @@ Esta tabla se crea en la **rebanada 6**, no en la 0. En la 0 sí alteramos `user
 - Cuarto: `bathroom_type` nullable string/enum `own|shared` (obligatorio si `category = room`; `null` en depa/casa)
 - Depa y casa: `bedrooms` y `bathrooms` unsignedTinyInteger nullable (obligatorios si apartment/house); `square_meters` unsignedInteger nullable (opcional); `has_parking` boolean nullable (obligatorio si apartment/house). En cuarto estas cuatro quedan `null`
 - No hay `floor` ni `has_garden`
-- Ubicación **en `listings`**, no en un modelo `Location`: `country` char(2) default `MX`, `state` string, `city` string, `neighborhood` string (colonia), `postal_code` nullable, `street_address` nullable (mostrar en ficha; el pin usa coords). No hay tabla `locations` en el MVP.
+- Ubicación **en `listings`**, no en un modelo `Location`: `country` char(2) default `MX`, `state` string default Puebla, `city` string default Teziutlán, `neighborhood` string (colonia elegida o escrita), `postal_code` nullable, `street_address` nullable (opcional; el pin usa coords). Catálogo de colonias en `config/locations.php`, no tabla `locations` / `neighborhoods`.
 - `latitude` / `longitude` `decimal(10, 7)` not null
 - Contacto: `contact_via_whatsapp` y `contact_via_phone` boolean, default `true`. Constraint: `contact_via_whatsapp OR contact_via_phone`. El número no se duplica aquí; se lee de `users.phone_number`
 - `published_at` (default now al crear; sirve para ordenar; despublicar no la limpia)
@@ -271,9 +271,9 @@ No hay tablas `categories`, `roles`, `conversations`, `locations` ni `settings` 
 
 ## 7. Pantallas (para cerrar el MVP de producto)
 
-- **Inicio / catálogo:** buscador de ubicación, chips de categoría, listado + mapa; vacío si no hay resultados
+- **Inicio / catálogo:** buscador de colonia (ciudad fija), chips de categoría, listado + mapa; vacío si no hay resultados
 - **Ficha:** galería, datos, botones WhatsApp y/o Llamar según flags (número del dueño), pin o dirección; 404 si está despublicada/eliminada (el dueño sí la ve)
-- **Publicar / editar:** formulario único; campos extra según categoría (baño propio/compartido vs recámaras/baños/m²/estacionamiento); 1–10 fotos; teléfono del perfil (obligatorio) + checkboxes de canal (default ambos, mínimo uno); mapa para soltar pin
+- **Publicar / editar:** formulario único; campos extra según categoría (baño propio/compartido vs recámaras/baños/m²/estacionamiento); 1–10 fotos; teléfono del perfil (obligatorio) + checkboxes de canal (default ambos, mínimo uno); ciudad fija Teziutlán; combobox de colonia (catálogo PHP) + mapa para soltar pin; “No encuentro mi zona” exige pin + nombre a mano
 - **Perfil:** editar `phone_number` (afecta todos los anuncios)
 - **Mis publicaciones:** todas las propias, publicadas y despublicadas (no las soft-deleted, salvo una papelera futura)
 - **Login/registro:** botones Google y Facebook junto al formulario Fortify existente (`resources/js/pages/auth/login.tsx`)
@@ -284,4 +284,4 @@ Policies: `view` público si `visibleInCatalog` o es dueño/admin; `update`/`del
 
 ## 8. Estado de implementación
 
-Especificación vigente. **Rebanada 0 hecha:** enums de categoría/baño, `users.phone_number`, tabla `listings` con `is_published`, modelo, factory, tests de visibilidad (publicado / despublicado / soft-deleted). Siguiente: **rebanada 1** (catálogo público: listado + ficha, sin mapa).
+Especificación vigente. **Rebanada 0 hecha:** enums de categoría/baño, `users.phone_number`, tabla `listings` con `is_published`, modelo, factory, tests de visibilidad (publicado / despublicado / soft-deleted). **Catálogo de colonias en código:** `config/locations.php` + `TeziutlanNeighborhoods` (ciudad fija Teziutlán; sin tabla de zonas). Siguiente: **rebanada 1** (catálogo público: listado + ficha, sin mapa).

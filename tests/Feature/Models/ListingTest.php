@@ -2,6 +2,15 @@
 
 use App\Models\Listing;
 
+test('a listing factory defaults to Teziutlan Centro', function () {
+    $listing = Listing::factory()->make();
+
+    expect($listing)
+        ->city->toBe('Teziutlán')
+        ->state->toBe('Puebla')
+        ->neighborhood->toBe('Centro');
+});
+
 test('a published listing appears in the catalog', function () {
     $listing = Listing::factory()->create();
 
