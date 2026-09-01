@@ -29,7 +29,7 @@ Cada rebanada incluye tests Pest de lo que acaba de nacer, no de todo el product
 
 **Contacto (decidido):** el número vive en el **usuario** (`users.phone_number`). Cada publicación elige *cómo* se puede usar ese número: WhatsApp y/o llamada. Por defecto las dos; al menos una. El interesado contacta al dueño (`wa.me` y/o `tel:`). No hay chat interno. El teléfono no es obligatorio al registrarse (sobre todo con Google/Facebook); sí lo es para **publicar**.
 
-**Geografía (decidido):** el MVP es **Teziutlán, Puebla** (`country = MX`, `state = Puebla`, `city = Teziutlán`). No hay campo ciudad en el formulario. Las colonias para autocompletar y centrar el mapa viven en `config/locations.php` + `App\Support\TeziutlanNeighborhoods` (no hay tabla `neighborhoods` / `locations`). Al guardar, el anuncio copia `city`, `neighborhood` y las coords del pin en `listings`. Si el usuario no encuentra su zona: pin obligatorio + nombre a mano; la lista curada **no crece sola**. Los filtros (rebanada 4) pueden mostrar `lista curada ∪ DISTINCT neighborhood` de listings. Extraer un catálogo compartido (`places` + `listings.place_id`) es aditivo, para cuando haya varias ciudades o CRUD de zonas.
+**Geografía (decidido):** el MVP es **Teziutlán, Puebla**. El producto es México; no hay columna ni clave de país. La renta se muestra como MXN en la UI; no hay columna ni config de moneda. No hay campo ciudad en el formulario. Las colonias para autocompletar y centrar el mapa viven en `config/locations.php` + `App\Support\TeziutlanNeighborhoods` (no hay tabla `neighborhoods` / `locations`). Al guardar, el anuncio copia `state`, `city`, `neighborhood` y las coords del pin en `listings`. Si el usuario no encuentra su zona: pin obligatorio + nombre a mano; la lista curada **no crece sola**. Los filtros (rebanada 4) pueden mostrar `lista curada ∪ DISTINCT neighborhood` de listings. Extraer un catálogo compartido (`places` + `listings.place_id`) es aditivo, para cuando haya varias ciudades o CRUD de zonas.
 
 **Ubicación permanece en `listings` (decidido):** no hay modelo/tabla `Location`. Es un *valor* del anuncio (texto + pin), no una entidad con vida propia. Extraer 1:1 duplicaría filas y obligaría JOIN/`with('location')` en el catálogo, que es la query más caliente. En la rebanada 1 se puede agrupar al serializar a Inertia (`location: { city, neighborhood, latitude, longitude }`) sin cambiar el esquema. En la rebanada 2 se comparte el array de colonias como prop de Inertia (no un endpoint de búsqueda).
 
@@ -188,7 +188,6 @@ erDiagram
     string title
     text description
     unsignedInteger rent_amount
-    char currency
     decimal latitude
     decimal longitude
     string city
@@ -232,13 +231,12 @@ Esta tabla se crea en la **rebanada 6**, no en la 0. En la 0 sí alteramos `user
 - `category`: string/enum `room|apartment|house`
 - `is_published` boolean default `true` (no Fillable: lo cambia una acción Publicar/Despublicar). No hay `status` available/rented ni `rented_at`
 - `title`, `description`
-- `rent_amount` unsignedInteger (pesos enteros MXN; más simple que centavos)
-- `currency` char(3) default `MXN`
+- `rent_amount` unsignedInteger (pesos enteros; más simple que centavos). En la UI se muestra como MXN; no hay columna ni config de moneda
 - `is_furnished` boolean default false, `pets_allowed` boolean default false
 - Cuarto: `bathroom_type` nullable string/enum `own|shared` (obligatorio si `category = room`; `null` en depa/casa)
 - Depa y casa: `bedrooms` y `bathrooms` unsignedTinyInteger nullable (obligatorios si apartment/house); `square_meters` unsignedInteger nullable (opcional); `has_parking` boolean nullable (obligatorio si apartment/house). En cuarto estas cuatro quedan `null`
 - No hay `floor` ni `has_garden`
-- Ubicación **en `listings`**, no en un modelo `Location`: `country` char(2) default `MX`, `state` string default Puebla, `city` string default Teziutlán, `neighborhood` string (colonia elegida o escrita), `postal_code` nullable, `street_address` nullable (opcional; el pin usa coords). Catálogo de colonias en `config/locations.php`, no tabla `locations` / `neighborhoods`.
+- Ubicación **en `listings`**, no en un modelo `Location`: `state` string (Puebla), `city` string (Teziutlán), `neighborhood` string (colonia elegida o escrita), `street_address` nullable (opcional; el pin usa coords). País y CP no se guardan. Catálogo de colonias en `config/locations.php`, no tabla `locations` / `neighborhoods`.
 - `latitude` / `longitude` `decimal(10, 7)` not null
 - Contacto: `contact_via_whatsapp` y `contact_via_phone` boolean, default `true`. Constraint: `contact_via_whatsapp OR contact_via_phone`. El número no se duplica aquí; se lee de `users.phone_number`
 - `published_at` (default now al crear; sirve para ordenar; despublicar no la limpia)

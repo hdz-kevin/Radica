@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->unsignedInteger('rent_amount');
-            $table->string('currency', 3)->default('MXN');
             $table->boolean('is_furnished')->default(false);
             $table->boolean('pets_allowed')->default(false);
             $table->string('bathroom_type')->nullable();
@@ -26,11 +25,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('bathrooms')->nullable();
             $table->unsignedInteger('square_meters')->nullable();
             $table->boolean('has_parking')->nullable();
-            $table->string('country', 2)->default('MX');
             $table->string('state');
             $table->string('city');
             $table->string('neighborhood');
-            $table->string('postal_code')->nullable();
             $table->string('street_address')->nullable();
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);

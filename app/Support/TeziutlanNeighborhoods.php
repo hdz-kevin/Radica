@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
  * Curated Teziutlán neighborhoods from config/locations.php.
  * Listings still store city, neighborhood, latitude, and longitude as values.
  *
- * @phpstan-type City array{country: string, state: string, name: string, latitude: float, longitude: float, zoom: int}
+ * @phpstan-type City array{state: string, name: string, latitude: float, longitude: float, zoom: int}
  * @phpstan-type Neighborhood array{slug: string, name: string, latitude: float, longitude: float, zoom: int}
  */
 class TeziutlanNeighborhoods

@@ -12,7 +12,6 @@ return [
     */
 
     'city' => [
-        'country' => 'MX',
         'state' => 'Puebla',
         'name' => 'Teziutlán',
         'latitude' => 19.8178,
@@ -20,17 +19,14 @@ return [
         'zoom' => 13,
     ],
 
-
     /**
-    *--------------------------------------------------------------------------
-    * Colonias de Teziutlán
-    *--------------------------------------------------------------------------
-    *
-    * Referencia para autocompletar y volar el mapa al centroide.
-    * TODO: Los centroides son aproximados; ajústalos cuando conozcas el punto.
-    *
-    */
-
+     *--------------------------------------------------------------------------
+     * Colonias de Teziutlán
+     *--------------------------------------------------------------------------
+     *
+     * Referencia para autocompletar y volar el mapa al centroide.
+     * TODO: Los centroides son aproximados; ajústalos cuando conozcas el punto.
+     */
     'neighborhoods' => [
         [
             'slug' => 'ahuateno',

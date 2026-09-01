@@ -21,7 +21,6 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string $description
  * @property int $rent_amount
- * @property string $currency
  * @property bool $is_furnished
  * @property bool $pets_allowed
  * @property BathroomType|null $bathroom_type
@@ -29,11 +28,9 @@ use Illuminate\Support\Carbon;
  * @property int|null $bathrooms
  * @property int|null $square_meters
  * @property bool|null $has_parking
- * @property string $country
  * @property string $state
  * @property string $city
  * @property string $neighborhood
- * @property string|null $postal_code
  * @property string|null $street_address
  * @property string $latitude
  * @property string $longitude
@@ -51,7 +48,6 @@ use Illuminate\Support\Carbon;
     'title',
     'description',
     'rent_amount',
-    'currency',
     'is_furnished',
     'pets_allowed',
     'bathroom_type',
@@ -59,11 +55,9 @@ use Illuminate\Support\Carbon;
     'bathrooms',
     'square_meters',
     'has_parking',
-    'country',
     'state',
     'city',
     'neighborhood',
-    'postal_code',
     'street_address',
     'latitude',
     'longitude',
@@ -80,8 +74,6 @@ class Listing extends Model
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'currency' => 'MXN',
-        'country' => 'MX',
         'is_furnished' => false,
         'pets_allowed' => false,
         'contact_via_whatsapp' => true,

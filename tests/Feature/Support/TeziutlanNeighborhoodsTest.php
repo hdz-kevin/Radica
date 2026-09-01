@@ -5,7 +5,6 @@ use App\Support\TeziutlanNeighborhoods;
 test('city is Teziutlan Puebla', function () {
     expect(TeziutlanNeighborhoods::city())
         ->toMatchArray([
-            'country' => 'MX',
             'state' => 'Puebla',
             'name' => 'Teziutlán',
         ]);
