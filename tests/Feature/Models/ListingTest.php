@@ -3,12 +3,18 @@
 use App\Models\Listing;
 
 test('a listing factory defaults to Teziutlan Centro', function () {
-    $listing = Listing::factory()->make();
+    $listing = Listing::factory()->create();
 
     expect($listing)
         ->city->toBe('Teziutlán')
         ->state->toBe('Puebla')
-        ->neighborhood->toBe('Centro');
+        ->zone->toBe('Centro')
+        ->street_address->toBeNull();
+
+    $this->assertDatabaseHas('listings', [
+        'id' => $listing->id,
+        'zone' => 'Centro',
+    ]);
 });
 
 test('a published listing appears in the catalog', function () {

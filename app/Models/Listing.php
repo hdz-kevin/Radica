@@ -30,10 +30,8 @@ use Illuminate\Support\Carbon;
  * @property bool|null $has_parking
  * @property string $state
  * @property string $city
- * @property string $neighborhood
+ * @property string $zone
  * @property string|null $street_address
- * @property string $latitude
- * @property string $longitude
  * @property bool $contact_via_whatsapp
  * @property bool $contact_via_phone
  * @property bool $is_published
@@ -57,10 +55,8 @@ use Illuminate\Support\Carbon;
     'has_parking',
     'state',
     'city',
-    'neighborhood',
+    'zone',
     'street_address',
-    'latitude',
-    'longitude',
     'contact_via_whatsapp',
     'contact_via_phone',
     'published_at',
@@ -99,8 +95,6 @@ class Listing extends Model
             'bedrooms' => 'integer',
             'bathrooms' => 'integer',
             'square_meters' => 'integer',
-            'latitude' => 'decimal:7',
-            'longitude' => 'decimal:7',
             'published_at' => 'datetime',
         ];
     }

@@ -27,10 +27,8 @@ return new class extends Migration
             $table->boolean('has_parking')->nullable();
             $table->string('state');
             $table->string('city');
-            $table->string('neighborhood');
+            $table->string('zone');
             $table->string('street_address')->nullable();
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
             $table->boolean('contact_via_whatsapp')->default(true);
             $table->boolean('contact_via_phone')->default(true);
             $table->boolean('is_published')->default(true);
@@ -38,9 +36,8 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['city', 'neighborhood']);
+            $table->index(['city', 'zone']);
             $table->index(['is_published', 'published_at']);
-            $table->index(['latitude', 'longitude']);
             $table->index('category');
         });
     }
