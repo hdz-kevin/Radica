@@ -7,8 +7,8 @@ Stack: Laravel 13, Inertia + React, Fortify. Por rebanadas (tests Pest de lo que
 | # | Entrega | Estado |
 | --- | --- | --- |
 | 0 | Datos: enums, `listings`, `users.phone_number`, factory, visibilidad | Hecha |
-| 1 | Catálogo público: listado (cards) + ficha | Siguiente |
-| 2 | Publicar / editar / despublicar (dueño) | |
+| 1 | Catálogo público: listado (cards) + ficha | Hecha |
+| 2 | Publicar / editar / despublicar (dueño) | Siguiente |
 | 3 | Fotos 1–10 (`listing_images`) | |
 | 4 | Filtros en vivo: `LIKE` en `zone` (debounce + Inertia/`useHttp`) | |
 | 5 | Google + Facebook (Socialite ^5.29+; [CVE-2026-73683](https://github.com/advisories/ghsa-cr46-5p72-vh72)) | |
@@ -36,7 +36,7 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 **Contacto.** Número en `users.phone_number` (E.164, `521…`). Canales en el listing: WhatsApp y/o llamada (default ambos; al menos uno). La ficha usa el teléfono **actual** del dueño. Obligatorio al **publicar**, no al registrarse. Sin chat.
 
-**Visibilidad.** `is_published` default true; no Fillable (acción Publicar/Despublicar). `published_at` ordena el catálogo; despublicar no la limpia. Soft delete = el dueño borró, no pausó. Scope `visibleInCatalog()`: publicado y no trashed. No hay available/rented ni ocultar a 7 días.
+**Visibilidad.** `is_published` default true; no Fillable (acción Publicar/Despublicar). `published_at` ordena el catálogo; despublicar no la limpia. Soft delete = el dueño borró, no pausó. Scope `published()` e `isPublished()`: `is_published` true (los trashed ya los oculta SoftDeletes). No hay available/rented ni ocultar a 7 días.
 
 **Fotos (rebanada 3).** 1–10, disco `public`, `is_cover` o `position` más baja = portada. Factories pueden ir sin fotos hasta entonces.
 
@@ -61,10 +61,10 @@ No hay tablas `categories`, `roles`, `conversations`, `locations`, `settings`.
 ## Pantallas
 
 - **Catálogo:** buscador de zona, chips de categoría, cards; vacío si no hay resultados.
-- **Ficha:** galería, datos, WhatsApp/Llamar según flags; zona/dirección; 404 si no es visible (el dueño sí la ve).
+- **Ficha:** galería, datos, WhatsApp/Llamar según flags; zona/dirección; 404 si no está publicado (el dueño sí la ve).
 - **Publicar/editar:** un form; campos extra por categoría; fotos; teléfono de perfil + canales; zona texto + dirección opcional.
 - **Mis publicaciones:** propias, publicadas y no (sin soft-deleted).
 - **Perfil:** `phone_number` (pega a todos los anuncios).
 - **Login:** Fortify + botones Google/Facebook.
 
-Policies: `view` si `visibleInCatalog` o dueño/admin; `update`/`delete`/publicar/despublicar dueño o admin.
+Policies: `view` si `isPublished` o dueño/admin; `update`/`delete`/publicar/despublicar dueño o admin.

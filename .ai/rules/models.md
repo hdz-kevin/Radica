@@ -13,3 +13,6 @@ Listing visibility is is_published (boolean, default true), not available/rented
 
 ## Zone is free text; no colonia catalog
 MVP geography defaults to Teziutlán, Puebla (state/city copied on save; not shown in the form). `zone` is required free text. Do not create cities, neighborhoods, or locations tables. Do not add config/locations.php or TeziutlanNeighborhoods. Catalog filters use LIKE on zone, not a curated list.
+
+## published() not visibleInCatalog
+Listing catalog queries use the published() scope and isPublished(), not visibleInCatalog. SoftDeletes already hide trashed rows; do not invent a second visibility vocabulary.

@@ -100,6 +100,8 @@ class Listing extends Model
     }
 
     /**
+     * The user who owns the listing.
+     *
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -108,13 +110,21 @@ class Listing extends Model
     }
 
     /**
-     * Public catalog: published and not soft-deleted.
+     * Only include published listings.
      *
      * @param  Builder<Listing>  $query
      */
     #[Scope]
-    protected function visibleInCatalog(Builder $query): void
+    protected function published(Builder $query): void
     {
         $query->where('is_published', true);
+    }
+
+    /**
+     * Whether the listing is published.
+     */
+    public function isPublished(): bool
+    {
+        return $this->is_published;
     }
 }

@@ -17,20 +17,21 @@ test('a listing factory defaults to Teziutlan Centro', function () {
     ]);
 });
 
-test('a published listing appears in the catalog', function () {
+test('a published listing is included in the published scope', function () {
     $listing = Listing::factory()->create();
 
-    expect(Listing::query()->visibleInCatalog()->whereKey($listing)->exists())->toBeTrue();
+    expect(Listing::query()->published()->whereKey($listing)->exists())->toBeTrue();
 });
 
-test('an unpublished listing does not appear in the catalog', function () {
+test('an unpublished listing is excluded by the published scope', function () {
     $listing = Listing::factory()->unpublished()->create();
 
-    expect(Listing::query()->visibleInCatalog()->whereKey($listing)->exists())->toBeFalse();
+    expect($listing->isPublished())->toBeFalse();
+    expect(Listing::query()->published()->whereKey($listing)->exists())->toBeFalse();
 });
 
-test('a soft deleted listing does not appear in the catalog', function () {
+test('a soft deleted listing is excluded by the published scope', function () {
     $listing = Listing::factory()->trashed()->create();
 
-    expect(Listing::query()->visibleInCatalog()->whereKey($listing)->exists())->toBeFalse();
+    expect(Listing::query()->published()->whereKey($listing)->exists())->toBeFalse();
 });
