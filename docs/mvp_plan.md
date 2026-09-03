@@ -30,7 +30,7 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 **Acceso.** Visitante: catálogo, ficha, filtros. Usuario: eso + CRUD y publicar/despublicar de las suyas. Admin: `is_admin`; Gate listo, sin UI. Cualquiera autenticado puede publicar. Sin Spatie/roles.
 
-**Ubicación.** Valor en `listings`: `state`, `city`, `zone`, `street_address`. Sin lat/lng. UI no pide estado/ciudad; al guardar: Puebla / Teziutlán. `zone` = texto libre obligatorio (etiqueta “Zona o colonia”; no `region`). Filtros: `LIKE` sobre `zone`. Inertia puede anidar `location: { … }` al serializar.
+**Ubicación.** Valor en `listings`: `state`, `city`, `zone`, `street_address`. Sin lat/lng. UI no pide estado/ciudad; al guardar: Puebla / Teziutlán. `zone` = texto libre obligatorio (etiqueta “Zona o colonia”; no `region`). Filtros: `LIKE` sobre `zone`. Inertia serializa esos campos planos, igual que el modelo.
 
 **Categorías.** Enum PHP `room` \| `apartment` \| `house`, una tabla, columnas nullable. Cuarto: `bathroom_type` `own`\|`shared`. Depa/casa: `bedrooms`, `bathrooms`, `square_meters` (opcional), `has_parking`. El cuarto no usa recámaras/m²/estacionamiento. Sin depósito, piso, jardín.
 

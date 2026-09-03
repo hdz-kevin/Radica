@@ -51,10 +51,9 @@ describe('show', function () {
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/show')
                 ->where('listing.id', $listing->id)
-                ->where('listing.location.zone', $listing->zone)
-                ->where('listing.owner.phone_number', $owner->phone_number)
-                ->missing('listing.owner.email')
-                ->missing('listing.user')
+                ->where('listing.zone', $listing->zone)
+                ->where('listing.user.phone_number', $owner->phone_number)
+                ->missing('listing.user.email')
             );
     });
 

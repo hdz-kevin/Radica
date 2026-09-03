@@ -11,14 +11,14 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import {
     categoryLabel,
     formatRent,
-    type CatalogListingCard,
+    type ListingCard,
 } from '@/lib/listing';
 import { home } from '@/routes';
 
 export default function ListingsIndex({
     listings,
 }: {
-    listings: CatalogListingCard[];
+    listings: ListingCard[];
 }) {
     return (
         <>

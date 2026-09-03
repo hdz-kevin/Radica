@@ -2,7 +2,7 @@ export type ListingCategoryValue = 'room' | 'apartment' | 'house';
 
 export type BathroomTypeValue = 'own' | 'shared';
 
-export type CatalogListingCard = {
+export type ListingCard = {
     id: number;
     title: string;
     category: ListingCategoryValue;
@@ -11,7 +11,7 @@ export type CatalogListingCard = {
     city: string;
 };
 
-export type CatalogListingShow = {
+export type ListingShow = {
     id: number;
     title: string;
     description: string;
@@ -25,15 +25,13 @@ export type CatalogListingShow = {
     square_meters: number | null;
     has_parking: boolean | null;
     is_published: boolean;
-    location: {
-        state: string;
-        city: string;
-        zone: string;
-        street_address: string | null;
-    };
+    state: string;
+    city: string;
+    zone: string;
+    street_address: string | null;
     contact_via_whatsapp: boolean;
     contact_via_phone: boolean;
-    owner: {
+    user: {
         phone_number: string | null;
     };
 };

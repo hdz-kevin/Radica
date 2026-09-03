@@ -8,13 +8,13 @@ import {
     categoryLabel,
     formatRent,
     telUrl,
-    type CatalogListingShow,
+    type ListingShow,
     whatsAppUrl,
     yesNo,
 } from '@/lib/listing';
 import { home } from '@/routes';
 
-export default function ListingsShow({ listing }: { listing: CatalogListingShow }) {
+export default function ListingsShow({ listing }: { listing: ListingShow }) {
     setLayoutProps({
         breadcrumbs: [
             {
@@ -28,7 +28,7 @@ export default function ListingsShow({ listing }: { listing: CatalogListingShow 
         ],
     });
 
-    const phoneNumber = listing.owner.phone_number;
+    const phoneNumber = listing.user.phone_number;
     const showWhatsApp =
         listing.contact_via_whatsapp && phoneNumber !== null;
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
@@ -65,10 +65,9 @@ export default function ListingsShow({ listing }: { listing: CatalogListingShow 
                         {listing.title}
                     </h1>
                     <p className="text-muted-foreground text-sm">
-                        {listing.location.zone}, {listing.location.city},{' '}
-                        {listing.location.state}
-                        {listing.location.street_address
-                            ? ` · ${listing.location.street_address}`
+                        {listing.zone}, {listing.city}, {listing.state}
+                        {listing.street_address
+                            ? ` · ${listing.street_address}`
                             : null}
                     </p>
                 </div>
