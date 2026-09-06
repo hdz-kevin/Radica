@@ -20,11 +20,14 @@ return new class extends Migration
             $table->unsignedInteger('rent_amount');
             $table->boolean('is_furnished')->default(false);
             $table->boolean('pets_allowed')->default(false);
-            $table->string('bathroom_type')->nullable();
             $table->unsignedTinyInteger('bedrooms')->nullable();
             $table->unsignedTinyInteger('bathrooms')->nullable();
-            $table->unsignedInteger('square_meters')->nullable();
-            $table->boolean('has_parking')->nullable();
+            $table->boolean('has_parking')->default(false);
+            $table->boolean('include_water')->default(false);
+            $table->boolean('include_electricity')->default(false);
+            $table->boolean('include_gas')->default(false);
+            $table->boolean('include_internet')->default(false);
+            $table->boolean('include_cable')->default(false);
             $table->string('state');
             $table->string('city');
             $table->string('zone');

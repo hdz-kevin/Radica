@@ -32,7 +32,7 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 **Ubicación.** Valor en `listings`: `state`, `city`, `zone`, `street_address`. Sin lat/lng. UI no pide estado/ciudad; al guardar: Puebla / Teziutlán. `zone` = texto libre obligatorio (etiqueta “Zona o colonia”; no `region`). Filtros: `LIKE` sobre `zone`. Inertia serializa esos campos planos, igual que el modelo.
 
-**Categorías.** Enum PHP `room` \| `apartment` \| `house`, una tabla, columnas nullable. Cuarto: `bathroom_type` `own`\|`shared`. Depa/casa: `bedrooms`, `bathrooms`, `square_meters` (opcional), `has_parking`. El cuarto no usa recámaras/m²/estacionamiento. Sin depósito, piso, jardín.
+**Categorías.** Enum PHP `room` \| `apartment` \| `house`, una tabla. Recámaras y baños obligatorios solo en depa/casa (`bedrooms`/`bathrooms` nullable en cuarto). Estacionamiento (`has_parking`) y servicios incluidos (`include_water`, `include_electricity`, `include_gas`, `include_internet`, `include_cable`) en todas las categorías; booleanos NOT NULL, default false. Sin `bathroom_type`, m², depósito, piso ni jardín.
 
 **Contacto.** Número en `users.phone_number` (E.164, `521…`). Canales en el listing: WhatsApp y/o llamada (default ambos; al menos uno). La ficha usa el teléfono **actual** del dueño. Obligatorio al **publicar**, no al registrarse. Sin chat.
 

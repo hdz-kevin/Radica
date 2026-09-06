@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\BathroomType;
 use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -26,7 +25,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 8500,
                     'bedrooms' => 2,
                     'bathrooms' => 1,
-                    'square_meters' => 75,
                     'has_parking' => true,
                     'is_furnished' => false,
                     'pets_allowed' => false,
@@ -34,7 +32,6 @@ class ListingSeeder extends Seeder
             ],
             [
                 'type' => 'room',
-                'bathroom' => BathroomType::Own,
                 'attributes' => [
                     'title' => 'Cuarto en El Carmen',
                     'description' => 'Habitación independiente con baño propio. Ideal para una persona. Incluye internet.',
@@ -43,6 +40,7 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 3500,
                     'is_furnished' => true,
                     'pets_allowed' => false,
+                    'include_internet' => true,
                     'contact_via_whatsapp' => true,
                     'contact_via_phone' => false,
                 ],
@@ -58,7 +56,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 12000,
                     'bedrooms' => 3,
                     'bathrooms' => 2,
-                    'square_meters' => 140,
                     'has_parking' => true,
                     'is_furnished' => false,
                     'pets_allowed' => true,
@@ -74,15 +71,12 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 6500,
                     'bedrooms' => 1,
                     'bathrooms' => 1,
-                    'square_meters' => 48,
-                    'has_parking' => false,
                     'is_furnished' => true,
                     'pets_allowed' => true,
                 ],
             ],
             [
                 'type' => 'room',
-                'bathroom' => BathroomType::Shared,
                 'attributes' => [
                     'title' => 'Cuarto con baño compartido en Xoloco',
                     'description' => 'Cuarto amueblado en casa familiar. Baño y cocina compartidos. Ambiente tranquilo.',
@@ -105,7 +99,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 18000,
                     'bedrooms' => 4,
                     'bathrooms' => 3,
-                    'square_meters' => 180,
                     'has_parking' => true,
                     'is_furnished' => false,
                     'pets_allowed' => true,
@@ -121,8 +114,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 9500,
                     'bedrooms' => 3,
                     'bathrooms' => 2,
-                    'square_meters' => 95,
-                    'has_parking' => false,
                     'is_furnished' => false,
                     'pets_allowed' => true,
                     'contact_via_whatsapp' => false,
@@ -131,7 +122,6 @@ class ListingSeeder extends Seeder
             ],
             [
                 'type' => 'room',
-                'bathroom' => BathroomType::Own,
                 'attributes' => [
                     'title' => 'Cuarto independiente en Mexcalcuautla',
                     'description' => 'Entrada independiente y baño propio. Cerca de transporte. Solo llamadas.',
@@ -154,7 +144,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 15000,
                     'bedrooms' => 3,
                     'bathrooms' => 2,
-                    'square_meters' => 130,
                     'has_parking' => true,
                     'is_furnished' => true,
                     'pets_allowed' => true,
@@ -170,8 +159,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 5500,
                     'bedrooms' => 1,
                     'bathrooms' => 1,
-                    'square_meters' => 40,
-                    'has_parking' => false,
                     'is_furnished' => false,
                     'pets_allowed' => false,
                 ],
@@ -187,8 +174,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 8000,
                     'bedrooms' => 2,
                     'bathrooms' => 1,
-                    'square_meters' => 90,
-                    'has_parking' => false,
                     'is_furnished' => false,
                     'pets_allowed' => false,
                 ],
@@ -203,7 +188,6 @@ class ListingSeeder extends Seeder
                     'rent_amount' => 7200,
                     'bedrooms' => 2,
                     'bathrooms' => 1,
-                    'square_meters' => 68,
                     'has_parking' => true,
                     'is_furnished' => false,
                     'pets_allowed' => false,
@@ -219,7 +203,7 @@ class ListingSeeder extends Seeder
             $factory = Listing::factory()->for($user);
 
             $factory = match ($listing['type']) {
-                'room' => $factory->room($listing['bathroom']),
+                'room' => $factory->room(),
                 'house' => $factory->house(),
                 default => $factory->apartment(),
             };

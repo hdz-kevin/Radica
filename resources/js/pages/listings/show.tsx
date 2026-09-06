@@ -10,9 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import {
-    bathroomLabel,
     categoryLabel,
     formatRent,
+    includedUtilities,
     telUrl,
     type ListingPermissions,
     type ListingShow,
@@ -145,12 +145,6 @@ export default function ListingsShow({
                 </p>
 
                 <dl className="grid gap-3 text-sm sm:grid-cols-2">
-                    {listing.category === 'room' && listing.bathroom_type ? (
-                        <Detail
-                            label="Baño"
-                            value={bathroomLabel(listing.bathroom_type)}
-                        />
-                    ) : null}
                     {listing.category !== 'room' ? (
                         <>
                             <Detail
@@ -161,24 +155,12 @@ export default function ListingsShow({
                                 label="Baños"
                                 value={listing.bathrooms?.toString() ?? '—'}
                             />
-                            <Detail
-                                label="Metros cuadrados"
-                                value={
-                                    listing.square_meters
-                                        ? `${listing.square_meters} m²`
-                                        : '—'
-                                }
-                            />
-                            <Detail
-                                label="Estacionamiento"
-                                value={
-                                    listing.has_parking === null
-                                        ? '—'
-                                        : yesNo(listing.has_parking)
-                                }
-                            />
                         </>
                     ) : null}
+                    <Detail
+                        label="Estacionamiento"
+                        value={yesNo(listing.has_parking)}
+                    />
                     <Detail
                         label="Amueblado"
                         value={yesNo(listing.is_furnished)}
@@ -187,6 +169,13 @@ export default function ListingsShow({
                         label="Mascotas"
                         value={yesNo(listing.pets_allowed)}
                     />
+                    {includedUtilities.map((utility) => (
+                        <Detail
+                            key={utility.name}
+                            label={utility.label}
+                            value={yesNo(listing[utility.name])}
+                        />
+                    ))}
                 </dl>
 
                 {(showWhatsApp || showPhone) && (

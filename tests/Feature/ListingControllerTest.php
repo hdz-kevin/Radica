@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\BathroomType;
 use App\Enums\ListingCategory;
 use App\Models\Listing;
 use App\Models\User;
@@ -23,8 +22,12 @@ function listingPayload(array $overrides = []): array
         'pets_allowed' => false,
         'bedrooms' => 2,
         'bathrooms' => 1,
-        'square_meters' => 70,
         'has_parking' => true,
+        'include_water' => false,
+        'include_electricity' => false,
+        'include_gas' => false,
+        'include_internet' => false,
+        'include_cable' => false,
         'contact_via_whatsapp' => true,
         'contact_via_phone' => true,
         ...$overrides,
@@ -81,6 +84,10 @@ describe('show', function () {
                 ->where('listing.zone', $listing->zone)
                 ->where('listing.user.phone_number', $owner->phone_number)
                 ->missing('listing.user.email')
+                ->missing('listing.bathroom_type')
+                ->missing('listing.square_meters')
+                ->where('listing.has_parking', $listing->has_parking)
+                ->where('listing.include_water', $listing->include_water)
                 ->where('can.update', false)
                 ->where('can.delete', false)
                 ->where('can.publish', false)
@@ -222,16 +229,21 @@ describe('store', function () {
         expect($user->listings()->count())->toBe(0);
     });
 
-    test('requires bathroom type for a room and bedrooms for an apartment', function () {
+    test('creates a room without bedrooms or bathrooms and requires bedrooms for an apartment', function () {
         $user = User::factory()->withPhone()->create();
 
         $this->actingAs($user)
-            ->from(route('listings.create'))
             ->post(route('listings.store'), listingPayload([
                 'category' => ListingCategory::Room->value,
             ]))
-            ->assertRedirect(route('listings.create'))
-            ->assertSessionHasErrors('bathroom_type');
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        expect($user->listings()->first())
+            ->category->toBe(ListingCategory::Room)
+            ->bedrooms->toBeNull()
+            ->bathrooms->toBeNull()
+            ->has_parking->toBeTrue();
 
         $this->actingAs($user)
             ->from(route('listings.create'))
@@ -240,6 +252,25 @@ describe('store', function () {
             ]))
             ->assertRedirect(route('listings.create'))
             ->assertSessionHasErrors('bedrooms');
+    });
+
+    test('persists included utilities', function () {
+        $user = User::factory()->withPhone()->create();
+
+        $this->actingAs($user)
+            ->post(route('listings.store'), listingPayload([
+                'include_water' => true,
+                'include_electricity' => true,
+                'include_internet' => true,
+            ]))
+            ->assertSessionHasNoErrors();
+
+        expect($user->listings()->first())
+            ->include_water->toBeTrue()
+            ->include_electricity->toBeTrue()
+            ->include_gas->toBeFalse()
+            ->include_internet->toBeTrue()
+            ->include_cable->toBeFalse();
     });
 
     test('ignores client-supplied state, city, and published flags', function () {
@@ -349,22 +380,21 @@ describe('update', function () {
 
     test('clears apartment fields when the listing becomes a room', function () {
         $owner = User::factory()->withPhone()->create();
-        $listing = Listing::factory()->for($owner)->apartment()->create();
+        $listing = Listing::factory()->for($owner)->apartment()->create([
+            'has_parking' => true,
+        ]);
 
         $this->actingAs($owner)
             ->patch(route('listings.update', $listing), listingPayload([
                 'category' => ListingCategory::Room->value,
-                'bathroom_type' => BathroomType::Own->value,
             ]))
             ->assertSessionHasNoErrors();
 
         expect($listing->fresh())
             ->category->toBe(ListingCategory::Room)
-            ->bathroom_type->toBe(BathroomType::Own)
             ->bedrooms->toBeNull()
             ->bathrooms->toBeNull()
-            ->square_meters->toBeNull()
-            ->has_parking->toBeNull();
+            ->has_parking->toBeTrue();
     });
 
     test('requires a phone when the owner has removed it from their profile', function () {

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\BathroomType;
 use App\Enums\ListingCategory;
 use App\Models\Listing;
 use App\Models\User;
@@ -28,11 +27,14 @@ class ListingFactory extends Factory
             'rent_amount' => 12000,
             'is_furnished' => false,
             'pets_allowed' => false,
-            'bathroom_type' => null,
             'bedrooms' => 2,
             'bathrooms' => 1,
-            'square_meters' => 75,
-            'has_parking' => true,
+            'has_parking' => false,
+            'include_water' => false,
+            'include_electricity' => false,
+            'include_gas' => false,
+            'include_internet' => false,
+            'include_cable' => false,
             'state' => Listing::DEFAULT_STATE,
             'city' => Listing::DEFAULT_CITY,
             'zone' => 'Centro',
@@ -47,15 +49,12 @@ class ListingFactory extends Factory
     /**
      * Indicate that the listing is a room.
      */
-    public function room(BathroomType $bathroomType = BathroomType::Own): static
+    public function room(): static
     {
         return $this->state(fn (array $attributes): array => [
             'category' => ListingCategory::Room,
-            'bathroom_type' => $bathroomType,
             'bedrooms' => null,
             'bathrooms' => null,
-            'square_meters' => null,
-            'has_parking' => null,
         ]);
     }
 
@@ -66,11 +65,8 @@ class ListingFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'category' => ListingCategory::Apartment,
-            'bathroom_type' => null,
             'bedrooms' => 2,
             'bathrooms' => 1,
-            'square_meters' => 75,
-            'has_parking' => true,
         ]);
     }
 
@@ -81,11 +77,8 @@ class ListingFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'category' => ListingCategory::House,
-            'bathroom_type' => null,
             'bedrooms' => 3,
             'bathrooms' => 2,
-            'square_meters' => 140,
-            'has_parking' => true,
         ]);
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Concerns;
 
-use App\Enums\BathroomType;
 use App\Enums\ListingCategory;
 use App\Models\Listing;
 use App\Rules\MexicanPhoneNumber;
@@ -12,23 +11,28 @@ use Illuminate\Validation\Validator;
 
 trait ListingValidationRules
 {
+    /**
+     * @var list<string>
+     */
+    private const BOOLEAN_FIELDS = [
+        'is_furnished',
+        'pets_allowed',
+        'has_parking',
+        'include_water',
+        'include_electricity',
+        'include_gas',
+        'include_internet',
+        'include_cable',
+        'contact_via_whatsapp',
+        'contact_via_phone',
+    ];
+
     protected function prepareForValidation(): void
     {
-        $booleans = [
-            'is_furnished',
-            'pets_allowed',
-            'contact_via_whatsapp',
-            'contact_via_phone',
-        ];
-
         $merged = [];
 
-        foreach ($booleans as $field) {
+        foreach (self::BOOLEAN_FIELDS as $field) {
             $merged[$field] = $this->boolean($field);
-        }
-
-        if ($this->input('category') !== ListingCategory::Room->value) {
-            $merged['has_parking'] = $this->boolean('has_parking');
         }
 
         $this->merge($merged);
@@ -39,7 +43,8 @@ trait ListingValidationRules
      */
     protected function listingRules(): array
     {
-        $isRoom = $this->input('category') === ListingCategory::Room->value;
+        $isApartment = $this->input('category') === ListingCategory::Apartment->value;
+        $isHouse = $this->input('category') === ListingCategory::House->value;
 
         $rules = [
             'title' => ['required', 'string', 'max:255'],
@@ -50,22 +55,19 @@ trait ListingValidationRules
             'street_address' => ['nullable', 'string', 'max:255'],
             'is_furnished' => ['required', 'boolean'],
             'pets_allowed' => ['required', 'boolean'],
+            'has_parking' => ['required', 'boolean'],
+            'include_water' => ['required', 'boolean'],
+            'include_electricity' => ['required', 'boolean'],
+            'include_gas' => ['required', 'boolean'],
+            'include_internet' => ['required', 'boolean'],
+            'include_cable' => ['required', 'boolean'],
             'contact_via_whatsapp' => ['required', 'boolean'],
             'contact_via_phone' => ['required', 'boolean'],
-            'bathroom_type' => [
-                Rule::when($isRoom, ['required', Rule::enum(BathroomType::class)], ['nullable']),
-            ],
             'bedrooms' => [
-                Rule::when(! $isRoom, ['required', 'integer', 'min:1'], ['nullable']),
+                Rule::when($isApartment || $isHouse, ['required', 'integer', 'min:1'], ['nullable']),
             ],
             'bathrooms' => [
-                Rule::when(! $isRoom, ['required', 'integer', 'min:1'], ['nullable']),
-            ],
-            'square_meters' => [
-                Rule::when(! $isRoom, ['nullable', 'integer', 'min:1'], ['nullable']),
-            ],
-            'has_parking' => [
-                Rule::when(! $isRoom, ['required', 'boolean'], ['nullable']),
+                Rule::when($isApartment || $isHouse, ['required', 'integer', 'min:1'], ['nullable']),
             ],
         ];
 
@@ -112,6 +114,12 @@ trait ListingValidationRules
                 'street_address',
                 'is_furnished',
                 'pets_allowed',
+                'has_parking',
+                'include_water',
+                'include_electricity',
+                'include_gas',
+                'include_internet',
+                'include_cable',
                 'contact_via_whatsapp',
                 'contact_via_phone',
             ]),
@@ -122,21 +130,15 @@ trait ListingValidationRules
         if ($category === ListingCategory::Room) {
             return [
                 ...$attributes,
-                'bathroom_type' => $this->validated('bathroom_type'),
                 'bedrooms' => null,
                 'bathrooms' => null,
-                'square_meters' => null,
-                'has_parking' => null,
             ];
         }
 
         return [
             ...$attributes,
-            'bathroom_type' => null,
             'bedrooms' => $this->validated('bedrooms'),
             'bathrooms' => $this->validated('bathrooms'),
-            'square_meters' => $this->validated('square_meters'),
-            'has_parking' => $this->boolean('has_parking'),
         ];
     }
 

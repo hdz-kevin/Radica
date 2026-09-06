@@ -1,6 +1,14 @@
 export type ListingCategoryValue = 'room' | 'apartment' | 'house';
 
-export type BathroomTypeValue = 'own' | 'shared';
+export const includedUtilities = [
+    { name: 'include_water', label: 'Agua' },
+    { name: 'include_electricity', label: 'Luz' },
+    { name: 'include_gas', label: 'Gas' },
+    { name: 'include_internet', label: 'Internet' },
+    { name: 'include_cable', label: 'Cable' },
+] as const;
+
+export type IncludedUtilityName = (typeof includedUtilities)[number]['name'];
 
 export type ListingCard = {
     id: number;
@@ -21,6 +29,8 @@ export type ListingPermissions = {
     publish: boolean;
 };
 
+type IncludedUtilities = Record<IncludedUtilityName, boolean>;
+
 export type ListingFormData = {
     id?: number;
     title: string;
@@ -29,18 +39,16 @@ export type ListingFormData = {
     rent_amount: number;
     is_furnished: boolean;
     pets_allowed: boolean;
-    bathroom_type: BathroomTypeValue | null;
     bedrooms: number | null;
     bathrooms: number | null;
-    square_meters: number | null;
-    has_parking: boolean | null;
+    has_parking: boolean;
     state: string;
     city: string;
     zone: string;
     street_address: string | null;
     contact_via_whatsapp: boolean;
     contact_via_phone: boolean;
-};
+} & IncludedUtilities;
 
 export type ListingShow = {
     id: number;
@@ -50,11 +58,9 @@ export type ListingShow = {
     rent_amount: number;
     is_furnished: boolean;
     pets_allowed: boolean;
-    bathroom_type: BathroomTypeValue | null;
     bedrooms: number | null;
     bathrooms: number | null;
-    square_meters: number | null;
-    has_parking: boolean | null;
+    has_parking: boolean;
     is_published: boolean;
     state: string;
     city: string;
@@ -65,17 +71,12 @@ export type ListingShow = {
     user: {
         phone_number: string | null;
     };
-};
+} & IncludedUtilities;
 
 const categoryLabels: Record<ListingCategoryValue, string> = {
     room: 'Cuarto',
     apartment: 'Departamento',
     house: 'Casa',
-};
-
-const bathroomLabels: Record<BathroomTypeValue, string> = {
-    own: 'Baño propio',
-    shared: 'Baño compartido',
 };
 
 const rentFormatter = new Intl.NumberFormat('es-MX', {
@@ -86,10 +87,6 @@ const rentFormatter = new Intl.NumberFormat('es-MX', {
 
 export function categoryLabel(category: ListingCategoryValue): string {
     return categoryLabels[category];
-}
-
-export function bathroomLabel(bathroomType: BathroomTypeValue): string {
-    return bathroomLabels[bathroomType];
 }
 
 export function formatRent(amount: number): string {

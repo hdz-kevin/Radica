@@ -19,3 +19,6 @@ Listing catalog queries use the published() scope and isPublished(), not visible
 
 ## Location defaults shown disabled in the form
 Listing::DEFAULT_STATE is Puebla and DEFAULT_CITY is Teziutlán. The publish/edit form shows Estado and Ciudad disabled. The server always writes those constants on save. zone remains required free text; street_address is optional. Do not extract a Location model.
+
+## Amenities are listing-level booleans
+has_parking and include_water/electricity/gas/internet/cable live on listings for every category (boolean, default false). bedrooms and bathrooms stay nullable and are only required for apartment/house. Do not add bathroom_type or square_meters.

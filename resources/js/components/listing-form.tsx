@@ -6,7 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { type ListingCategoryValue, type ListingFormData } from '@/lib/listing';
+import {
+    includedUtilities,
+    type ListingCategoryValue,
+    type ListingFormData,
+} from '@/lib/listing';
 import type { Auth } from '@/types';
 
 const selectClassName =
@@ -103,23 +107,7 @@ export function ListingForm({
                         </div>
                     </div>
 
-                    {category === 'room' ? (
-                        <div className="grid gap-2">
-                            <Label htmlFor="bathroom_type">Baño</Label>
-                            <select
-                                id="bathroom_type"
-                                name="bathroom_type"
-                                required
-                                className={selectClassName}
-                                defaultValue={listing?.bathroom_type ?? 'own'}
-                            >
-                                <option value="own">Baño propio</option>
-                                <option value="shared">Baño compartido</option>
-                            </select>
-
-                            <InputError message={errors.bathroom_type} />
-                        </div>
-                    ) : (
+                    {['apartment', 'house'].includes(category) && (
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="grid gap-2">
                                 <Label htmlFor="bedrooms">Recámaras</Label>
@@ -148,21 +136,6 @@ export function ListingForm({
 
                                 <InputError message={errors.bathrooms} />
                             </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="square_meters">
-                                    Metros cuadrados (opcional)
-                                </Label>
-                                <Input
-                                    id="square_meters"
-                                    name="square_meters"
-                                    type="number"
-                                    min={1}
-                                    defaultValue={listing?.square_meters ?? ''}
-                                />
-
-                                <InputError message={errors.square_meters} />
-                            </div>
                         </div>
                     )}
 
@@ -181,16 +154,32 @@ export function ListingForm({
                             defaultChecked={listing?.pets_allowed ?? false}
                             error={errors.pets_allowed}
                         />
-                        {['apartment', 'house'].includes(category) && (
-                            <BooleanField
-                                id="has_parking"
-                                name="has_parking"
-                                label="Estacionamiento"
-                                defaultChecked={listing?.has_parking ?? false}
-                                error={errors.has_parking}
-                            />
-                        )}
+                        <BooleanField
+                            id="has_parking"
+                            name="has_parking"
+                            label="Estacionamiento"
+                            defaultChecked={listing?.has_parking ?? false}
+                            error={errors.has_parking}
+                        />
                     </div>
+
+                    <fieldset className="grid gap-3">
+                        <legend className="text-sm font-medium">
+                            Incluidos en la renta
+                        </legend>
+                        {includedUtilities.map((utility) => (
+                            <BooleanField
+                                key={utility.name}
+                                id={utility.name}
+                                name={utility.name}
+                                label={utility.label}
+                                defaultChecked={
+                                    listing?.[utility.name] ?? false
+                                }
+                                error={errors[utility.name]}
+                            />
+                        ))}
+                    </fieldset>
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="grid gap-2">
@@ -300,7 +289,7 @@ function BooleanField({
                     name={name}
                     value="1"
                     defaultChecked={defaultChecked}
-                    className="border-input size-4 rounded-[4px] border shadow-xs"
+                    className="border-input size-4 rounded-lg border shadow-xs"
                 />
                 <Label htmlFor={id}>{label}</Label>
             </div>

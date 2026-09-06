@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\BathroomType;
 use App\Enums\ListingCategory;
 use Database\Factories\ListingFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -23,11 +22,14 @@ use Illuminate\Support\Carbon;
  * @property int $rent_amount
  * @property bool $is_furnished
  * @property bool $pets_allowed
- * @property BathroomType|null $bathroom_type
  * @property int|null $bedrooms
  * @property int|null $bathrooms
- * @property int|null $square_meters
- * @property bool|null $has_parking
+ * @property bool $has_parking
+ * @property bool $include_water
+ * @property bool $include_electricity
+ * @property bool $include_gas
+ * @property bool $include_internet
+ * @property bool $include_cable
  * @property string $state
  * @property string $city
  * @property string $zone
@@ -48,11 +50,14 @@ use Illuminate\Support\Carbon;
     'rent_amount',
     'is_furnished',
     'pets_allowed',
-    'bathroom_type',
     'bedrooms',
     'bathrooms',
-    'square_meters',
     'has_parking',
+    'include_water',
+    'include_electricity',
+    'include_gas',
+    'include_internet',
+    'include_cable',
     'state',
     'city',
     'zone',
@@ -76,6 +81,12 @@ class Listing extends Model
     protected $attributes = [
         'is_furnished' => false,
         'pets_allowed' => false,
+        'has_parking' => false,
+        'include_water' => false,
+        'include_electricity' => false,
+        'include_gas' => false,
+        'include_internet' => false,
+        'include_cable' => false,
         'contact_via_whatsapp' => true,
         'contact_via_phone' => true,
         'is_published' => true,
@@ -88,17 +99,20 @@ class Listing extends Model
     {
         return [
             'category' => ListingCategory::class,
-            'bathroom_type' => BathroomType::class,
             'is_furnished' => 'boolean',
             'pets_allowed' => 'boolean',
             'has_parking' => 'boolean',
+            'include_water' => 'boolean',
+            'include_electricity' => 'boolean',
+            'include_gas' => 'boolean',
+            'include_internet' => 'boolean',
+            'include_cable' => 'boolean',
             'contact_via_whatsapp' => 'boolean',
             'contact_via_phone' => 'boolean',
             'is_published' => 'boolean',
             'rent_amount' => 'integer',
             'bedrooms' => 'integer',
             'bathrooms' => 'integer',
-            'square_meters' => 'integer',
             'published_at' => 'datetime',
         ];
     }
