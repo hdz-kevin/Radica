@@ -63,6 +63,10 @@ use Illuminate\Support\Carbon;
 ])]
 class Listing extends Model
 {
+    public const DEFAULT_STATE = 'Puebla';
+
+    public const DEFAULT_CITY = 'Teziutlán';
+
     /** @use HasFactory<ListingFactory> */
     use HasFactory, SoftDeletes;
 
@@ -126,5 +130,24 @@ class Listing extends Model
     public function isPublished(): bool
     {
         return $this->is_published;
+    }
+
+    /**
+     * Make the listing visible in the catalog and bump its sort date.
+     */
+    public function publish(): void
+    {
+        $this->is_published = true;
+        $this->published_at = now();
+        $this->save();
+    }
+
+    /**
+     * Hide the listing from the catalog without clearing published_at.
+     */
+    public function unpublish(): void
+    {
+        $this->is_published = false;
+        $this->save();
     }
 }

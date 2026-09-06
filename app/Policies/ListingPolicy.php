@@ -29,11 +29,11 @@ class ListingPolicy
     }
 
     /**
-     * Only the owner can create a listing.
+     * Any authenticated user may publish a listing.
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class ListingPolicy
      */
     public function update(User $user, Listing $listing): bool
     {
-        return false;
+        return $this->owns($user, $listing);
     }
 
     /**
@@ -49,7 +49,23 @@ class ListingPolicy
      */
     public function delete(User $user, Listing $listing): bool
     {
-        return false;
+        return $this->owns($user, $listing);
+    }
+
+    /**
+     * Only the owner can publish a listing.
+     */
+    public function publish(User $user, Listing $listing): bool
+    {
+        return $this->owns($user, $listing);
+    }
+
+    /**
+     * Only the owner can unpublish a listing.
+     */
+    public function unpublish(User $user, Listing $listing): bool
+    {
+        return $this->owns($user, $listing);
     }
 
     /**
@@ -66,5 +82,13 @@ class ListingPolicy
     public function forceDelete(User $user, Listing $listing): bool
     {
         return false;
+    }
+
+    /**
+     * Whether the user owns the listing.
+     */
+    private function owns(User $user, Listing $listing): bool
+    {
+        return $user->id === $listing->user_id;
     }
 }

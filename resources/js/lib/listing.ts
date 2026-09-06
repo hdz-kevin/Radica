@@ -11,6 +11,37 @@ export type ListingCard = {
     city: string;
 };
 
+export type ListingMine = ListingCard & {
+    is_published: boolean;
+};
+
+export type ListingPermissions = {
+    update: boolean;
+    delete: boolean;
+    publish: boolean;
+};
+
+export type ListingFormData = {
+    id?: number;
+    title: string;
+    description: string;
+    category: ListingCategoryValue;
+    rent_amount: number;
+    is_furnished: boolean;
+    pets_allowed: boolean;
+    bathroom_type: BathroomTypeValue | null;
+    bedrooms: number | null;
+    bathrooms: number | null;
+    square_meters: number | null;
+    has_parking: boolean | null;
+    state: string;
+    city: string;
+    zone: string;
+    street_address: string | null;
+    contact_via_whatsapp: boolean;
+    contact_via_phone: boolean;
+};
+
 export type ListingShow = {
     id: number;
     title: string;

@@ -55,4 +55,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Listing::class);
     }
+
+    /**
+     * Whether the user has a contact phone number.
+     */
+    public function hasPhone(): bool
+    {
+        return filled($this->phone_number);
+    }
 }

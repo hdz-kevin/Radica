@@ -12,7 +12,10 @@ Listing address fields (state, city, zone, street_address) stay on listings. Do 
 Listing visibility is is_published (boolean, default true), not available/rented and not a two-value enum. Do not put is_published in Fillable; Publicar/Despublicar is a dedicated action. published_at is only for catalog sort and is not cleared on unpublish. Soft delete means the owner deleted the listing, not paused it. There is no rented_at or hide-after-7-days.
 
 ## Zone is free text; no colonia catalog
-MVP geography defaults to Teziutlán, Puebla (state/city copied on save; not shown in the form). `zone` is required free text. Do not create cities, neighborhoods, or locations tables. Do not add config/locations.php or TeziutlanNeighborhoods. Catalog filters use LIKE on zone, not a curated list.
+MVP geography defaults to Teziutlán, Puebla (state/city copied on save). `zone` is required free text. Do not create cities, neighborhoods, or locations tables. Do not add config/locations.php or TeziutlanNeighborhoods. Catalog filters use LIKE on zone, not a curated list.
 
 ## published() not visibleInCatalog
 Listing catalog queries use the published() scope and isPublished(), not visibleInCatalog. SoftDeletes already hide trashed rows; do not invent a second visibility vocabulary.
+
+## Location defaults shown disabled in the form
+Listing::DEFAULT_STATE is Puebla and DEFAULT_CITY is Teziutlán. The publish/edit form shows Estado and Ciudad disabled. The server always writes those constants on save. zone remains required free text; street_address is optional. Do not extract a Location model.

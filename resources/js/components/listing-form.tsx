@@ -1,0 +1,310 @@
+import { Form, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
+import { type ListingCategoryValue, type ListingFormData } from '@/lib/listing';
+import type { Auth } from '@/types';
+
+const selectClassName =
+    'border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs outline-none md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50';
+
+type ListingFormProps = {
+    action: string;
+    method: 'post' | 'put' | 'patch';
+    listing?: ListingFormData;
+    defaults?: {
+        state: string;
+        city: string;
+    };
+    submitLabel: string;
+};
+
+export function ListingForm({
+    action,
+    method,
+    listing,
+    defaults,
+    submitLabel,
+}: ListingFormProps) {
+    const { auth } = usePage<{ auth: Auth }>().props;
+    const needsPhone = auth.user?.phone_number == null;
+    const [category, setCategory] = useState<ListingCategoryValue>(
+        listing?.category ?? 'apartment',
+    );
+
+    const state = listing?.state ?? defaults?.state ?? '';
+    const city = listing?.city ?? defaults?.city ?? '';
+
+    return (
+        <Form action={action} method={method} className="flex flex-col gap-8" noValidate>
+            {({ processing, errors, }) => (
+                <>
+                    <div className="grid gap-2">
+                        <Label htmlFor="title">Título</Label>
+                        <Input
+                            id="title"
+                            name="title"
+                            required
+                            defaultValue={listing?.title}
+                            autoComplete="off"
+                        />
+                        <InputError message={errors.title} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="description">Descripción</Label>
+                        <Textarea
+                            id="description"
+                            name="description"
+                            required
+                            rows={6}
+                            defaultValue={listing?.description}
+                        />
+
+                        <InputError message={errors.description} />
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="grid gap-2">
+                            <Label htmlFor="category">Categoría</Label>
+                            <select
+                                id="category"
+                                name="category"
+                                required
+                                className={selectClassName}
+                                value={category}
+                                onChange={(event) => setCategory(event.target.value as ListingCategoryValue)}
+                            >
+                                <option value="room">Cuarto</option>
+                                <option value="apartment">Departamento</option>
+                                <option value="house">Casa</option>
+                            </select>
+
+                            <InputError message={errors.category} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="rent_amount">Renta mensual (MXN)</Label>
+                            <Input
+                                id="rent_amount"
+                                name="rent_amount"
+                                type="number"
+                                min={1}
+                                step={1}
+                                required
+                                defaultValue={listing?.rent_amount}
+                            />
+
+                            <InputError message={errors.rent_amount} />
+                        </div>
+                    </div>
+
+                    {category === 'room' ? (
+                        <div className="grid gap-2">
+                            <Label htmlFor="bathroom_type">Baño</Label>
+                            <select
+                                id="bathroom_type"
+                                name="bathroom_type"
+                                required
+                                className={selectClassName}
+                                defaultValue={listing?.bathroom_type ?? 'own'}
+                            >
+                                <option value="own">Baño propio</option>
+                                <option value="shared">Baño compartido</option>
+                            </select>
+
+                            <InputError message={errors.bathroom_type} />
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-2">
+                                <Label htmlFor="bedrooms">Recámaras</Label>
+                                <Input
+                                    id="bedrooms"
+                                    name="bedrooms"
+                                    type="number"
+                                    min={1}
+                                    required
+                                    defaultValue={listing?.bedrooms ?? ''}
+                                />
+
+                                <InputError message={errors.bedrooms} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="bathrooms">Baños</Label>
+                                <Input
+                                    id="bathrooms"
+                                    name="bathrooms"
+                                    type="number"
+                                    min={1}
+                                    required
+                                    defaultValue={listing?.bathrooms ?? ''}
+                                />
+
+                                <InputError message={errors.bathrooms} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="square_meters">
+                                    Metros cuadrados (opcional)
+                                </Label>
+                                <Input
+                                    id="square_meters"
+                                    name="square_meters"
+                                    type="number"
+                                    min={1}
+                                    defaultValue={listing?.square_meters ?? ''}
+                                />
+
+                                <InputError message={errors.square_meters} />
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="grid gap-3">
+                        <BooleanField
+                            id="is_furnished"
+                            name="is_furnished"
+                            label="Amueblado"
+                            defaultChecked={listing?.is_furnished ?? false}
+                            error={errors.is_furnished}
+                        />
+                        <BooleanField
+                            id="pets_allowed"
+                            name="pets_allowed"
+                            label="Se aceptan mascotas"
+                            defaultChecked={listing?.pets_allowed ?? false}
+                            error={errors.pets_allowed}
+                        />
+                        {['apartment', 'house'].includes(category) && (
+                            <BooleanField
+                                id="has_parking"
+                                name="has_parking"
+                                label="Estacionamiento"
+                                defaultChecked={listing?.has_parking ?? false}
+                                error={errors.has_parking}
+                            />
+                        )}
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="grid gap-2">
+                            <Label htmlFor="state">Estado</Label>
+                            <Input id="state" value={state} disabled />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="city">Ciudad</Label>
+                            <Input id="city" value={city} disabled />
+                        </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="zone">Zona o colonia</Label>
+                        <Input
+                            id="zone"
+                            name="zone"
+                            required
+                            defaultValue={listing?.zone}
+                        />
+                        <InputError message={errors.zone} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="street_address">
+                            Dirección (opcional)
+                        </Label>
+                        <Input
+                            id="street_address"
+                            name="street_address"
+                            defaultValue={listing?.street_address ?? ''}
+                        />
+                        <InputError message={errors.street_address} />
+                    </div>
+
+                    <fieldset className="grid gap-3">
+                        <legend className="text-sm font-medium">Contacto</legend>
+                        <BooleanField
+                            id="contact_via_whatsapp"
+                            name="contact_via_whatsapp"
+                            label="WhatsApp"
+                            defaultChecked={
+                                listing?.contact_via_whatsapp ?? true
+                            }
+                            error={errors.contact_via_whatsapp}
+                        />
+                        <BooleanField
+                            id="contact_via_phone"
+                            name="contact_via_phone"
+                            label="Llamada"
+                            defaultChecked={listing?.contact_via_phone ?? true}
+                            error={errors.contact_via_phone}
+                        />
+                    </fieldset>
+
+                    {needsPhone ? (
+                        <div className="grid gap-2">
+                            <Label htmlFor="phone_number">Teléfono</Label>
+                            <Input
+                                id="phone_number"
+                                name="phone_number"
+                                required
+                                inputMode="numeric"
+                                placeholder="5215512345678"
+                                autoComplete="tel"
+                            />
+                            <p className="text-muted-foreground text-sm">
+                                Número mexicano en formato 521 seguido de 10
+                                dígitos. Se guarda en tu perfil.
+                            </p>
+                            <InputError message={errors.phone_number} />
+                        </div>
+                    ) : null}
+
+                    <div>
+                        <Button type="submit" disabled={processing}>
+                            {processing && <Spinner />}
+                            {submitLabel}
+                        </Button>
+                    </div>
+                </>
+            )}
+        </Form>
+    );
+}
+
+function BooleanField({
+    id,
+    name,
+    label,
+    defaultChecked,
+    error,
+}: {
+    id: string;
+    name: string;
+    label: string;
+    defaultChecked: boolean;
+    error?: string;
+}) {
+    return (
+        <div className="grid gap-2">
+            <div className="flex items-center gap-3">
+                <input type="hidden" name={name} value="0" />
+                <input
+                    id={id}
+                    type="checkbox"
+                    name={name}
+                    value="1"
+                    defaultChecked={defaultChecked}
+                    className="border-input size-4 rounded-[4px] border shadow-xs"
+                />
+                <Label htmlFor={id}>{label}</Label>
+            </div>
+            <InputError message={error} />
+        </div>
+    );
+}

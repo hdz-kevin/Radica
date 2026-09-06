@@ -33,3 +33,29 @@ test('another user cannot view an unpublished listing', function () {
 
     expect((new ListingPolicy)->view(User::factory()->create(), $listing))->toBeFalse();
 });
+
+test('any authenticated user can create a listing', function () {
+    expect((new ListingPolicy)->create(User::factory()->create()))->toBeTrue();
+});
+
+test('the owner can update delete publish and unpublish a listing', function () {
+    $owner = User::factory()->create();
+    $listing = Listing::factory()->for($owner)->create();
+    $policy = new ListingPolicy;
+
+    expect($policy->update($owner, $listing))->toBeTrue();
+    expect($policy->delete($owner, $listing))->toBeTrue();
+    expect($policy->publish($owner, $listing))->toBeTrue();
+    expect($policy->unpublish($owner, $listing))->toBeTrue();
+});
+
+test('another user cannot update delete publish or unpublish a listing', function () {
+    $listing = Listing::factory()->create();
+    $other = User::factory()->create();
+    $policy = new ListingPolicy;
+
+    expect($policy->update($other, $listing))->toBeFalse();
+    expect($policy->delete($other, $listing))->toBeFalse();
+    expect($policy->publish($other, $listing))->toBeFalse();
+    expect($policy->unpublish($other, $listing))->toBeFalse();
+});

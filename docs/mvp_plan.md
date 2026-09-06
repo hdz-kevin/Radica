@@ -8,8 +8,8 @@ Stack: Laravel 13, Inertia + React, Fortify. Por rebanadas (tests Pest de lo que
 | --- | --- | --- |
 | 0 | Datos: enums, `listings`, `users.phone_number`, factory, visibilidad | Hecha |
 | 1 | Catálogo público: listado (cards) + ficha | Hecha |
-| 2 | Publicar / editar / despublicar (dueño) | Siguiente |
-| 3 | Fotos 1–10 (`listing_images`) | |
+| 2 | Publicar / editar / despublicar (dueño) | Hecha |
+| 3 | Fotos 1–10 (`listing_images`) | Siguiente |
 | 4 | Filtros en vivo: `LIKE` en `zone` (debounce + Inertia/`useHttp`) | |
 | 5 | Google + Facebook (Socialite ^5.29+; [CVE-2026-73683](https://github.com/advisories/ghsa-cr46-5p72-vh72)) | |
 | 6 | `users.is_admin` + Gate; tu usuario vía `ADMIN_EMAIL`. Sin panel | |

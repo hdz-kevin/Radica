@@ -1,5 +1,11 @@
-import { Head, Link, setLayoutProps } from '@inertiajs/react';
-import { show } from '@/actions/App/Http/Controllers/ListingController';
+import { Form, Head, Link, setLayoutProps } from '@inertiajs/react';
+import {
+    destroy,
+    edit,
+    publish,
+    show,
+    unpublish,
+} from '@/actions/App/Http/Controllers/ListingController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
@@ -8,13 +14,20 @@ import {
     categoryLabel,
     formatRent,
     telUrl,
+    type ListingPermissions,
     type ListingShow,
     whatsAppUrl,
     yesNo,
 } from '@/lib/listing';
 import { home } from '@/routes';
 
-export default function ListingsShow({ listing }: { listing: ListingShow }) {
+export default function ListingsShow({
+    listing,
+    can,
+}: {
+    listing: ListingShow;
+    can: ListingPermissions;
+}) {
     setLayoutProps({
         breadcrumbs: [
             {
@@ -42,6 +55,61 @@ export default function ListingsShow({ listing }: { listing: ListingShow }) {
                     <p className="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
                         Esta publicación no está visible en el catálogo.
                     </p>
+                )}
+
+                {(can.update || can.delete || can.publish) && (
+                    <div className="flex flex-wrap gap-2">
+                        {can.update && (
+                            <Button variant="outline" asChild>
+                                <Link href={edit(listing.id)}>Editar</Link>
+                            </Button>
+                        )}
+                        {can.publish &&
+                            (listing.is_published ? (
+                                <Form {...unpublish.form(listing.id)}>
+                                    {({ processing }) => (
+                                        <Button
+                                            type="submit"
+                                            variant="outline"
+                                            disabled={processing}
+                                        >
+                                            Despublicar
+                                        </Button>
+                                    )}
+                                </Form>
+                            ) : (
+                                <Form {...publish.form(listing.id)}>
+                                    {({ processing }) => (
+                                        <Button
+                                            type="submit"
+                                            disabled={processing}
+                                        >
+                                            Publicar
+                                        </Button>
+                                    )}
+                                </Form>
+                            ))}
+                        {can.delete && (
+                            <Form
+                                {...destroy.form(listing.id)}
+                                onBefore={() =>
+                                    confirm(
+                                        '¿Borrar esta publicación? No se puede deshacer.',
+                                    )
+                                }
+                            >
+                                {({ processing }) => (
+                                    <Button
+                                        type="submit"
+                                        variant="destructive"
+                                        disabled={processing}
+                                    >
+                                        Borrar
+                                    </Button>
+                                )}
+                            </Form>
+                        )}
+                    </div>
                 )}
 
                 <div className="relative aspect-video overflow-hidden rounded-xl border">

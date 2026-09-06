@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { House, Menu } from 'lucide-react';
+import { House, List, Menu, Plus } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -28,19 +28,40 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { home, login, register } from '@/routes';
+import { create, mine } from '@/routes/listings';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
 };
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Inicio',
-        href: home(),
-        icon: House,
-    },
-];
+function navItems(isAuthenticated: boolean): NavItem[] {
+    const items: NavItem[] = [
+        {
+            title: 'Inicio',
+            href: home(),
+            icon: House,
+        },
+    ];
+
+    if (!isAuthenticated) {
+        return items;
+    }
+
+    return [
+        ...items,
+        {
+            title: 'Publicar',
+            href: create(),
+            icon: Plus,
+        },
+        {
+            title: 'Mis publicaciones',
+            href: mine(),
+            icon: List,
+        },
+    ];
+}
 
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -48,6 +69,7 @@ const activeItemStyles =
 export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage();
     const { auth } = page.props;
+    const mainNavItems = navItems(auth.user !== null);
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 

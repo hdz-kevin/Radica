@@ -34,7 +34,7 @@ export default function Profile({
                 <Heading
                     variant="small"
                     title="Profile"
-                    description="Update your name and email address"
+                    description="Update your name, email, and phone number"
                 />
 
                 <Form
@@ -82,6 +82,29 @@ export default function Profile({
                                 <InputError
                                     className="mt-2"
                                     message={errors.email}
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="phone_number">
+                                    Phone number
+                                </Label>
+                                <Input
+                                    id="phone_number"
+                                    className="mt-1 block w-full"
+                                    defaultValue={auth.user.phone_number ?? ''}
+                                    name="phone_number"
+                                    inputMode="numeric"
+                                    autoComplete="tel"
+                                    placeholder="5215512345678"
+                                />
+                                <p className="text-muted-foreground text-sm">
+                                    Mexican mobile number as 521 followed by 10
+                                    digits. Used on all your listings.
+                                </p>
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.phone_number}
                                 />
                             </div>
 
