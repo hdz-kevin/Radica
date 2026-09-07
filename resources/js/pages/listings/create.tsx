@@ -1,8 +1,11 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { store } from '@/actions/App/Http/Controllers/ListingController';
+import InputError from '@/components/input-error';
 import { ListingForm } from '@/components/listing-form';
 import { create } from '@/routes/listings';
 import { home } from '@/routes';
+import { edit as editProfile } from '@/routes/profile';
+import type { Auth } from '@/types';
 
 export default function ListingsCreate({
     defaults,
@@ -12,6 +15,8 @@ export default function ListingsCreate({
         city: string;
     };
 }) {
+    const { auth, errors } = usePage<{ auth: Auth }>().props;
+
     return (
         <>
             <Head title="Publicar" />
@@ -25,6 +30,21 @@ export default function ListingsCreate({
                         Tu publicación aparecerá al principio de la lista de publicaciones.
                     </p>
                 </div>
+
+                {auth.user?.phone_number == null ? (
+                    <div className="grid gap-2">
+                        <p className="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
+                            Guarda tu teléfono en el perfil para publicar.{' '}
+                            <Link
+                                href={editProfile()}
+                                className="font-medium underline underline-offset-4"
+                            >
+                                Ir al perfil
+                            </Link>
+                        </p>
+                        <InputError message={errors.phone_number} />
+                    </div>
+                ) : null}
 
                 <ListingForm
                     {...store.form()}

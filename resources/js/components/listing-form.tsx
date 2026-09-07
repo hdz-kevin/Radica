@@ -1,4 +1,4 @@
-import { Form, usePage } from '@inertiajs/react';
+import { Form } from '@inertiajs/react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,6 @@ import {
     type ListingCategoryValue,
     type ListingFormData,
 } from '@/lib/listing';
-import type { Auth } from '@/types';
 
 const selectClassName =
     'border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs outline-none md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50';
@@ -34,8 +33,6 @@ export function ListingForm({
     defaults,
     submitLabel,
 }: ListingFormProps) {
-    const { auth } = usePage<{ auth: Auth }>().props;
-    const needsPhone = auth.user?.phone_number == null;
     const [category, setCategory] = useState<ListingCategoryValue>(
         listing?.category ?? 'apartment',
     );
@@ -52,6 +49,7 @@ export function ListingForm({
                         <Input
                             id="title"
                             name="title"
+                            autoFocus
                             required
                             defaultValue={listing?.title}
                             autoComplete="off"
@@ -235,25 +233,6 @@ export function ListingForm({
                         />
                     </fieldset>
 
-                    {needsPhone ? (
-                        <div className="grid gap-2">
-                            <Label htmlFor="phone_number">Teléfono</Label>
-                            <Input
-                                id="phone_number"
-                                name="phone_number"
-                                required
-                                inputMode="numeric"
-                                placeholder="5215512345678"
-                                autoComplete="tel"
-                            />
-                            <p className="text-muted-foreground text-sm">
-                                Número mexicano en formato 521 seguido de 10
-                                dígitos. Se guarda en tu perfil.
-                            </p>
-                            <InputError message={errors.phone_number} />
-                        </div>
-                    ) : null}
-
                     <div>
                         <Button type="submit" disabled={processing}>
                             {processing && <Spinner />}
@@ -282,7 +261,10 @@ function BooleanField({
     return (
         <div className="grid gap-2">
             <div className="flex items-center gap-3">
+                {/* If the checkbox is not checked, a value of "0" is submitted.
+                This allows the field to be sent in the request even if it is not checked. */}
                 <input type="hidden" name={name} value="0" />
+                {/* If the checkbox is checked, the last input with the same name is submitted */}
                 <input
                     id={id}
                     type="checkbox"

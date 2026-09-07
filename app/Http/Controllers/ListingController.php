@@ -10,7 +10,6 @@ use App\Http\Resources\ListingShowResource;
 use App\Models\Listing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -49,20 +48,16 @@ class ListingController extends Controller
      */
     public function store(StoreListingRequest $request): RedirectResponse
     {
-        $listing = DB::transaction(function () use ($request): Listing {
-            $listing = $request->user()->listings()->create([
-                ...$request->listingAttributes(),
-                'published_at' => now(),
+        if (! $request->user()->hasPhone()) {
+            return back()->withErrors([
+                'phone_number' => 'Guarda tu teléfono en el perfil para publicar.',
             ]);
+        }
 
-            $phoneNumber = $request->phoneNumberToPersist();
-
-            if ($phoneNumber !== null) {
-                $request->user()->update(['phone_number' => $phoneNumber]);
-            }
-
-            return $listing;
-        });
+        $listing = $request->user()->listings()->create([
+            ...$request->listingAttributes(),
+            'published_at' => now(),
+        ]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Publicación creada.']);
 
@@ -133,15 +128,7 @@ class ListingController extends Controller
 
     public function update(UpdateListingRequest $request, Listing $listing): RedirectResponse
     {
-        DB::transaction(function () use ($request, $listing): void {
-            $listing->update($request->listingAttributes());
-
-            $phoneNumber = $request->phoneNumberToPersist();
-
-            if ($phoneNumber !== null) {
-                $request->user()->update(['phone_number' => $phoneNumber]);
-            }
-        });
+        $listing->update($request->listingAttributes());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Publicación actualizada.']);
 
@@ -159,15 +146,9 @@ class ListingController extends Controller
         return to_route('listings.mine');
     }
 
-    public function publish(Request $request, Listing $listing): RedirectResponse
+    public function publish(Listing $listing): RedirectResponse
     {
         Gate::authorize('publish', $listing);
-
-        if (! $request->user()->hasPhone()) {
-            return back()->withErrors([
-                'phone_number' => 'Añade un teléfono en tu perfil o al editar la publicación.',
-            ]);
-        }
 
         $listing->publish();
 

@@ -156,7 +156,7 @@ describe('store', function () {
             ->assertRedirect(route('login'));
     });
 
-    test('creates a published listing without asking for a phone the user already has', function () {
+    test('creates a published listing', function () {
         $user = User::factory()->withPhone()->create();
 
         $this->actingAs($user)
@@ -179,7 +179,7 @@ describe('store', function () {
         $this->get(route('listings.show', $listing))->assertOk();
     });
 
-    test('requires a phone and saves it when the user has none', function () {
+    test('does not create a listing when the user has no phone', function () {
         $user = User::factory()->create();
 
         $this->actingAs($user)
@@ -189,28 +189,7 @@ describe('store', function () {
             ->assertSessionHasErrors('phone_number');
 
         expect($user->listings()->count())->toBe(0);
-
-        $this->actingAs($user)
-            ->post(route('listings.store'), listingPayload([
-                'phone_number' => '5215512345678',
-            ]))
-            ->assertSessionHasNoErrors()
-            ->assertRedirect();
-
-        expect($user->fresh()->phone_number)->toBe('5215512345678');
-        expect($user->listings()->count())->toBe(1);
-    });
-
-    test('does not overwrite an existing phone number from the listing form', function () {
-        $user = User::factory()->withPhone('5215512345678')->create();
-
-        $this->actingAs($user)
-            ->post(route('listings.store'), listingPayload([
-                'phone_number' => '5215599999999',
-            ]))
-            ->assertSessionHasNoErrors();
-
-        expect($user->fresh()->phone_number)->toBe('5215512345678');
+        expect($user->fresh()->phone_number)->toBeNull();
     });
 
     test('rejects a listing without a zone or a contact channel', function () {
@@ -397,24 +376,19 @@ describe('update', function () {
             ->has_parking->toBeTrue();
     });
 
-    test('requires a phone when the owner has removed it from their profile', function () {
+    test('updates a listing when the owner has no phone', function () {
         $owner = User::factory()->create();
         $listing = Listing::factory()->for($owner)->create();
 
         $this->actingAs($owner)
-            ->from(route('listings.edit', $listing))
-            ->patch(route('listings.update', $listing), listingPayload())
-            ->assertRedirect(route('listings.edit', $listing))
-            ->assertSessionHasErrors('phone_number');
-
-        $this->actingAs($owner)
             ->patch(route('listings.update', $listing), listingPayload([
-                'phone_number' => '5215512345678',
+                'title' => 'Departamento renovado',
             ]))
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('listings.show', $listing));
 
-        expect($owner->fresh()->phone_number)->toBe('5215512345678');
+        expect($listing->fresh()->title)->toBe('Departamento renovado');
+        expect($owner->fresh()->phone_number)->toBeNull();
     });
 });
 
@@ -466,7 +440,7 @@ describe('publish', function () {
             ->published_at->toDateTimeString()->toBe(now()->toDateTimeString());
     });
 
-    test('does not publish when the owner has no phone number', function () {
+    test('publishes a listing when the owner has no phone number', function () {
         $owner = User::factory()->create();
         $listing = Listing::factory()->for($owner)->unpublished()->create();
 
@@ -474,9 +448,9 @@ describe('publish', function () {
             ->from(route('listings.show', $listing))
             ->post(route('listings.publish', $listing))
             ->assertRedirect(route('listings.show', $listing))
-            ->assertSessionHasErrors('phone_number');
+            ->assertSessionHasNoErrors();
 
-        expect($listing->fresh()->is_published)->toBeFalse();
+        expect($listing->fresh()->is_published)->toBeTrue();
     });
 
     test('forbids another user from publishing a listing', function () {

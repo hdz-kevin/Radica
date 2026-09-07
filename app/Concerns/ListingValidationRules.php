@@ -4,7 +4,6 @@ namespace App\Concerns;
 
 use App\Enums\ListingCategory;
 use App\Models\Listing;
-use App\Rules\MexicanPhoneNumber;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -12,6 +11,8 @@ use Illuminate\Validation\Validator;
 trait ListingValidationRules
 {
     /**
+     * All boolean fields expected in the incoming request.
+     *
      * @var list<string>
      */
     private const BOOLEAN_FIELDS = [
@@ -27,6 +28,10 @@ trait ListingValidationRules
         'contact_via_phone',
     ];
 
+    /**
+     * Ensure that the boolean fields are always included in the request.
+     * If they don't exist in the incoming request, they are set to false.
+     */
     protected function prepareForValidation(): void
     {
         $merged = [];
@@ -39,6 +44,9 @@ trait ListingValidationRules
     }
 
     /**
+     * Get the validation rules used to validate listings.
+     * Bedrooms and bathrooms are required for apartments and houses.
+     *
      * @return array<string, array<int, ValidationRule|array<mixed>|string>>
      */
     protected function listingRules(): array
@@ -46,7 +54,7 @@ trait ListingValidationRules
         $isApartment = $this->input('category') === ListingCategory::Apartment->value;
         $isHouse = $this->input('category') === ListingCategory::House->value;
 
-        $rules = [
+        return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:5000'],
             'category' => ['required', Rule::enum(ListingCategory::class)],
@@ -70,15 +78,11 @@ trait ListingValidationRules
                 Rule::when($isApartment || $isHouse, ['required', 'integer', 'min:1'], ['nullable']),
             ],
         ];
-
-        if (blank($this->user()?->phone_number)) {
-            $rules['phone_number'] = ['required', 'string', new MexicanPhoneNumber];
-        }
-
-        return $rules;
     }
 
     /**
+     * Require at least one contact channel after the field rules pass.
+     *
      * @return array<int, callable(Validator): void>
      */
     protected function contactChannelRules(): array
@@ -98,56 +102,25 @@ trait ListingValidationRules
     }
 
     /**
+     * Prepare the listing data to be persisted after validation.
+     *
      * @return array<string, mixed>
      */
     public function listingAttributes(): array
     {
-        $category = ListingCategory::from($this->validated('category'));
+        $category = ListingCategory::from($this->input('category'));
 
         $attributes = [
-            ...$this->safe()->only([
-                'title',
-                'description',
-                'category',
-                'rent_amount',
-                'zone',
-                'street_address',
-                'is_furnished',
-                'pets_allowed',
-                'has_parking',
-                'include_water',
-                'include_electricity',
-                'include_gas',
-                'include_internet',
-                'include_cable',
-                'contact_via_whatsapp',
-                'contact_via_phone',
-            ]),
+            ...$this->validated(),
             'state' => Listing::DEFAULT_STATE,
             'city' => Listing::DEFAULT_CITY,
         ];
 
         if ($category === ListingCategory::Room) {
-            return [
-                ...$attributes,
-                'bedrooms' => null,
-                'bathrooms' => null,
-            ];
+            $attributes['bedrooms'] = null;
+            $attributes['bathrooms'] = null;
         }
 
-        return [
-            ...$attributes,
-            'bedrooms' => $this->validated('bedrooms'),
-            'bathrooms' => $this->validated('bathrooms'),
-        ];
-    }
-
-    public function phoneNumberToPersist(): ?string
-    {
-        if (filled($this->user()?->phone_number)) {
-            return null;
-        }
-
-        return $this->validated('phone_number');
+        return $attributes;
     }
 }

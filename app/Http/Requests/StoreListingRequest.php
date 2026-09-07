@@ -12,7 +12,7 @@ class StoreListingRequest extends FormRequest
     use ListingValidationRules;
 
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine whether the user may create a listing.
      */
     public function authorize(): bool
     {
@@ -20,7 +20,7 @@ class StoreListingRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Get the validation rules used to validate listings.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
@@ -30,10 +30,14 @@ class StoreListingRequest extends FormRequest
     }
 
     /**
+     * Get the "after" validation rules.
+     * This is used to add additional validation rules that depend on the validated data.
+     *
      * @return array<int, callable>
      */
     public function after(): array
     {
+        // At least one contact channel is required after the field rules pass.
         return $this->contactChannelRules();
     }
 }

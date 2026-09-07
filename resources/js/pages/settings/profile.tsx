@@ -52,7 +52,7 @@ export default function Profile({
                                 <Input
                                     id="name"
                                     className="mt-1 block w-full"
-                                    defaultValue={auth.user.name}
+                                    defaultValue={auth.user?.name}
                                     name="name"
                                     required
                                     autoComplete="name"
@@ -72,7 +72,7 @@ export default function Profile({
                                     id="email"
                                     type="email"
                                     className="mt-1 block w-full"
-                                    defaultValue={auth.user.email}
+                                    defaultValue={auth.user?.email}
                                     name="email"
                                     required
                                     autoComplete="username"
@@ -92,7 +92,7 @@ export default function Profile({
                                 <Input
                                     id="phone_number"
                                     className="mt-1 block w-full"
-                                    defaultValue={auth.user.phone_number ?? ''}
+                                    defaultValue={auth.user?.phone_number ?? ''}
                                     name="phone_number"
                                     inputMode="numeric"
                                     autoComplete="tel"
@@ -102,6 +102,13 @@ export default function Profile({
                                     Mexican mobile number as 521 followed by 10
                                     digits. Used on all your listings.
                                 </p>
+                                {/* TODO: Agregar validación. Traducir y mejorar mensaje. */}
+                                {auth.user?.phone_number == null ? (
+                                    <p className="text-muted-foreground text-sm">
+                                        If this is empty, your listings will
+                                        have no WhatsApp or call button.
+                                    </p>
+                                ) : null}
                                 <InputError
                                     className="mt-2"
                                     message={errors.phone_number}
@@ -109,7 +116,7 @@ export default function Profile({
                             </div>
 
                             {mustVerifyEmail &&
-                                auth.user.email_verified_at === null && (
+                                auth.user?.email_verified_at === null && (
                                     <div>
                                         <p className="text-muted-foreground -mt-4 text-sm">
                                             Your email address is unverified.{' '}
