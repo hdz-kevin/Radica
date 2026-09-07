@@ -11,7 +11,7 @@ class UpdateListingRequest extends FormRequest
     use ListingValidationRules;
 
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine if the user is authorized to update the listing.
      */
     public function authorize(): bool
     {
@@ -19,7 +19,7 @@ class UpdateListingRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Get the validation rules used to validate listings.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
@@ -29,6 +29,9 @@ class UpdateListingRequest extends FormRequest
     }
 
     /**
+     * Get the "after" validation rules.
+     * This is used to add additional validation rules that depend on the validated data.
+     *
      * @return array<int, callable>
      */
     public function after(): array

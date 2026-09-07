@@ -16,11 +16,17 @@ use Inertia\Response;
 
 class ListingController extends Controller
 {
+    /**
+     * Display the listing index page.
+     */
     public function index(): Response
     {
         $listings = Listing::query()
             ->published()
             ->latest('published_at')
+            // Specify a Deterministic Sort Order. 'id' as stable tie-breaker.
+            /** @see .cursor/skills/laravel-best-practices/rules/architecture.md */
+            ->latest('id')
             ->get();
 
         return Inertia::render('listings/index', [
@@ -29,7 +35,7 @@ class ListingController extends Controller
     }
 
     /**
-     * Render the create listing page.
+     * Display the create listing form.
      */
     public function create(): Response
     {
@@ -64,6 +70,9 @@ class ListingController extends Controller
         return to_route('listings.show', $listing);
     }
 
+    /**
+     * Show an individual listing.
+     */
     public function show(Listing $listing): Response
     {
         if (! Gate::allows('view', $listing)) {
@@ -82,11 +91,14 @@ class ListingController extends Controller
         ]);
     }
 
+    /**
+     * Display the user's listings.
+    */
     public function mine(Request $request): Response
     {
         $listings = $request->user()
             ->listings()
-            ->latest('updated_at')
+            ->latest('created_at')
             ->latest('id')
             ->get();
 
@@ -95,6 +107,9 @@ class ListingController extends Controller
         ]);
     }
 
+    /**
+     * Display the edit listing form
+     */
     public function edit(Listing $listing): Response
     {
         Gate::authorize('update', $listing);
@@ -126,6 +141,9 @@ class ListingController extends Controller
         ]);
     }
 
+    /**
+     * Update the listing in the database.
+     */
     public function update(UpdateListingRequest $request, Listing $listing): RedirectResponse
     {
         $listing->update($request->listingAttributes());
@@ -135,6 +153,9 @@ class ListingController extends Controller
         return to_route('listings.show', $listing);
     }
 
+    /**
+     * Delete the listing from the database.
+     */
     public function destroy(Listing $listing): RedirectResponse
     {
         Gate::authorize('delete', $listing);
@@ -146,6 +167,9 @@ class ListingController extends Controller
         return to_route('listings.mine');
     }
 
+    /**
+     * Mark the listing as published.
+     */
     public function publish(Listing $listing): RedirectResponse
     {
         Gate::authorize('publish', $listing);
@@ -157,6 +181,9 @@ class ListingController extends Controller
         return back();
     }
 
+    /**
+     * Mark the listing as unpublished.
+     */
     public function unpublish(Listing $listing): RedirectResponse
     {
         Gate::authorize('unpublish', $listing);
