@@ -6,6 +6,7 @@ import {
     show,
     unpublish,
 } from '@/actions/App/Http/Controllers/ListingController';
+import { ListingCover } from '@/components/listing-cover';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +15,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { categoryLabel, formatRent, type ListingMine } from '@/lib/listing';
 import { home } from '@/routes';
 import { create, mine } from '@/routes/listings';
@@ -43,10 +43,7 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                 {listings.length === 0 ? (
                     <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
                         Aún no tienes publicaciones.{' '}
-                        <Link
-                            href={create()}
-                            className="underline-offset-4 hover:underline"
-                        >
+                        <Link href={create()} className="underline-offset-4 hover:underline">
                             Publica la primera
                         </Link>
                         .
@@ -56,26 +53,14 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                         {listings.map((listing) => (
                             <li key={listing.id}>
                                 <Card className="h-full">
-                                    <div className="relative mx-6 aspect-video overflow-hidden rounded-lg border">
-                                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                    </div>
+                                    <ListingCover url={listing.cover_url} alt={listing.title} className="mx-6" />
                                     <CardHeader>
                                         <div className="flex items-center justify-between gap-2">
                                             <Badge variant="secondary">
-                                                {categoryLabel(
-                                                    listing.category,
-                                                )}
+                                                {categoryLabel(listing.category)}
                                             </Badge>
-                                            <Badge
-                                                variant={
-                                                    listing.is_published
-                                                        ? 'default'
-                                                        : 'outline'
-                                                }
-                                            >
-                                                {listing.is_published
-                                                    ? 'Publicada'
-                                                    : 'Oculta'}
+                                            <Badge variant={listing.is_published ? 'default' : 'outline'}>
+                                                {listing.is_published ? 'Publicada' : 'Oculta'}
                                             </Badge>
                                         </div>
                                         <CardTitle className="line-clamp-2 text-base">
@@ -88,58 +73,28 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                                             {listing.zone}, {listing.city}
                                         </p>
                                         <div className="flex flex-wrap gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                asChild
-                                            >
+                                            <Button variant="outline" size="sm" asChild>
                                                 <Link href={show(listing.id)}>
                                                     Ver
                                                 </Link>
                                             </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                asChild
-                                            >
+                                            <Button variant="outline" size="sm" asChild>
                                                 <Link href={edit(listing.id)}>
                                                     Editar
                                                 </Link>
                                             </Button>
                                             {listing.is_published ? (
-                                                <Form
-                                                    {...unpublish.form(
-                                                        listing.id,
-                                                    )}
-                                                >
+                                                <Form {...unpublish.form(listing.id)}>
                                                     {({ processing }) => (
-                                                        <Button
-                                                            type="submit"
-                                                            variant="outline"
-                                                            size="sm"
-                                                            disabled={
-                                                                processing
-                                                            }
-                                                        >
+                                                        <Button type="submit" variant="outline" size="sm" disabled={processing}>
                                                             Despublicar
                                                         </Button>
                                                     )}
                                                 </Form>
                                             ) : (
-                                                <Form
-                                                    {...publish.form(
-                                                        listing.id,
-                                                    )}
-                                                >
+                                                <Form {...publish.form(listing.id)}>
                                                     {({ processing }) => (
-                                                        <Button
-                                                            type="submit"
-                                                            variant="outline"
-                                                            size="sm"
-                                                            disabled={
-                                                                processing
-                                                            }
-                                                        >
+                                                        <Button type="submit" variant="outline" size="sm" disabled={processing}>
                                                             Publicar
                                                         </Button>
                                                     )}
@@ -148,18 +103,11 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                                             <Form
                                                 {...destroy.form(listing.id)}
                                                 onBefore={() =>
-                                                    confirm(
-                                                        '¿Borrar esta publicación? No se puede deshacer.',
-                                                    )
+                                                    confirm('¿Borrar esta publicación? No se puede deshacer.')
                                                 }
                                             >
                                                 {({ processing }) => (
-                                                    <Button
-                                                        type="submit"
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        disabled={processing}
-                                                    >
+                                                    <Button type="submit" variant="destructive" size="sm" disabled={processing}>
                                                         Borrar
                                                     </Button>
                                                 )}

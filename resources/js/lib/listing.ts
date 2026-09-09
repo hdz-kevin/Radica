@@ -17,6 +17,7 @@ export type ListingCard = {
     rent_amount: number;
     zone: string;
     city: string;
+    cover_url: string | null;
 };
 
 export type ListingMine = ListingCard & {
@@ -27,6 +28,15 @@ export type ListingPermissions = {
     update: boolean;
     delete: boolean;
     publish: boolean;
+};
+
+export type ListingImagePreview = {
+    id: number;
+    url: string;
+};
+
+export type ListingShowImage = ListingImagePreview & {
+    is_cover: boolean;
 };
 
 type IncludedUtilities = Record<IncludedUtilityName, boolean>;
@@ -48,6 +58,7 @@ export type ListingFormData = {
     street_address: string | null;
     contact_via_whatsapp: boolean;
     contact_via_phone: boolean;
+    images: ListingImagePreview[];
 } & IncludedUtilities;
 
 export type ListingShow = {
@@ -68,6 +79,7 @@ export type ListingShow = {
     street_address: string | null;
     contact_via_whatsapp: boolean;
     contact_via_phone: boolean;
+    images: ListingShowImage[];
     user: {
         phone_number: string | null;
     };

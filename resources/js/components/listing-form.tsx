@@ -10,6 +10,7 @@ import {
     includedUtilities,
     type ListingCategoryValue,
     type ListingFormData,
+    type ListingImagePreview,
 } from '@/lib/listing';
 
 const selectClassName =
@@ -36,12 +37,15 @@ export function ListingForm({
     const [category, setCategory] = useState<ListingCategoryValue>(
         listing?.category ?? 'apartment',
     );
+    const [keptImages, setKeptImages] = useState<ListingImagePreview[]>(
+        listing?.images ?? [],
+    );
 
     const state = listing?.state ?? defaults?.state ?? '';
     const city = listing?.city ?? defaults?.city ?? '';
 
     return (
-        <Form action={action} method={method} className="flex flex-col gap-8" noValidate>
+        <Form action={action} method={method} encType="multipart/form-data" className="flex flex-col gap-8">
             {({ processing, errors, }) => (
                 <>
                     <div className="grid gap-2">
@@ -50,7 +54,6 @@ export function ListingForm({
                             id="title"
                             name="title"
                             autoFocus
-                            required
                             defaultValue={listing?.title}
                             autoComplete="off"
                         />
@@ -62,7 +65,6 @@ export function ListingForm({
                         <Textarea
                             id="description"
                             name="description"
-                            required
                             rows={6}
                             defaultValue={listing?.description}
                         />
@@ -76,7 +78,6 @@ export function ListingForm({
                             <select
                                 id="category"
                                 name="category"
-                                required
                                 className={selectClassName}
                                 value={category}
                                 onChange={(event) => setCategory(event.target.value as ListingCategoryValue)}
@@ -97,7 +98,6 @@ export function ListingForm({
                                 type="number"
                                 min={1}
                                 step={1}
-                                required
                                 defaultValue={listing?.rent_amount}
                             />
 
@@ -114,7 +114,6 @@ export function ListingForm({
                                     name="bedrooms"
                                     type="number"
                                     min={1}
-                                    required
                                     defaultValue={listing?.bedrooms ?? ''}
                                 />
 
@@ -128,7 +127,6 @@ export function ListingForm({
                                     name="bathrooms"
                                     type="number"
                                     min={1}
-                                    required
                                     defaultValue={listing?.bathrooms ?? ''}
                                 />
 
@@ -171,9 +169,7 @@ export function ListingForm({
                                 id={utility.name}
                                 name={utility.name}
                                 label={utility.label}
-                                defaultChecked={
-                                    listing?.[utility.name] ?? false
-                                }
+                                defaultChecked={listing?.[utility.name] ?? false}
                                 error={errors[utility.name]}
                             />
                         ))}
@@ -195,7 +191,6 @@ export function ListingForm({
                         <Input
                             id="zone"
                             name="zone"
-                            required
                             defaultValue={listing?.zone}
                         />
                         <InputError message={errors.zone} />
@@ -231,6 +226,51 @@ export function ListingForm({
                             defaultChecked={listing?.contact_via_phone ?? true}
                             error={errors.contact_via_phone}
                         />
+                    </fieldset>
+
+                    <fieldset className="grid gap-3">
+                        <legend className="text-sm font-medium">Fotos</legend>
+                        <p className="text-muted-foreground text-sm">
+                            1 a 15 fotos. La primera es la portada.
+                        </p>
+                        {/* Edit mode */}
+                        {keptImages.length > 0 ? (
+                            <ul className="flex flex-wrap gap-3">
+                                {keptImages.map((image) => (
+                                    <li key={image.id} className="flex flex-col gap-2">
+
+                                        <input type="hidden" name="kept_image_ids[]" value={image.id} />
+
+                                        <img src={image.url} className="size-24 rounded-md border object-cover" />
+
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() =>
+                                                setKeptImages(
+                                                    (current) => current.filter((kept) => kept.id !== image.id)
+                                                )
+                                            }
+                                        >
+                                            Quitar
+                                        </Button>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : null}
+                        {/* Upload images field */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="images">{listing ? 'Agregar fotos' : 'Fotos'}</Label>
+                            <Input
+                                id="images"
+                                name="images[]"
+                                type="file"
+                                multiple
+                                accept="image/jpeg,image/jpg,image/png,image/webp,image/avif"
+                            />
+                            <InputError message={errors.images} />
+                        </div>
                     </fieldset>
 
                     <div>

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Concerns\ListingValidationRules;
 use App\Models\Listing;
+use App\Models\ListingImage;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +27,11 @@ class StoreListingRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->listingRules();
+        return [
+            ...$this->listingRules(),
+            'images' => ['required', 'array', 'min:1', 'max:'.ListingImage::MAX_PER_LISTING],
+            'images.*' => $this->imageFileRules(),
+        ];
     }
 
     /**

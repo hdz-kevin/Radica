@@ -33,8 +33,8 @@ export default function ListingsCreate({
 
                 {auth.user?.phone_number == null ? (
                     <div className="grid gap-2">
-                        <p className="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
-                            Guarda tu teléfono en el perfil para publicar.{' '}
+                        <p className="rounded-md my-1 border border-red-200 bg-red-50 px-3 py-2 text-red-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-50">
+                            Guarda tu teléfono de contacto en tu perfil para poder publicar.{' '}
                             <Link
                                 href={editProfile()}
                                 className="font-medium underline underline-offset-4"

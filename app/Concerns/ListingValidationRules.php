@@ -5,6 +5,7 @@ namespace App\Concerns;
 use App\Enums\ListingCategory;
 use App\Models\Listing;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -81,6 +82,16 @@ trait ListingValidationRules
     }
 
     /**
+     * Rules for each uploaded listing photo.
+     *
+     * @return array<int, ValidationRule|string>
+     */
+    protected function imageFileRules(): array
+    {
+        return ['image', 'mimes:jpeg,jpg,png,webp,avif', 'max:4096'];
+    }
+
+    /**
      * Require at least one contact channel after the field rules pass.
      *
      * @return array<int, callable(Validator): void>
@@ -102,7 +113,7 @@ trait ListingValidationRules
     }
 
     /**
-     * Prepare the listing data to be persisted after validation.
+     * Prepare the specific listing fields to be persisted after validation.
      *
      * @return array<string, mixed>
      */
@@ -111,7 +122,7 @@ trait ListingValidationRules
         $category = ListingCategory::from($this->input('category'));
 
         $attributes = [
-            ...$this->validated(),
+            ...$this->safe()->except(['images', 'kept_image_ids']),
             'state' => Listing::DEFAULT_STATE,
             'city' => Listing::DEFAULT_CITY,
         ];
@@ -122,5 +133,22 @@ trait ListingValidationRules
         }
 
         return $attributes;
+    }
+
+    /**
+     * Uploaded photos from the images field.
+     *
+     * @return list<UploadedFile>
+     */
+    public function uploadedImages(): array
+    {
+        $files = $this->file('images', []);
+
+        // If the files is a single file
+        if ($files instanceof UploadedFile) {
+            return [$files];
+        }
+
+        return array_values($files);
     }
 }

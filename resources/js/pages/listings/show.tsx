@@ -1,4 +1,5 @@
 import { Form, Head, Link, setLayoutProps } from '@inertiajs/react';
+import { useState } from 'react';
 import {
     destroy,
     edit,
@@ -16,9 +17,11 @@ import {
     telUrl,
     type ListingPermissions,
     type ListingShow,
+    type ListingShowImage,
     whatsAppUrl,
     yesNo,
 } from '@/lib/listing';
+import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 
 export default function ListingsShow({
@@ -42,8 +45,7 @@ export default function ListingsShow({
     });
 
     const phoneNumber = listing.user.phone_number;
-    const showWhatsApp =
-        listing.contact_via_whatsapp && phoneNumber !== null;
+    const showWhatsApp = listing.contact_via_whatsapp && phoneNumber !== null;
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
 
     return (
@@ -52,8 +54,8 @@ export default function ListingsShow({
 
             <article className="mx-auto flex max-w-3xl flex-col gap-6 p-4">
                 {!listing.is_published && (
-                    <p className="rounded-md border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
-                        Esta publicación no está visible en el catálogo.
+                    <p className="rounded-md mt-2 border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
+                        Esta publicación no está visible al público
                     </p>
                 )}
 
@@ -68,11 +70,7 @@ export default function ListingsShow({
                             (listing.is_published ? (
                                 <Form {...unpublish.form(listing.id)}>
                                     {({ processing }) => (
-                                        <Button
-                                            type="submit"
-                                            variant="outline"
-                                            disabled={processing}
-                                        >
+                                        <Button type="submit" variant="outline" disabled={processing}>
                                             Despublicar
                                         </Button>
                                     )}
@@ -80,10 +78,7 @@ export default function ListingsShow({
                             ) : (
                                 <Form {...publish.form(listing.id)}>
                                     {({ processing }) => (
-                                        <Button
-                                            type="submit"
-                                            disabled={processing}
-                                        >
+                                        <Button type="submit" disabled={processing}>
                                             Publicar
                                         </Button>
                                     )}
@@ -93,17 +88,11 @@ export default function ListingsShow({
                             <Form
                                 {...destroy.form(listing.id)}
                                 onBefore={() =>
-                                    confirm(
-                                        '¿Borrar esta publicación? No se puede deshacer.',
-                                    )
+                                    confirm('¿Borrar esta publicación? No se puede deshacer.')
                                 }
                             >
                                 {({ processing }) => (
-                                    <Button
-                                        type="submit"
-                                        variant="destructive"
-                                        disabled={processing}
-                                    >
+                                    <Button type="submit" variant="destructive" disabled={processing}>
                                         Borrar
                                     </Button>
                                 )}
@@ -112,9 +101,13 @@ export default function ListingsShow({
                     </div>
                 )}
 
-                <div className="relative aspect-video overflow-hidden rounded-xl border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
+                {listing.images.length > 0 ? (
+                    <ListingGallery images={listing.images} title={listing.title} />
+                ) : (
+                    <div className="relative aspect-video overflow-hidden rounded-xl border">
+                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                    </div>
+                )}
 
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-center gap-2">
@@ -134,9 +127,7 @@ export default function ListingsShow({
                     </h1>
                     <p className="text-muted-foreground text-sm">
                         {listing.zone}, {listing.city}, {listing.state}
-                        {listing.street_address
-                            ? ` · ${listing.street_address}`
-                            : null}
+                        {listing.street_address ? ` · ${listing.street_address}` : null}
                     </p>
                 </div>
 
@@ -147,14 +138,8 @@ export default function ListingsShow({
                 <dl className="grid gap-3 text-sm sm:grid-cols-2">
                     {listing.category !== 'room' ? (
                         <>
-                            <Detail
-                                label="Recámaras"
-                                value={listing.bedrooms?.toString() ?? '—'}
-                            />
-                            <Detail
-                                label="Baños"
-                                value={listing.bathrooms?.toString() ?? '—'}
-                            />
+                            <Detail label="Recámaras" value={listing.bedrooms?.toString() ?? '—'} />
+                            <Detail label="Baños" value={listing.bathrooms?.toString() ?? '—'} />
                         </>
                     ) : null}
                     <Detail
@@ -209,6 +194,51 @@ export default function ListingsShow({
                 </p>
             </article>
         </>
+    );
+}
+
+function ListingGallery({
+    images,
+    title,
+}: {
+    images: ListingShowImage[];
+    title: string;
+}) {
+    const coverIndex = Math.max(
+        0,
+        images.findIndex((image) => image.is_cover),
+    );
+    const [activeIndex, setActiveIndex] = useState(coverIndex);
+    const active = images[activeIndex] ?? images[0];
+
+    return (
+        <div className="flex flex-col gap-3">
+            <div className="relative aspect-video overflow-hidden rounded-xl border">
+                <img
+                    src={active.url}
+                    alt={title}
+                    className="size-full object-cover"
+                />
+            </div>
+            {images.length > 1 ? (
+                <ul className="flex gap-2 overflow-x-auto">
+                    {images.map((image, index) => (
+                        <li key={image.id}>
+                            <button
+                                type="button"
+                                onClick={() => setActiveIndex(index)}
+                                className={cn(
+                                    'overflow-hidden rounded-md border',
+                                    index === activeIndex && 'ring-gray-500 ring-2',
+                                )}
+                            >
+                                <img src={image.url} alt="" className="size-16 object-cover"/>
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            ) : null}
+        </div>
     );
 }
 

@@ -17,7 +17,8 @@ class ListingMineResource extends JsonResource
      *     rent_amount: int,
      *     zone: string,
      *     city: string,
-     *     is_published: bool
+     *     is_published: bool,
+     *     cover_url: string|null
      * }
      */
     public function toArray(Request $request): array
@@ -30,6 +31,7 @@ class ListingMineResource extends JsonResource
             'zone' => $this->zone,
             'city' => $this->city,
             'is_published' => $this->is_published,
+            'cover_url' => $this->cover?->url(),
         ];
     }
 }

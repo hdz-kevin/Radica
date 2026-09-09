@@ -2,8 +2,16 @@
 
 use App\Enums\ListingCategory;
 use App\Models\Listing;
+use App\Models\ListingImage;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
+
+function listingImage(string $name = 'cover.jpg'): UploadedFile
+{
+    return UploadedFile::fake()->image($name);
+}
 
 /**
  * @param  array<string, mixed>  $overrides
@@ -30,6 +38,7 @@ function listingPayload(array $overrides = []): array
         'include_cable' => false,
         'contact_via_whatsapp' => true,
         'contact_via_phone' => true,
+        'images' => [listingImage()],
         ...$overrides,
     ];
 }
@@ -47,6 +56,7 @@ describe('index', function () {
                 ->has('listings', 1)
                 ->where('listings.0.id', $published->id)
                 ->where('listings.0.zone', $published->zone)
+                ->where('listings.0.cover_url', null)
                 ->missing('listings.0.description')
             );
     });
@@ -84,6 +94,7 @@ describe('show', function () {
                 ->where('listing.zone', $listing->zone)
                 ->where('listing.user.phone_number', $owner->phone_number)
                 ->missing('listing.user.email')
+                ->has('listing.images', 0)
                 ->missing('listing.bathroom_type')
                 ->missing('listing.square_meters')
                 ->where('listing.has_parking', $listing->has_parking)
@@ -151,6 +162,10 @@ describe('create', function () {
 });
 
 describe('store', function () {
+    beforeEach(function () {
+        Storage::fake(ListingImage::DISK);
+    });
+
     test('redirects guests to login', function () {
         $this->post(route('listings.store'), listingPayload())
             ->assertRedirect(route('login'));
@@ -270,6 +285,77 @@ describe('store', function () {
             ->city->toBe(Listing::DEFAULT_CITY)
             ->is_published->toBeTrue();
     });
+
+    test('rejects a listing without photos', function () {
+        $user = User::factory()->withPhone()->create();
+
+        $this->actingAs($user)
+            ->from(route('listings.create'))
+            ->post(route('listings.store'), listingPayload([
+                'images' => [],
+            ]))
+            ->assertRedirect(route('listings.create'))
+            ->assertSessionHasErrors('images');
+
+        expect($user->listings()->count())->toBe(0);
+    });
+
+    test('stores one photo and exposes its url on the card and show page', function () {
+        $user = User::factory()->withPhone()->create();
+        $file = listingImage('sala.jpg');
+
+        $this->actingAs($user)
+            ->post(route('listings.store'), listingPayload([
+                'images' => [$file],
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $listing = $user->listings()->first();
+        $image = $listing->images()->first();
+
+        expect($image)
+            ->not->toBeNull()
+            ->position->toBe(0)
+            ->is_cover->toBeTrue();
+
+        Storage::disk(ListingImage::DISK)->assertExists($image->path);
+
+        $this->get(route('listings.show', $listing))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/show')
+                ->has('listing.images', 1)
+                ->where('listing.images.0.is_cover', true)
+                ->where('listing.images.0.url', $image->url())
+            );
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->where('listings.0.cover_url', $image->url())
+            );
+    });
+
+    test('rejects a listing with more than 15 photos', function () {
+        $user = User::factory()->withPhone()->create();
+        $images = [];
+
+        for ($i = 1; $i <= ListingImage::MAX_PER_LISTING + 1; $i++) {
+            $images[] = listingImage("photo-{$i}.jpg");
+        }
+
+        $this->actingAs($user)
+            ->from(route('listings.create'))
+            ->post(route('listings.store'), listingPayload([
+                'images' => $images,
+            ]))
+            ->assertRedirect(route('listings.create'))
+            ->assertSessionHasErrors('images');
+
+        expect($user->listings()->count())->toBe(0);
+    });
 });
 
 describe('mine', function () {
@@ -325,11 +411,16 @@ describe('edit', function () {
                 ->component('listings/edit')
                 ->where('listing.id', $listing->id)
                 ->where('listing.title', $listing->title)
+                ->has('listing.images', 0)
             );
     });
 });
 
 describe('update', function () {
+    beforeEach(function () {
+        Storage::fake(ListingImage::DISK);
+    });
+
     test('updates a listing for the owner without requiring an existing phone', function () {
         $owner = User::factory()->withPhone()->create();
         $listing = Listing::factory()->for($owner)->create();
@@ -389,6 +480,71 @@ describe('update', function () {
 
         expect($listing->fresh()->title)->toBe('Departamento renovado');
         expect($owner->fresh()->phone_number)->toBeNull();
+    });
+
+    test('rejects an update that would leave the listing without photos', function () {
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(1)->create();
+
+        $this->actingAs($owner)
+            ->from(route('listings.edit', $listing))
+            ->patch(route('listings.update', $listing), listingPayload([
+                'kept_image_ids' => [],
+                'images' => [],
+            ]))
+            ->assertRedirect(route('listings.edit', $listing))
+            ->assertSessionHasErrors([
+                'images' => 'La publicación debe tener entre 1 y 15 fotos.',
+            ]);
+
+        expect($listing->fresh()->images)->toHaveCount(1);
+    });
+
+    test('keeps remaining photos, stores a new one, and recalculates the cover', function () {
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(2)->create();
+        $existing = $listing->images()->orderBy('position')->get();
+        $removed = $existing[0];
+        $kept = $existing[1];
+        $newFile = listingImage('nueva.jpg');
+
+        $this->actingAs($owner)
+            ->patch(route('listings.update', $listing), listingPayload([
+                'kept_image_ids' => [$kept->id],
+                'images' => [$newFile],
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('listings.show', $listing));
+
+        $images = $listing->fresh()->images()->orderBy('position')->get();
+
+        expect($images)->toHaveCount(2);
+        expect($images[0])
+            ->id->toBe($kept->id)
+            ->is_cover->toBeTrue()
+            ->position->toBe(0);
+        expect($images[1])
+            ->is_cover->toBeFalse()
+            ->position->toBe(1);
+
+        Storage::disk(ListingImage::DISK)->assertMissing($removed->path);
+        Storage::disk(ListingImage::DISK)->assertExists($images[1]->path);
+        $this->assertDatabaseMissing('listing_images', ['id' => $removed->id]);
+    });
+
+    test('rejects kept image ids that belong to another listing', function () {
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(1)->create();
+        $foreignId = Listing::factory()->withImages(1)->create()->images()->first()->id;
+
+        $this->actingAs($owner)
+            ->from(route('listings.edit', $listing))
+            ->patch(route('listings.update', $listing), listingPayload([
+                'kept_image_ids' => [$foreignId],
+                'images' => [],
+            ]))
+            ->assertRedirect(route('listings.edit', $listing))
+            ->assertSessionHasErrors('kept_image_ids.0');
     });
 });
 
@@ -489,5 +645,21 @@ describe('destroy', function () {
             ->assertForbidden();
 
         $this->assertNotSoftDeleted($listing);
+    });
+
+    test('deletes stored photo files when the listing is deleted', function () {
+        Storage::fake(ListingImage::DISK);
+
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(1)->create();
+        $path = $listing->images()->first()->path;
+
+        $this->actingAs($owner)
+            ->delete(route('listings.destroy', $listing))
+            ->assertRedirect(route('listings.mine'));
+
+        $this->assertSoftDeleted($listing);
+        $this->assertDatabaseMissing('listing_images', ['listing_id' => $listing->id]);
+        Storage::disk(ListingImage::DISK)->assertMissing($path);
     });
 });

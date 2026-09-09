@@ -7,11 +7,15 @@ use Database\Factories\ListingFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -42,6 +46,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read User $user
+ * @property-read Collection<int, ListingImage> $images
+ * @property-read ListingImage|null $cover
  */
 #[Fillable([
     'category',
@@ -68,12 +74,26 @@ use Illuminate\Support\Carbon;
 ])]
 class Listing extends Model
 {
+    /** @use HasFactory<ListingFactory> */
+    use HasFactory, SoftDeletes;
+
     public const DEFAULT_STATE = 'Puebla';
 
     public const DEFAULT_CITY = 'Teziutlán';
 
-    /** @use HasFactory<ListingFactory> */
-    use HasFactory, SoftDeletes;
+    protected static function booted(): void
+    {
+        static::deleting(function (Listing $listing): void {
+            $listing->loadMissing('images');
+
+            foreach ($listing->images as $image) {
+                Storage::disk($image->disk)->delete($image->path);
+            }
+
+            Storage::disk(ListingImage::DISK)->deleteDirectory('listings/'.$listing->id);
+            $listing->images()->delete();
+        });
+    }
 
     /**
      * @var array<string, mixed>
@@ -125,6 +145,26 @@ class Listing extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Photos for this listing, in display order.
+     *
+     * @return HasMany<ListingImage, $this>
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(ListingImage::class)->orderBy('position');
+    }
+
+    /**
+     * The cover photo (lowest position after a sync).
+     *
+     * @return HasOne<ListingImage, $this>
+     */
+    public function cover(): HasOne
+    {
+        return $this->hasOne(ListingImage::class)->where('is_cover', true);
     }
 
     /**

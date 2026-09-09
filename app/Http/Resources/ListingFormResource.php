@@ -8,11 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @mixin Listing */
-class ListingShowResource extends JsonResource
+class ListingFormResource extends JsonResource
 {
     /**
-     * Transform Listing model into a simpler array for the listing show view.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -33,7 +31,6 @@ class ListingShowResource extends JsonResource
             'include_gas' => $this->include_gas,
             'include_internet' => $this->include_internet,
             'include_cable' => $this->include_cable,
-            'is_published' => $this->is_published,
             'state' => $this->state,
             'city' => $this->city,
             'zone' => $this->zone,
@@ -43,11 +40,7 @@ class ListingShowResource extends JsonResource
             'images' => $this->images->map(fn (ListingImage $image): array => [
                 'id' => $image->id,
                 'url' => $image->url(),
-                'is_cover' => $image->is_cover,
             ])->values()->all(),
-            'user' => [
-                'phone_number' => $this->user->phone_number,
-            ],
         ];
     }
 }

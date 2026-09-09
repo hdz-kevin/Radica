@@ -4,8 +4,10 @@ namespace Database\Factories;
 
 use App\Enums\ListingCategory;
 use App\Models\Listing;
+use App\Models\ListingImage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @extends Factory<Listing>
@@ -90,5 +92,25 @@ class ListingFactory extends Factory
         return $this->state(fn (array $attributes): array => [
             'is_published' => false,
         ]);
+    }
+
+    /**
+     * Attach stored image rows (and fake files) after the listing is created.
+     */
+    public function withImages(int $count = 1): static
+    {
+        return $this->afterCreating(function (Listing $listing) use ($count): void {
+            for ($i = 0; $i < $count; $i++) {
+                $path = 'listings/'.$listing->id.'/'.fake()->uuid().'.jpg';
+                Storage::disk(ListingImage::DISK)->put($path, 'fake-image');
+
+                ListingImage::factory()->for($listing)->create([
+                    'path' => $path,
+                    'disk' => ListingImage::DISK,
+                    'position' => $i,
+                    'is_cover' => $i === 0,
+                ]);
+            }
+        });
     }
 }

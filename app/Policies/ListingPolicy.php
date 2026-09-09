@@ -21,11 +21,7 @@ class ListingPolicy
      */
     public function view(?User $user, Listing $listing): bool
     {
-        if ($listing->isPublished()) {
-            return true;
-        }
-
-        return $user !== null && $user->id === $listing->user_id;
+        return $listing->isPublished() || ($user !== null && $user->id === $listing->user_id);
     }
 
     /**

@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SyncListingImages;
 use App\Http\Requests\StoreListingRequest;
 use App\Http\Requests\UpdateListingRequest;
 use App\Http\Resources\ListingCardResource;
+use App\Http\Resources\ListingFormResource;
 use App\Http\Resources\ListingMineResource;
 use App\Http\Resources\ListingShowResource;
 use App\Models\Listing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,9 +26,9 @@ class ListingController extends Controller
     {
         $listings = Listing::query()
             ->published()
+            ->with('cover')
             ->latest('published_at')
             // Specify a Deterministic Sort Order. 'id' as stable tie-breaker.
-            /** @see .cursor/skills/laravel-best-practices/rules/architecture.md */
             ->latest('id')
             ->get();
 
@@ -52,18 +55,25 @@ class ListingController extends Controller
     /**
      * Save a new listing to the database.
      */
-    public function store(StoreListingRequest $request): RedirectResponse
+    public function store(StoreListingRequest $request, SyncListingImages $sync): RedirectResponse
     {
         if (! $request->user()->hasPhone()) {
             return back()->withErrors([
-                'phone_number' => 'Guarda tu teléfono en el perfil para publicar.',
+                'phone_number' => 'Guarda tu teléfono de contacto en tu perfil.',
             ]);
         }
 
-        $listing = $request->user()->listings()->create([
-            ...$request->listingAttributes(),
-            'published_at' => now(),
-        ]);
+        // Create the listing and sync the images
+        $listing = DB::transaction(function () use ($request, $sync): Listing {
+            $listing = $request->user()->listings()->create([
+                ...$request->listingAttributes(),
+                'published_at' => now(),
+            ]);
+
+            $sync->handle($listing, $request->uploadedImages());
+
+            return $listing;
+        });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Publicación creada.']);
 
@@ -79,7 +89,7 @@ class ListingController extends Controller
             abort(404);
         }
 
-        $listing->load(['user:id,phone_number']);
+        $listing->load(['user:id,phone_number', 'images']);
 
         return Inertia::render('listings/show', [
             'listing' => ListingShowResource::make($listing),
@@ -93,11 +103,12 @@ class ListingController extends Controller
 
     /**
      * Display the user's listings.
-    */
+     */
     public function mine(Request $request): Response
     {
         $listings = $request->user()
             ->listings()
+            ->with('cover')
             ->latest('created_at')
             ->latest('id')
             ->get();
@@ -114,39 +125,26 @@ class ListingController extends Controller
     {
         Gate::authorize('update', $listing);
 
+        $listing->load('images');
+
         return Inertia::render('listings/edit', [
-            'listing' => [
-                'id' => $listing->id,
-                'title' => $listing->title,
-                'description' => $listing->description,
-                'category' => $listing->category->value,
-                'rent_amount' => $listing->rent_amount,
-                'is_furnished' => $listing->is_furnished,
-                'pets_allowed' => $listing->pets_allowed,
-                'bedrooms' => $listing->bedrooms,
-                'bathrooms' => $listing->bathrooms,
-                'has_parking' => $listing->has_parking,
-                'include_water' => $listing->include_water,
-                'include_electricity' => $listing->include_electricity,
-                'include_gas' => $listing->include_gas,
-                'include_internet' => $listing->include_internet,
-                'include_cable' => $listing->include_cable,
-                'state' => $listing->state,
-                'city' => $listing->city,
-                'zone' => $listing->zone,
-                'street_address' => $listing->street_address,
-                'contact_via_whatsapp' => $listing->contact_via_whatsapp,
-                'contact_via_phone' => $listing->contact_via_phone,
-            ],
+            'listing' => ListingFormResource::make($listing),
         ]);
     }
 
     /**
      * Update the listing in the database.
      */
-    public function update(UpdateListingRequest $request, Listing $listing): RedirectResponse
+    public function update(UpdateListingRequest $request, Listing $listing, SyncListingImages $sync): RedirectResponse
     {
-        $listing->update($request->listingAttributes());
+        DB::transaction(function () use ($request, $listing, $sync): void {
+            $listing->update($request->listingAttributes());
+            $sync->handle(
+                $listing,
+                $request->uploadedImages(),
+                $request->input('kept_image_ids', []),
+            );
+        });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Publicación actualizada.']);
 

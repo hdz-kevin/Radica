@@ -9,7 +9,7 @@ Stack: Laravel 13, Inertia + React, Fortify. Por rebanadas (tests Pest de lo que
 | 0 | Datos: enums, `listings`, `users.phone_number`, factory, visibilidad | Hecha |
 | 1 | Catálogo público: listado (cards) + ficha | Hecha |
 | 2 | Publicar / editar / despublicar (dueño) | Hecha |
-| 3 | Fotos 1–10 (`listing_images`) | Siguiente |
+| 3 | Fotos 1–15 (`listing_images`) | Hecha |
 | 4 | Filtros en vivo: `LIKE` en `zone` (debounce + Inertia/`useHttp`) | |
 | 5 | Google + Facebook (Socialite ^5.29+; [CVE-2026-73683](https://github.com/advisories/ghsa-cr46-5p72-vh72)) | |
 | 6 | `users.is_admin` + Gate; tu usuario vía `ADMIN_EMAIL`. Sin panel | |
@@ -38,7 +38,7 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 **Visibilidad.** `is_published` default true; no Fillable (acción Publicar/Despublicar). `published_at` ordena el catálogo; despublicar no la limpia. Soft delete = el dueño borró, no pausó. Scope `published()` e `isPublished()`: `is_published` true (los trashed ya los oculta SoftDeletes). No hay available/rented ni ocultar a 7 días.
 
-**Fotos (rebanada 3).** 1–10, disco `public`, `is_cover` o `position` más baja = portada. Factories pueden ir sin fotos hasta entonces.
+**Fotos.** 1–15, disco `public`, `position` más baja = portada (`is_cover` en esa fila). El límite vive en Form Request, no en CHECK SQL. Factories pueden ir sin fotos (cards usan placeholder).
 
 **Auth (rebanada 5).** Fortify se queda. Socialite: Google y Facebook; `password` nullable; tabla `social_accounts` (`provider`+`provider_id` unique; un provider por usuario). Email ya verificado por el provider → `email_verified_at`. Mismo email → vincular, no duplicar. Facebook: App Review (`public_profile` + `email`); Google puede salir antes.
 
@@ -48,7 +48,6 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 Pendiente de rebanada, no de reabrir el diseño:
 
-- **`listing_images` (3):** `listing_id` cascade, `path`, `disk` default `public`, `position`, `is_cover`; unique `(listing_id, position)`. Validar 1–10 en Form Request, no CHECK SQL.
 - **`social_accounts` (5):** sin guardar tokens de OAuth.
 - **`users`:** `password` nullable (5); `is_admin` default false + index (6); `avatar_path` nullable (OAuth/futuro).
 

@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { show } from '@/actions/App/Http/Controllers/ListingController';
+import { ListingCover } from '@/components/listing-cover';
 import { Badge } from '@/components/ui/badge';
 import {
     Card,
@@ -7,7 +8,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import {
     categoryLabel,
     formatRent,
@@ -48,9 +48,11 @@ export default function ListingsIndex({
                                     className="block h-full"
                                 >
                                     <Card className="h-full transition-colors hover:bg-accent/40">
-                                        <div className="relative mx-6 aspect-video overflow-hidden rounded-lg border">
-                                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                        </div>
+                                        <ListingCover
+                                            url={listing.cover_url}
+                                            alt={listing.title}
+                                            className="mx-6"
+                                        />
                                         <CardHeader>
                                             <div className="flex items-center justify-between gap-2">
                                                 <Badge variant="secondary">

@@ -22,3 +22,6 @@ Listing::DEFAULT_STATE is Puebla and DEFAULT_CITY is Teziutlán. The publish/edi
 
 ## Amenities are listing-level booleans
 has_parking and include_water/electricity/gas/internet/cable live on listings for every category (boolean, default false). bedrooms and bathrooms stay nullable and are only required for apartment/house. Do not add bathroom_type or square_meters.
+
+## Listing photos live on listing_images
+Listing::images() is hasMany ordered by position. Cover is the lowest position (that row has is_cover true after a sync). Limit 1–15 belongs in Form Requests, not a SQL CHECK. Disk is public; deleting a listing must remove files as well as rows. Factories may omit photos; use withImages($n) when a test needs files.
