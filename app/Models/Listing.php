@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -176,6 +177,33 @@ class Listing extends Model
     protected function published(Builder $query): void
     {
         $query->where('is_published', true);
+    }
+
+    /**
+     * Match listings whose zone contains the given text.
+     *
+     * @param  Builder<Listing>  $query
+     */
+    #[Scope]
+    protected function inZone(Builder $query, string $zone): void
+    {
+        $needle = addcslashes(str_replace(' ', '', $zone), '%_\\');
+
+        $query->whereLike(
+            DB::raw('REPLACE('.$query->qualifyColumn('zone').", ' ', '')"),
+            '%'.$needle.'%',
+        );
+    }
+
+    /**
+     * Match listings of the given category.
+     *
+     * @param  Builder<Listing>  $query
+     */
+    #[Scope]
+    protected function ofCategory(Builder $query, ListingCategory $category): void
+    {
+        $query->where('category', $category);
     }
 
     /**

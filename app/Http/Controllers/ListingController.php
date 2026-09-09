@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\SyncListingImages;
+use App\Enums\ListingCategory;
 use App\Http\Requests\StoreListingRequest;
 use App\Http\Requests\UpdateListingRequest;
 use App\Http\Resources\ListingCardResource;
@@ -22,11 +23,21 @@ class ListingController extends Controller
     /**
      * Display the listing index page.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $validated = $request->validate([
+            'zone' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'category' => ['sometimes', 'nullable', 'string'],
+        ]);
+
+        $zone = trim((string) ($validated['zone'] ?? ''));
+        $category = ListingCategory::tryFrom((string) ($validated['category'] ?? ''));
+
         $listings = Listing::query()
             ->published()
             ->with('cover')
+            ->when($zone !== '', fn ($query) => $query->inZone($zone))
+            ->when($category, fn ($query, ListingCategory $category) => $query->ofCategory($category))
             ->latest('published_at')
             // Specify a Deterministic Sort Order. 'id' as stable tie-breaker.
             ->latest('id')
@@ -34,6 +45,10 @@ class ListingController extends Controller
 
         return Inertia::render('listings/index', [
             'listings' => ListingCardResource::collection($listings),
+            'filters' => [
+                'zone' => $zone,
+                'category' => $category?->value,
+            ],
         ]);
     }
 

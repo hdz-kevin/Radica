@@ -25,3 +25,9 @@ has_parking and include_water/electricity/gas/internet/cable live on listings fo
 
 ## Listing photos live on listing_images
 Listing::images() is hasMany ordered by position. Cover is the lowest position (that row has is_cover true after a sync). Limit 1–15 belongs in Form Requests, not a SQL CHECK. Disk is public; deleting a listing must remove files as well as rows. Factories may omit photos; use withImages($n) when a test needs files.
+
+## inZone escapes LIKE wildcards
+Listing::inZone() uses whereLike on zone after addcslashes for %, _, and \\. User input must not act as SQL LIKE wildcards. ofCategory() filters by the ListingCategory enum. Catalog queries still start from published().
+
+## inZone ignores spaces in zone text
+Listing::inZone() compares REPLACE(zone, ' ', '') with the search text after stripping spaces, then addcslashes for %, _, and \\. whereLike stays case-insensitive. Do not fold accents. ofCategory() is unchanged.

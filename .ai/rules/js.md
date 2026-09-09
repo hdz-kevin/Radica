@@ -13,3 +13,6 @@ Do not collect phone_number on the listing form. Create shows a warning plus a l
 
 ## Listing form uploads 1 to 15 photos
 Listing form uses multipart Form with images[] and, on edit, hidden kept_image_ids[] for remaining thumbs. Copy is “1 a 15 fotos”. Cards use cover_url or the existing placeholder; show renders images in position order as a simple gallery.
+
+## Catalog live filters are Inertia visits
+The catalog filters with debounced router.get to home, only listings and filters, preserveState, preserveScroll, and replace. Omit empty query keys. Do not use useHttp or a JSON search endpoint for this page.

@@ -20,6 +20,11 @@ export type ListingCard = {
     cover_url: string | null;
 };
 
+export type CatalogFilters = {
+    zone: string;
+    category: ListingCategoryValue | null;
+};
+
 export type ListingMine = ListingCard & {
     is_published: boolean;
 };
@@ -84,6 +89,12 @@ export type ListingShow = {
         phone_number: string | null;
     };
 } & IncludedUtilities;
+
+export const listingCategories: ListingCategoryValue[] = [
+    'room',
+    'apartment',
+    'house',
+];
 
 const categoryLabels: Record<ListingCategoryValue, string> = {
     room: 'Cuarto',

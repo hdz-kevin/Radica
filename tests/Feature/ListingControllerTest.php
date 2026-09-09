@@ -58,6 +58,8 @@ describe('index', function () {
                 ->where('listings.0.zone', $published->zone)
                 ->where('listings.0.cover_url', null)
                 ->missing('listings.0.description')
+                ->where('filters.zone', '')
+                ->where('filters.category', null)
             );
     });
 
@@ -77,6 +79,137 @@ describe('index', function () {
                 ->component('listings/index')
                 ->where('listings.0.id', $newer->id)
                 ->where('listings.1.id', $older->id)
+            );
+    });
+
+    test('filters published listings by a zone substring', function () {
+        $centro = Listing::factory()->create(['zone' => 'Centro']);
+        Listing::factory()->create(['zone' => 'El Carmen']);
+        Listing::factory()->unpublished()->create(['zone' => 'Centro']);
+        Listing::factory()->trashed()->create(['zone' => 'Centro']);
+
+        $this->get(route('home', ['zone' => 'Centro']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 1)
+                ->where('listings.0.id', $centro->id)
+                ->where('filters.zone', 'Centro')
+                ->where('filters.category', null)
+            );
+    });
+
+    test('filters zones without regard to letter case', function () {
+        $centro = Listing::factory()->create(['zone' => 'Centro']);
+        Listing::factory()->create(['zone' => 'El Carmen']);
+
+        $this->get(route('home', ['zone' => 'centro']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 1)
+                ->where('listings.0.id', $centro->id)
+                ->where('filters.zone', 'centro')
+            );
+    });
+
+    test('filters zones without regard to spaces', function () {
+        $carmen = Listing::factory()->create(['zone' => 'El Carmen']);
+        Listing::factory()->create(['zone' => 'Centro']);
+
+        $this->get(route('home', ['zone' => 'elcarmen']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 1)
+                ->where('listings.0.id', $carmen->id)
+                ->where('filters.zone', 'elcarmen')
+            );
+    });
+
+    test('an empty zone query returns the full published catalog', function (string $zone) {
+        Listing::factory()->create(['zone' => 'Centro']);
+        Listing::factory()->create(['zone' => 'El Carmen']);
+
+        $this->get(route('home', ['zone' => $zone]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 2)
+                ->where('filters.zone', '')
+            );
+    })->with([
+        'empty' => [''],
+        'whitespace' => ['   '],
+    ]);
+
+    test('filters published listings by category', function () {
+        $room = Listing::factory()->room()->create();
+        Listing::factory()->apartment()->create();
+
+        $this->get(route('home', ['category' => 'room']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 1)
+                ->where('listings.0.id', $room->id)
+                ->where('filters.category', 'room')
+                ->where('filters.zone', '')
+            );
+    });
+
+    test('applies zone and category filters together', function () {
+        $match = Listing::factory()->apartment()->create(['zone' => 'Centro']);
+        Listing::factory()->room()->create(['zone' => 'Centro']);
+        Listing::factory()->apartment()->create(['zone' => 'El Carmen']);
+
+        $this->get(route('home', ['zone' => 'Centro', 'category' => 'apartment']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 1)
+                ->where('listings.0.id', $match->id)
+                ->where('filters.zone', 'Centro')
+                ->where('filters.category', 'apartment')
+            );
+    });
+
+    test('treats like wildcards in the zone query as literals', function () {
+        Listing::factory()->create(['zone' => 'Centro']);
+
+        $this->get(route('home', ['zone' => '%']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 0)
+                ->where('filters.zone', '%')
+            );
+    });
+
+    test('ignores an unknown category query and lists published listings', function () {
+        Listing::factory()->room()->create();
+        Listing::factory()->apartment()->create();
+
+        $this->get(route('home', ['category' => 'nope']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 2)
+                ->where('filters.category', null)
+                ->where('filters.zone', '')
+            );
+    });
+
+    test('renders an empty catalog when the filters match nothing', function () {
+        Listing::factory()->create(['zone' => 'Centro']);
+
+        $this->get(route('home', ['zone' => 'Xoloco']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/index')
+                ->has('listings', 0)
+                ->where('filters.zone', 'Xoloco')
+                ->where('filters.category', null)
             );
     });
 });

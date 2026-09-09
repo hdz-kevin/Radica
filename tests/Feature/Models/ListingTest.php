@@ -67,3 +67,30 @@ test('a soft deleted listing is excluded by the published scope', function () {
 
     expect(Listing::query()->published()->whereKey($listing)->exists())->toBeFalse();
 });
+
+test('the inZone scope matches a zone substring', function () {
+    $centro = Listing::factory()->create(['zone' => 'Centro']);
+    Listing::factory()->create(['zone' => 'El Carmen']);
+
+    expect(Listing::query()->inZone('Cent')->pluck('id')->all())
+        ->toBe([$centro->id]);
+});
+
+test('the inZone scope treats like wildcards as literals', function () {
+    Listing::factory()->create(['zone' => 'Centro']);
+
+    expect(Listing::query()->inZone('%')->exists())->toBeFalse();
+    expect(Listing::query()->inZone('_')->exists())->toBeFalse();
+});
+
+test('the inZone scope ignores spaces in the zone text', function (string $needle) {
+    $carmen = Listing::factory()->create(['zone' => 'El Carmen']);
+    Listing::factory()->create(['zone' => 'Centro']);
+
+    expect(Listing::query()->inZone($needle)->pluck('id')->all())
+        ->toBe([$carmen->id]);
+})->with([
+    'without spaces' => ['elcarmen'],
+    'with a space' => ['el carmen'],
+    'with extra spaces' => ['el  carmen'],
+]);
