@@ -89,17 +89,8 @@ export default function ListingsIndex({
         <>
             <Head title="Rentas en Teziutlán" />
 
-            <div className="flex flex-col gap-6 p-4">
-                <div>
-                    <h1 className="text-2xl font-semibold tracking-tight">
-                        Rentas en Teziutlán
-                    </h1>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                        Publicaciones de cuartos, departamentos y casas.
-                    </p>
-                </div>
-
-                <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
+                <div className="flex flex-col md:flex-row md:items-end gap-5 md:gap-7 mt-2">
                     <div className="grid max-w-md gap-2">
                         <Label htmlFor="zone">Zona o colonia</Label>
                         <Input
@@ -108,20 +99,20 @@ export default function ListingsIndex({
                             maxLength={255}
                             placeholder="Centro, El Carmen…"
                             onChange={(event) => setZone(event.target.value)}
+                            className='text-sm md:text-base'
                         />
                     </div>
 
                     <ToggleGroup
                         type="single"
                         variant="outline"
-                        size="sm"
                         value={category || 'all'}
                         onValueChange={handleCategoryChange}
                         className="w-fit flex-wrap justify-start"
                     >
-                        <ToggleGroupItem value="all">Todas</ToggleGroupItem>
+                        <ToggleGroupItem value="all" className='px-4'>Cualquier categoría</ToggleGroupItem>
                         {listingCategories.map((listingCategory) => (
-                            <ToggleGroupItem key={listingCategory} value={listingCategory}>
+                            <ToggleGroupItem key={listingCategory} value={listingCategory} className='px-4'>
                                 {categoryLabel(listingCategory)}
                             </ToggleGroupItem>
                         ))}
@@ -137,7 +128,7 @@ export default function ListingsIndex({
                 ) : (
                     <ul
                         className={cn(
-                            'grid gap-4 sm:grid-cols-2 lg:grid-cols-3',
+                            'grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
                             filtering && 'opacity-60',
                         )}
                     >

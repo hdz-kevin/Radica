@@ -38,7 +38,7 @@ type Props = {
 function navItems(isAuthenticated: boolean): NavItem[] {
     const items: NavItem[] = [
         {
-            title: 'Inicio',
+            title: 'Catálogo',
             href: home(),
             icon: House,
         },
@@ -76,111 +76,113 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     return (
         <>
             <div className="border-sidebar-border/80 border-b">
-                <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
-                    {/* Mobile Menu */}
-                    <div className="lg:hidden">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="mr-2 h-[34px] w-[34px]"
-                                >
-                                    <Menu className="h-5 w-5" />
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent
-                                side="left"
-                                className="bg-sidebar flex h-full w-64 flex-col items-stretch justify-between"
-                            >
-                                <SheetTitle className="sr-only">
-                                    Navigation menu
-                                </SheetTitle>
-                                <SheetHeader className="flex justify-start text-left">
-                                    <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
-                                </SheetHeader>
-                                <div className="flex h-full flex-1 flex-col space-y-4 p-4">
-                                    <div className="flex h-full flex-col justify-between text-sm">
-                                        <div className="flex flex-col space-y-4">
-                                            {mainNavItems.map((item) => (
-                                                <Link
-                                                    key={item.title}
-                                                    href={item.href}
-                                                    className="flex items-center space-x-2 font-medium"
-                                                >
-                                                    {item.icon && (
-                                                        <item.icon className="h-5 w-5" />
-                                                    )}
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            ))}
-                                        </div>
-
-                                        {!auth.user && (
-                                            <div className="flex flex-col space-y-3">
-                                                <Link
-                                                    href={login()}
-                                                    className="font-medium"
-                                                >
-                                                    Iniciar sesión
-                                                </Link>
-                                                <Link
-                                                    href={register()}
-                                                    className="font-medium"
-                                                >
-                                                    Crear cuenta
-                                                </Link>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
-
-                    <Link
-                        href={home()}
-                        prefetch
-                        className="flex items-center space-x-2"
-                    >
-                        <AppLogo />
-                    </Link>
-
-                    {/* Desktop Navigation */}
-                    <div className="ml-6 hidden h-full items-center space-x-6 lg:flex">
-                        <NavigationMenu className="flex h-full items-stretch">
-                            <NavigationMenuList className="flex h-full items-stretch space-x-2">
-                                {mainNavItems.map((item, index) => (
-                                    <NavigationMenuItem
-                                        key={index}
-                                        className="relative flex h-full items-center"
+                <div className="mx-auto grid h-16 md:h-18 grid-cols-[1fr_auto_1fr] items-center w-[95%] max-w-450 px-2">
+                    <div className="flex items-center justify-start">
+                        <div className="lg:hidden">
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="mr-2 h-[34px] w-[34px]"
                                     >
-                                        <Link
-                                            href={item.href}
-                                            className={cn(
-                                                navigationMenuTriggerStyle(),
-                                                whenCurrentUrl(
-                                                    item.href,
-                                                    activeItemStyles,
-                                                ),
-                                                'h-9 cursor-pointer px-3',
+                                        <Menu className="h-5 w-5" />
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent
+                                    side="left"
+                                    className="bg-sidebar flex h-full w-64 flex-col items-stretch justify-between"
+                                >
+                                    <SheetTitle className="sr-only">
+                                        Navigation menu
+                                    </SheetTitle>
+                                    <SheetHeader className="flex justify-start text-left">
+                                        <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
+                                    </SheetHeader>
+                                    <div className="flex h-full flex-1 flex-col space-y-4 p-4">
+                                        <div className="flex h-full flex-col justify-between text-sm">
+                                            <div className="flex flex-col space-y-4">
+                                                {mainNavItems.map((item) => (
+                                                    <Link
+                                                        key={item.title}
+                                                        href={item.href}
+                                                        className="flex items-center space-x-2 font-medium"
+                                                    >
+                                                        {item.icon && (
+                                                            <item.icon className="h-5 w-5" />
+                                                        )}
+                                                        <span>{item.title}</span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+
+                                            {!auth.user && (
+                                                <div className="flex flex-col space-y-3">
+                                                    <Link
+                                                        href={login()}
+                                                        className="font-medium"
+                                                    >
+                                                        Iniciar sesión
+                                                    </Link>
+                                                    <Link
+                                                        href={register()}
+                                                        className="font-medium"
+                                                    >
+                                                        Crear cuenta
+                                                    </Link>
+                                                </div>
                                             )}
-                                        >
-                                            {item.icon && (
-                                                <item.icon className="mr-2 h-4 w-4" />
-                                            )}
-                                            {item.title}
-                                        </Link>
-                                        {isCurrentUrl(item.href) && (
-                                            <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
-                                        )}
-                                    </NavigationMenuItem>
-                                ))}
-                            </NavigationMenuList>
-                        </NavigationMenu>
+                                        </div>
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
+
+                        <Link
+                            href={home()}
+                            prefetch
+                            className="flex items-center space-x-2"
+                        >
+                            <AppLogo />
+                        </Link>
                     </div>
 
-                    <div className="ml-auto flex items-center space-x-2">
+                    <div className="flex h-full items-center justify-center">
+                        <div className="hidden h-full items-center lg:flex">
+                            <NavigationMenu className="flex h-full items-stretch">
+                                <NavigationMenuList className="flex h-full items-stretch space-x-2">
+                                    {mainNavItems.map((item, index) => (
+                                        <NavigationMenuItem
+                                            key={index}
+                                            className="relative flex h-full items-center"
+                                        >
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    navigationMenuTriggerStyle(),
+                                                    whenCurrentUrl(
+                                                        item.href,
+                                                        activeItemStyles,
+                                                    ),
+                                                    'h-9 cursor-pointer px-3',
+                                                )}
+                                            >
+                                                {item.icon && (
+                                                    <item.icon className="mr-2 h-4 w-4" />
+                                                )}
+                                                {item.title}
+                                            </Link>
+                                            {isCurrentUrl(item.href) && (
+                                                <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
+                                            )}
+                                        </NavigationMenuItem>
+                                    ))}
+                                </NavigationMenuList>
+                            </NavigationMenu>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-end space-x-2">
                         {auth.user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -220,8 +222,8 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                 </div>
             </div>
             {breadcrumbs.length > 1 && (
-                <div className="border-sidebar-border/70 flex w-full border-b">
-                    <div className="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
+                <div className="border-sidebar-border/70 flex w-full">
+                    <div className="mx-auto flex h-13 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
                         <Breadcrumbs breadcrumbs={breadcrumbs} />
                     </div>
                 </div>
