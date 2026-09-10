@@ -36,20 +36,12 @@ type Props = {
 };
 
 function navItems(isAuthenticated: boolean): NavItem[] {
-    const items: NavItem[] = [
+    return [
         {
             title: 'Catálogo',
             href: home(),
             icon: House,
         },
-    ];
-
-    if (!isAuthenticated) {
-        return items;
-    }
-
-    return [
-        ...items,
         {
             title: 'Publicar',
             href: create(),
@@ -76,7 +68,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     return (
         <>
             <div className="border-sidebar-border/80 border-b">
-                <div className="mx-auto grid h-16 md:h-18 grid-cols-[1fr_auto_1fr] items-center w-[95%] max-w-450 px-2">
+                <div className="mx-auto grid h-16 md:h-18 grid-cols-[1fr_auto_1fr] items-center w-[95%] max-w-500 sm:px-2">
                     <div className="flex items-center justify-start">
                         <div className="lg:hidden">
                             <Sheet>

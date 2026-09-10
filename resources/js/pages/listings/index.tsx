@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { show } from '@/actions/App/Http/Controllers/ListingController';
 import { ListingCover } from '@/components/listing-cover';
@@ -51,6 +52,9 @@ function visitCatalog(
     });
 }
 
+const categoryChipClassName =
+    'rounded-full sm:rounded-full px-4 sm:px-6 sm:h-11 sm:min-w-10 sm:text-[15px] first:rounded-full last:rounded-full border-gray-300 dark:border-input data-[variant=outline]:border-l data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:data-[state=on]:bg-primary/90 hover:data-[state=on]:text-primary-foreground dark:data-[state=on]:border-primary-foreground dark:data-[state=on]:bg-primary-foreground dark:data-[state=on]:text-primary dark:hover:data-[state=on]:bg-primary-foreground/90 dark:hover:data-[state=on]:text-primary';
+
 export default function ListingsIndex({
     listings,
     filters,
@@ -89,35 +93,65 @@ export default function ListingsIndex({
         <>
             <Head title="Rentas en Teziutlán" />
 
-            <div className="flex flex-col gap-6">
-                <div className="flex flex-col md:flex-row md:items-end gap-5 md:gap-7 mt-2">
-                    <div className="grid max-w-md gap-2">
-                        <Label htmlFor="zone">Zona o colonia</Label>
-                        <Input
-                            id="zone"
-                            value={zone}
-                            maxLength={255}
-                            placeholder="Centro, El Carmen…"
-                            onChange={(event) => setZone(event.target.value)}
-                            className='text-sm md:text-base'
-                        />
+            <div className="flex flex-col gap-6 sm:gap-5 sm:mt-4">
+                <section className="flex flex-col sm:flex-row gap-6 sm:gap-8" aria-label="Filtros">
+                    <div className="grid max-w-xl gap-2">
+                        {/* <Label
+                            htmlFor="zone"
+                            className="text-base text-center sm:text-start font-medium tracking-tight"
+                        >
+                            Zona o colonia de Teziutlán
+                        </Label> */}
+                        <div className="relative sm:w-sm">
+                            <span className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <Search className="size-5" aria-hidden />
+                            </span>
+                            <Input
+                                id="zone"
+                                value={zone}
+                                maxLength={255}
+                                placeholder="Centro, El Fresnillo, Xoloco…"
+                                aria-label="Zona o colonia"
+                                onChange={(event) => setZone(event.target.value)}
+                                className="h-10 sm:h-11 pl-9 sm:pl-10 text-base sm:placeholder:text-base rounded-full border-gray-300 dark:border-input"
+                            />
+                        </div>
                     </div>
 
-                    <ToggleGroup
-                        type="single"
-                        variant="outline"
-                        value={category || 'all'}
-                        onValueChange={handleCategoryChange}
-                        className="w-fit flex-wrap justify-start"
-                    >
-                        <ToggleGroupItem value="all" className='px-4'>Cualquier categoría</ToggleGroupItem>
-                        {listingCategories.map((listingCategory) => (
-                            <ToggleGroupItem key={listingCategory} value={listingCategory} className='px-4'>
-                                {categoryLabel(listingCategory)}
+                    <div className="grid gap-2">
+                        {/* <Label
+                            htmlFor="category-filter"
+                            className="text-base text-center sm:text-start font-medium tracking-tight"
+                        >
+                            Categoría
+                        </Label> */}
+                        <ToggleGroup
+                            id="category-filter"
+                            type="single"
+                            variant="outline"
+                            size="default"
+                            value={category || 'all'}
+                            onValueChange={handleCategoryChange}
+                            className="flex flex-wrap justify-between gap-2"
+                        >
+                            <ToggleGroupItem
+                                value="all"
+                                className={categoryChipClassName}
+                            >
+                                Todas
                             </ToggleGroupItem>
-                        ))}
-                    </ToggleGroup>
-                </div>
+                            {listingCategories.map((listingCategory) => (
+                                <ToggleGroupItem
+                                    key={listingCategory}
+                                    value={listingCategory}
+                                    className={categoryChipClassName}
+                                >
+                                    {categoryLabel(listingCategory)}
+                                </ToggleGroupItem>
+                            ))}
+                        </ToggleGroup>
+                    </div>
+                </section>
 
                 {listings.length === 0 ? (
                     <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
@@ -128,7 +162,7 @@ export default function ListingsIndex({
                 ) : (
                     <ul
                         className={cn(
-                            'grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-5 3xl:grid-cols-4',
                             filtering && 'opacity-60',
                         )}
                     >
@@ -143,27 +177,23 @@ export default function ListingsIndex({
                                         <ListingCover
                                             url={listing.cover_url}
                                             alt={listing.title}
-                                            className="mx-6"
+                                            className="mx-0"
                                         />
                                         <CardHeader>
                                             <div className="flex items-center justify-between gap-2">
-                                                <Badge variant="secondary">
-                                                    {categoryLabel(
-                                                        listing.category,
-                                                    )}
+                                                <Badge variant="secondary" className='text-[13px] px-2.5'>
+                                                    {categoryLabel(listing.category)}
                                                 </Badge>
-                                                <span className="text-sm font-semibold">
-                                                    {formatRent(
-                                                        listing.rent_amount,
-                                                    )}
+                                                <span className="text-base font-semibold">
+                                                    {formatRent(listing.rent_amount)}
                                                 </span>
                                             </div>
-                                            <CardTitle className="line-clamp-2 text-base">
+                                            <CardTitle className="line-clamp-2 text-base mt-1">
                                                 {listing.title}
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <p className="text-muted-foreground text-sm">
+                                            <p className="text-sm font-medium text-gray-600">
                                                 {listing.zone}, {listing.city}
                                             </p>
                                         </CardContent>

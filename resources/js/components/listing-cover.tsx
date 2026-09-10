@@ -13,7 +13,7 @@ export function ListingCover({
     return (
         <div
             className={cn(
-                'relative aspect-video overflow-hidden rounded-lg border',
+                'relative aspect-video overflow-hidden rounded-md border',
                 className,
             )}
         >
