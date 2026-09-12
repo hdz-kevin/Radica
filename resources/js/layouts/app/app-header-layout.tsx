@@ -1,3 +1,4 @@
+import { AppBottomNav } from '@/components/app-bottom-nav';
 import { AppContent } from '@/components/app-content';
 import { AppHeader } from '@/components/app-header';
 import { AppShell } from '@/components/app-shell';
@@ -11,6 +12,7 @@ export default function AppHeaderLayout({
         <AppShell variant="header">
             <AppHeader breadcrumbs={breadcrumbs} />
             <AppContent variant="header">{children}</AppContent>
+            <AppBottomNav />
         </AppShell>
     );
 }

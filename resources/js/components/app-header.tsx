@@ -1,7 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import { House, List, Menu, Plus } from 'lucide-react';
+import { LogIn, User2, UserPlus, UserPlus2 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -16,44 +15,16 @@ import {
     NavigationMenuList,
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from '@/components/ui/sheet';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import { useInitials } from '@/hooks/use-initials';
+import { mainNavItems } from '@/lib/main-nav';
 import { cn } from '@/lib/utils';
 import { home, login, register } from '@/routes';
-import { create, mine } from '@/routes/listings';
-import type { BreadcrumbItem, NavItem } from '@/types';
+import type { BreadcrumbItem } from '@/types';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
 };
-
-function navItems(isAuthenticated: boolean): NavItem[] {
-    return [
-        {
-            title: 'Catálogo',
-            href: home(),
-            icon: House,
-        },
-        {
-            title: 'Publicar',
-            href: create(),
-            icon: Plus,
-        },
-        {
-            title: 'Mis publicaciones',
-            href: mine(),
-            icon: List,
-        },
-    ];
-}
 
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -61,75 +32,14 @@ const activeItemStyles =
 export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage();
     const { auth } = page.props;
-    const mainNavItems = navItems(auth.user !== null);
-    const getInitials = useInitials();
+    const navItems = mainNavItems();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 
     return (
         <>
             <div className="border-sidebar-border/80 border-b">
-                <div className="mx-auto grid h-16 md:h-18 grid-cols-[1fr_auto_1fr] items-center w-[95%] max-w-500 sm:px-2">
+                <div className="mx-auto flex h-16 w-[93%] max-w-500 items-center justify-between gap-2 lg:h-18 lg:grid lg:grid-cols-[1fr_auto_1fr]">
                     <div className="flex items-center justify-start">
-                        <div className="lg:hidden">
-                            <Sheet>
-                                <SheetTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="mr-2 h-[34px] w-[34px]"
-                                    >
-                                        <Menu className="h-5 w-5" />
-                                    </Button>
-                                </SheetTrigger>
-                                <SheetContent
-                                    side="left"
-                                    className="bg-sidebar flex h-full w-64 flex-col items-stretch justify-between"
-                                >
-                                    <SheetTitle className="sr-only">
-                                        Navigation menu
-                                    </SheetTitle>
-                                    <SheetHeader className="flex justify-start text-left">
-                                        <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
-                                    </SheetHeader>
-                                    <div className="flex h-full flex-1 flex-col space-y-4 p-4">
-                                        <div className="flex h-full flex-col justify-between text-sm">
-                                            <div className="flex flex-col space-y-4">
-                                                {mainNavItems.map((item) => (
-                                                    <Link
-                                                        key={item.title}
-                                                        href={item.href}
-                                                        className="flex items-center space-x-2 font-medium"
-                                                    >
-                                                        {item.icon && (
-                                                            <item.icon className="h-5 w-5" />
-                                                        )}
-                                                        <span>{item.title}</span>
-                                                    </Link>
-                                                ))}
-                                            </div>
-
-                                            {!auth.user && (
-                                                <div className="flex flex-col space-y-3">
-                                                    <Link
-                                                        href={login()}
-                                                        className="font-medium"
-                                                    >
-                                                        Iniciar sesión
-                                                    </Link>
-                                                    <Link
-                                                        href={register()}
-                                                        className="font-medium"
-                                                    >
-                                                        Crear cuenta
-                                                    </Link>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </SheetContent>
-                            </Sheet>
-                        </div>
-
                         <Link
                             href={home()}
                             prefetch
@@ -143,7 +53,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         <div className="hidden h-full items-center lg:flex">
                             <NavigationMenu className="flex h-full items-stretch">
                                 <NavigationMenuList className="flex h-full items-stretch space-x-2">
-                                    {mainNavItems.map((item, index) => (
+                                    {navItems.map((item, index) => (
                                         <NavigationMenuItem
                                             key={index}
                                             className="relative flex h-full items-center"
@@ -178,17 +88,14 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         {auth.user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        className="size-10 rounded-full p-1"
-                                    >
-                                        <Avatar className="size-8 overflow-hidden rounded-full">
+                                    <Button variant="ghost" className="size-10 rounded-full p-1">
+                                        <Avatar className="size-9 md:size-10 overflow-hidden rounded-full">
                                             <AvatarImage
                                                 src={auth.user.avatar}
                                                 alt={auth.user.name}
                                             />
-                                            <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                                {getInitials(auth.user.name)}
+                                            <AvatarFallback className="rounded-lg bg-neutral-100 text-black dark:bg-neutral-700 dark:text-white">
+                                                <User2 className="size-5" />
                                             </AvatarFallback>
                                         </Avatar>
                                     </Button>
@@ -201,12 +108,27 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
-                            <div className="hidden items-center gap-2 sm:flex">
-                                <Button variant="ghost" asChild>
-                                    <Link href={login()}>Iniciar sesión</Link>
+                            // TODO: Add favorites button and simplify the login/register buttons
+                            <div className="flex shrink-0 items-center md:gap-1">
+                                {/* Mobile */}
+                                <Button variant="ghost" asChild className="md:hidden">
+                                    <Link href={login()}>
+                                        <LogIn className="size-5" />
+                                        Iniciar sesión
+                                    </Link>
                                 </Button>
-                                <Button asChild>
-                                    <Link href={register()}>Crear cuenta</Link>
+                                {/* Desktop */}
+                                {/* <Button variant="ghost" asChild size="lg" className="hidden md:flex">
+                                    <Link href={register()}>
+                                        <UserPlus2 className="size-4" />
+                                        Crear cuenta
+                                    </Link>
+                                </Button> */}
+                                <Button variant="ghost" asChild size="lg" className="hidden md:flex">
+                                    <Link href={login()}>
+                                        <LogIn className="size-4" />
+                                        Iniciar sesión
+                                    </Link>
                                 </Button>
                             </div>
                         )}
