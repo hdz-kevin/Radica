@@ -108,23 +108,14 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
-                            // TODO: Add favorites button and simplify the login/register buttons
                             <div className="flex shrink-0 items-center md:gap-1">
-                                {/* Mobile */}
-                                <Button variant="ghost" asChild className="md:hidden">
-                                    <Link href={login()}>
-                                        <LogIn className="size-5" />
-                                        Iniciar sesión
-                                    </Link>
-                                </Button>
-                                {/* Desktop */}
-                                {/* <Button variant="ghost" asChild size="lg" className="hidden md:flex">
+                                <Button variant="ghost" asChild size="lg" className="hidden xl:flex">
                                     <Link href={register()}>
                                         <UserPlus2 className="size-4" />
                                         Crear cuenta
                                     </Link>
-                                </Button> */}
-                                <Button variant="ghost" asChild size="lg" className="hidden md:flex">
+                                </Button>
+                                <Button variant="secondary" asChild size="lg">
                                     <Link href={login()}>
                                         <LogIn className="size-4" />
                                         Iniciar sesión
