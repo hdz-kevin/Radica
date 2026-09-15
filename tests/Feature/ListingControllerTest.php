@@ -752,6 +752,10 @@ describe('publish', function () {
 });
 
 describe('destroy', function () {
+    beforeEach(function () {
+        Storage::fake(ListingImage::DISK);
+    });
+
     test('soft deletes a listing for the owner', function () {
         $owner = User::factory()->create();
         $listing = Listing::factory()->for($owner)->create();
@@ -781,8 +785,6 @@ describe('destroy', function () {
     });
 
     test('deletes stored photo files when the listing is deleted', function () {
-        Storage::fake(ListingImage::DISK);
-
         $owner = User::factory()->create();
         $listing = Listing::factory()->for($owner)->withImages(1)->create();
         $path = $listing->images()->first()->path;
