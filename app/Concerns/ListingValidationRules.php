@@ -122,7 +122,7 @@ trait ListingValidationRules
         $category = ListingCategory::from($this->input('category'));
 
         $attributes = [
-            ...$this->safe()->except(['images', 'kept_image_ids']),
+            ...$this->safe()->except(['images', 'image_order']),
             'state' => Listing::DEFAULT_STATE,
             'city' => Listing::DEFAULT_CITY,
         ];

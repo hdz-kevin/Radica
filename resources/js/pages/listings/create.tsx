@@ -21,7 +21,7 @@ export default function ListingsCreate({
         <>
             <Head title="Publicar" />
 
-            <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 p-4">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4">
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight">
                         Publicar vivienda

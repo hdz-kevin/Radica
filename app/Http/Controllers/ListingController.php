@@ -157,7 +157,7 @@ class ListingController extends Controller
             $sync->handle(
                 $listing,
                 $request->uploadedImages(),
-                $request->input('kept_image_ids', []),
+                $request->imageOrder(),
             );
         });
 

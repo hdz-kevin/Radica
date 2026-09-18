@@ -1,6 +1,7 @@
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
 import InputError from '@/components/input-error';
+import { ListingImageUploader } from '@/components/listing-image-uploader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +11,6 @@ import {
     includedUtilities,
     type ListingCategoryValue,
     type ListingFormData,
-    type ListingImagePreview,
 } from '@/lib/listing';
 
 const selectClassName =
@@ -37,17 +37,23 @@ export function ListingForm({
     const [category, setCategory] = useState<ListingCategoryValue>(
         listing?.category ?? 'apartment',
     );
-    const [keptImages, setKeptImages] = useState<ListingImagePreview[]>(
-        listing?.images ?? [],
-    );
 
     const state = listing?.state ?? defaults?.state ?? '';
     const city = listing?.city ?? defaults?.city ?? '';
 
     return (
-        <Form action={action} method={method} encType="multipart/form-data" className="flex flex-col gap-8">
-            {({ processing, errors, }) => (
-                <>
+        <Form action={action} method={method} encType="multipart/form-data" className="flex flex-col gap-8 lg:mt-4 novalidate">
+            {({ processing, errors }) => (
+                <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-10">
+                    <div className="lg:sticky lg:top-4">
+                        <ListingImageUploader
+                            existing={listing?.images ?? []}
+                            errors={errors}
+                            withOrderFields={listing != null}
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-8">
                     <div className="grid gap-2">
                         <Label htmlFor="title">Título</Label>
                         <Input
@@ -228,58 +234,14 @@ export function ListingForm({
                         />
                     </fieldset>
 
-                    <fieldset className="grid gap-3">
-                        <legend className="text-sm font-medium">Fotos</legend>
-                        <p className="text-muted-foreground text-sm">
-                            1 a 15 fotos. La primera es la portada.
-                        </p>
-                        {/* Edit mode */}
-                        {keptImages.length > 0 ? (
-                            <ul className="flex flex-wrap gap-3">
-                                {keptImages.map((image) => (
-                                    <li key={image.id} className="flex flex-col gap-2">
-
-                                        <input type="hidden" name="kept_image_ids[]" value={image.id} />
-
-                                        <img src={image.url} className="size-24 rounded-md border object-cover" />
-
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() =>
-                                                setKeptImages(
-                                                    (current) => current.filter((kept) => kept.id !== image.id)
-                                                )
-                                            }
-                                        >
-                                            Quitar
-                                        </Button>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : null}
-                        {/* Upload images field */}
-                        <div className="grid gap-2">
-                            <Label htmlFor="images">{listing ? 'Agregar fotos' : 'Fotos'}</Label>
-                            <Input
-                                id="images"
-                                name="images[]"
-                                type="file"
-                                multiple
-                                accept="image/jpeg,image/jpg,image/png,image/webp,image/avif"
-                            />
-                            <InputError message={errors.images} />
-                        </div>
-                    </fieldset>
-
                     <div>
                         <Button type="submit" disabled={processing}>
                             {processing && <Spinner />}
                             {submitLabel}
                         </Button>
                     </div>
-                </>
+                    </div>
+                </div>
             )}
         </Form>
     );

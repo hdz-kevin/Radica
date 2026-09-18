@@ -39,6 +39,7 @@ function listingPayload(array $overrides = []): array
         'contact_via_whatsapp' => true,
         'contact_via_phone' => true,
         'images' => [listingImage()],
+        'image_order' => ['new'],
         ...$overrides,
     ];
 }
@@ -622,7 +623,7 @@ describe('update', function () {
         $this->actingAs($owner)
             ->from(route('listings.edit', $listing))
             ->patch(route('listings.update', $listing), listingPayload([
-                'kept_image_ids' => [],
+                'image_order' => [],
                 'images' => [],
             ]))
             ->assertRedirect(route('listings.edit', $listing))
@@ -643,7 +644,7 @@ describe('update', function () {
 
         $this->actingAs($owner)
             ->patch(route('listings.update', $listing), listingPayload([
-                'kept_image_ids' => [$kept->id],
+                'image_order' => [$kept->id, 'new'],
                 'images' => [$newFile],
             ]))
             ->assertSessionHasNoErrors()
@@ -665,7 +666,7 @@ describe('update', function () {
         $this->assertDatabaseMissing('listing_images', ['id' => $removed->id]);
     });
 
-    test('rejects kept image ids that belong to another listing', function () {
+    test('rejects image order ids that belong to another listing', function () {
         $owner = User::factory()->create();
         $listing = Listing::factory()->for($owner)->withImages(1)->create();
         $foreignId = Listing::factory()->withImages(1)->create()->images()->first()->id;
@@ -673,11 +674,120 @@ describe('update', function () {
         $this->actingAs($owner)
             ->from(route('listings.edit', $listing))
             ->patch(route('listings.update', $listing), listingPayload([
-                'kept_image_ids' => [$foreignId],
+                'image_order' => [$foreignId],
                 'images' => [],
             ]))
             ->assertRedirect(route('listings.edit', $listing))
-            ->assertSessionHasErrors('kept_image_ids.0');
+            ->assertSessionHasErrors('image_order.0');
+    });
+
+    test('reorders existing photos and moves the former second to cover', function () {
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(2)->create();
+        $existing = $listing->images()->orderBy('position')->orderBy('id')->get();
+
+        $this->actingAs($owner)
+            ->patch(route('listings.update', $listing), listingPayload([
+                'image_order' => [$existing[1]->id, $existing[0]->id],
+                'images' => [],
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('listings.show', $listing));
+
+        $images = $listing->fresh()->images()->orderBy('position')->orderBy('id')->get();
+
+        expect($images)->toHaveCount(2);
+        expect($images[0])
+            ->id->toBe($existing[1]->id)
+            ->is_cover->toBeTrue()
+            ->position->toBe(0);
+        expect($images[1])
+            ->id->toBe($existing[0]->id)
+            ->is_cover->toBeFalse()
+            ->position->toBe(1);
+    });
+
+    test('inserts a new photo as cover ahead of kept photos', function () {
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(2)->create();
+        $existing = $listing->images()->orderBy('position')->orderBy('id')->get();
+        $newFile = listingImage('portada.jpg');
+
+        $this->actingAs($owner)
+            ->patch(route('listings.update', $listing), listingPayload([
+                'image_order' => ['new', $existing[0]->id, $existing[1]->id],
+                'images' => [$newFile],
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('listings.show', $listing));
+
+        $images = $listing->fresh()->images()->orderBy('position')->orderBy('id')->get();
+
+        expect($images)->toHaveCount(3);
+        expect($images[0])
+            ->is_cover->toBeTrue()
+            ->position->toBe(0);
+        expect($images[1])
+            ->id->toBe($existing[0]->id)
+            ->is_cover->toBeFalse()
+            ->position->toBe(1);
+        expect($images[2])
+            ->id->toBe($existing[1]->id)
+            ->is_cover->toBeFalse()
+            ->position->toBe(2);
+
+        Storage::disk(ListingImage::DISK)->assertExists($images[0]->path);
+    });
+
+    test('interleaves a new photo between kept photos', function () {
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(2)->create();
+        $existing = $listing->images()->orderBy('position')->orderBy('id')->get();
+        $newFile = listingImage('intercalada.jpg');
+
+        $this->actingAs($owner)
+            ->patch(route('listings.update', $listing), listingPayload([
+                'image_order' => [$existing[0]->id, 'new', $existing[1]->id],
+                'images' => [$newFile],
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('listings.show', $listing));
+
+        $images = $listing->fresh()->images()->orderBy('position')->orderBy('id')->get();
+
+        expect($images)->toHaveCount(3);
+        expect($images[0])
+            ->id->toBe($existing[0]->id)
+            ->is_cover->toBeTrue()
+            ->position->toBe(0);
+        expect($images[1])
+            ->is_cover->toBeFalse()
+            ->position->toBe(1);
+        expect($images[2])
+            ->id->toBe($existing[1]->id)
+            ->is_cover->toBeFalse()
+            ->position->toBe(2);
+
+        Storage::disk(ListingImage::DISK)->assertExists($images[1]->path);
+    });
+
+    test('rejects an update when new photo slots do not match uploaded files', function () {
+        $owner = User::factory()->create();
+        $listing = Listing::factory()->for($owner)->withImages(1)->create();
+        $keptId = $listing->images()->first()->id;
+
+        $this->actingAs($owner)
+            ->from(route('listings.edit', $listing))
+            ->patch(route('listings.update', $listing), listingPayload([
+                'image_order' => [$keptId, 'new'],
+                'images' => [],
+            ]))
+            ->assertRedirect(route('listings.edit', $listing))
+            ->assertSessionHasErrors([
+                'images' => 'El número de fotos nuevas no coincide con el orden indicado.',
+            ]);
+
+        expect($listing->fresh()->images)->toHaveCount(1);
     });
 });
 

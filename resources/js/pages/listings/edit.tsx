@@ -23,7 +23,7 @@ export default function ListingsEdit({ listing }: { listing: ListingFormData }) 
         <>
             <Head title={`Editar ${listing.title}`} />
 
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-4">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4">
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight">
                         Editar publicación

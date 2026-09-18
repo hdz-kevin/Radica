@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Actions\SyncListingImages;
 use App\Concerns\ListingValidationRules;
 use App\Models\ListingImage;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class UpdateListingRequest extends FormRequest
@@ -29,20 +29,35 @@ class UpdateListingRequest extends FormRequest
      */
     public function rules(): array
     {
-        $listingId = $this->route('listing')->id;
-
         return [
             ...$this->listingRules(),
-            'kept_image_ids' => ['nullable', 'array', 'max:'.ListingImage::MAX_PER_LISTING],
-            'kept_image_ids.*' => [
-                'integer',
-                'distinct',
-                // Check if the image exists in listing_images table and belongs to the listing
-                Rule::exists('listing_images', 'id')->where('listing_id', $listingId),
-            ],
+            'image_order' => ['nullable', 'array', 'max:'.ListingImage::MAX_PER_LISTING],
+            'image_order.*' => ['required'],
             'images' => ['nullable', 'array', 'max:'.ListingImage::MAX_PER_LISTING],
             'images.*' => $this->imageFileRules(),
         ];
+    }
+
+    /**
+     * Display order of kept image ids and new-file sentinels.
+     *
+     * @return list<int|string>
+     */
+    public function imageOrder(): array
+    {
+        $order = [];
+
+        foreach (Arr::wrap($this->input('image_order', [])) as $item) {
+            if ($item === SyncListingImages::NEW_SLOT) {
+                $order[] = SyncListingImages::NEW_SLOT;
+
+                continue;
+            }
+
+            $order[] = (int) $item;
+        }
+
+        return $order;
     }
 
     /**
@@ -60,13 +75,79 @@ class UpdateListingRequest extends FormRequest
                     return;
                 }
 
-                $kept = count(Arr::wrap($this->input('kept_image_ids', [])));
-                $total = $kept + count($this->uploadedImages());
+                $rawOrder = array_values(Arr::wrap($this->input('image_order', [])));
+                $listingId = $this->route('listing')->id;
+                $keptIds = [];
+                $newCount = 0;
+
+                foreach ($rawOrder as $index => $item) {
+                    if ($item === SyncListingImages::NEW_SLOT) {
+                        $newCount++;
+
+                        continue;
+                    }
+
+                    if (! is_numeric($item) || (int) $item < 1 || (string) (int) $item !== (string) $item) {
+                        $validator->errors()->add(
+                            "image_order.{$index}",
+                            'Cada posición debe ser una foto existente o una foto nueva.',
+                        );
+
+                        continue;
+                    }
+
+                    $id = (int) $item;
+
+                    if (in_array($id, $keptIds, true)) {
+                        $validator->errors()->add(
+                            "image_order.{$index}",
+                            'No puedes repetir la misma foto en el orden.',
+                        );
+
+                        continue;
+                    }
+
+                    $keptIds[] = $id;
+                }
+
+                if ($validator->errors()->isNotEmpty()) {
+                    return;
+                }
+
+                $ownedIds = ListingImage::query()
+                    ->where('listing_id', $listingId)
+                    ->whereIn('id', $keptIds)
+                    ->pluck('id')
+                    ->all();
+
+                foreach ($rawOrder as $index => $item) {
+                    if ($item === SyncListingImages::NEW_SLOT) {
+                        continue;
+                    }
+
+                    if (! in_array((int) $item, $ownedIds, true)) {
+                        $validator->errors()->add(
+                            "image_order.{$index}",
+                            'La foto seleccionada no pertenece a esta publicación.',
+                        );
+                    }
+                }
+
+                $total = count($rawOrder);
 
                 if ($total < 1 || $total > ListingImage::MAX_PER_LISTING) {
                     $validator->errors()->add(
                         'images',
                         'La publicación debe tener entre 1 y 15 fotos.',
+                    );
+
+                    return;
+                }
+
+                if ($newCount !== count($this->uploadedImages())) {
+                    $validator->errors()->add(
+                        'images',
+                        'El número de fotos nuevas no coincide con el orden indicado.',
                     );
                 }
             },
