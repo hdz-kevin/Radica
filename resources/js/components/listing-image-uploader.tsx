@@ -22,6 +22,7 @@ import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
+    MAX_LISTING_PHOTO_BYTES,
     MAX_LISTING_PHOTOS,
     type ListingImagePreview,
 } from '@/lib/listing';
@@ -132,12 +133,17 @@ export function ListingImageUploader({
 
     function addFiles(fileList: FileList | File[]): void {
         const incoming = Array.from(fileList);
-        const accepted = incoming.filter(isAcceptedImage);
+        const typed = incoming.filter(isAcceptedImage);
+        const accepted = typed.filter(
+            (file) => file.size <= MAX_LISTING_PHOTO_BYTES,
+        );
         const remaining = MAX_LISTING_PHOTOS - items.length;
         const toAdd = accepted.slice(0, Math.max(0, remaining));
 
-        if (accepted.length < incoming.length) {
+        if (typed.length < incoming.length) {
             setClientError('Solo se aceptan fotos JPEG, PNG, WebP o AVIF.');
+        } else if (accepted.length < typed.length) {
+            setClientError('Cada foto debe pesar 10 MB o menos.');
         } else if (accepted.length > remaining) {
             setClientError(`Puedes subir hasta ${MAX_LISTING_PHOTOS} fotos.`);
         } else {

@@ -28,6 +28,8 @@ class ListingImage extends Model
 
     public const MAX_PER_LISTING = 15;
 
+    public const MAX_FILE_KILOBYTES = 10240;
+
     /**
      * @var array<string, mixed>
      */

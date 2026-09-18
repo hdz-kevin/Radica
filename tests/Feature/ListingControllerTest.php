@@ -490,6 +490,21 @@ describe('store', function () {
 
         expect($user->listings()->count())->toBe(0);
     });
+
+    test('rejects a photo larger than 10 MB', function () {
+        $user = User::factory()->withPhone()->create();
+        $file = listingImage('grande.jpg')->size(ListingImage::MAX_FILE_KILOBYTES + 1);
+
+        $this->actingAs($user)
+            ->from(route('listings.create'))
+            ->post(route('listings.store'), listingPayload([
+                'images' => [$file],
+            ]))
+            ->assertRedirect(route('listings.create'))
+            ->assertSessionHasErrors('images.0');
+
+        expect($user->listings()->count())->toBe(0);
+    });
 });
 
 describe('mine', function () {

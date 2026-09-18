@@ -4,6 +4,7 @@ namespace App\Concerns;
 
 use App\Enums\ListingCategory;
 use App\Models\Listing;
+use App\Models\ListingImage;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
@@ -88,7 +89,7 @@ trait ListingValidationRules
      */
     protected function imageFileRules(): array
     {
-        return ['image', 'mimes:jpeg,jpg,png,webp,avif', 'max:4096'];
+        return ['image', 'mimes:jpeg,jpg,png,webp,avif', 'max:'.ListingImage::MAX_FILE_KILOBYTES];
     }
 
     /**

@@ -12,6 +12,8 @@ export type IncludedUtilityName = (typeof includedUtilities)[number]['name'];
 
 export const MAX_LISTING_PHOTOS = 15;
 
+export const MAX_LISTING_PHOTO_BYTES = 10 * 1024 * 1024;
+
 export type ListingCard = {
     id: number;
     title: string;
