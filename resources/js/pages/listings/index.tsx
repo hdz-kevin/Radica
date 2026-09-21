@@ -11,7 +11,6 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import {
@@ -53,7 +52,7 @@ function visitCatalog(
 }
 
 const categoryChipClassName =
-    'rounded-full sm:rounded-full px-4 sm:px-6 sm:h-11 sm:min-w-10 sm:text-[15px] first:rounded-full last:rounded-full border-gray-300 dark:border-input data-[variant=outline]:border-l data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:data-[state=on]:bg-primary/90 hover:data-[state=on]:text-primary-foreground dark:data-[state=on]:border-primary-foreground dark:data-[state=on]:bg-primary-foreground dark:data-[state=on]:text-primary dark:hover:data-[state=on]:bg-primary-foreground/90 dark:hover:data-[state=on]:text-primary';
+    'rounded-full sm:rounded-full px-4 sm:px-6 sm:h-10 sm:min-w-10 first:rounded-full last:rounded-full border-gray-300 dark:border-input data-[variant=outline]:border-l data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:data-[state=on]:bg-primary/90 hover:data-[state=on]:text-primary-foreground dark:data-[state=on]:border-primary-foreground dark:data-[state=on]:bg-primary-foreground dark:data-[state=on]:text-primary dark:hover:data-[state=on]:bg-primary-foreground/90 dark:hover:data-[state=on]:text-primary';
 
 export default function ListingsIndex({
     listings,
@@ -93,18 +92,12 @@ export default function ListingsIndex({
         <>
             <Head title="Rentas en Teziutlán" />
 
-            <div className="flex flex-col gap-6 sm:gap-5 sm:mt-4">
+            <div className="flex flex-col gap-6 sm:gap-8 sm:mt-4">
                 <section className="flex flex-col sm:flex-row gap-6 sm:gap-8" aria-label="Filtros">
                     <div className="grid max-w-xl gap-2">
-                        {/* <Label
-                            htmlFor="zone"
-                            className="text-base text-center sm:text-start font-medium tracking-tight"
-                        >
-                            Zona o colonia de Teziutlán
-                        </Label> */}
                         <div className="relative sm:w-sm">
                             <span className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                <Search className="size-5" aria-hidden />
+                                <Search className="size-4" aria-hidden />
                             </span>
                             <Input
                                 id="zone"
@@ -113,18 +106,12 @@ export default function ListingsIndex({
                                 placeholder="Centro, El Fresnillo, Xoloco…"
                                 aria-label="Zona o colonia"
                                 onChange={(event) => setZone(event.target.value)}
-                                className="h-10 sm:h-11 pl-9 sm:pl-10 text-base sm:placeholder:text-base rounded-full border-gray-300 dark:border-input"
+                                className="h-10 sm:h-10 pl-9 sm:pl-9 md:text-[15px] sm:placeholder:text-[15px] rounded-full border-gray-300 dark:border-input"
                             />
                         </div>
                     </div>
 
                     <div className="grid gap-2">
-                        {/* <Label
-                            htmlFor="category-filter"
-                            className="text-base text-center sm:text-start font-medium tracking-tight"
-                        >
-                            Categoría
-                        </Label> */}
                         <ToggleGroup
                             id="category-filter"
                             type="single"
@@ -162,7 +149,7 @@ export default function ListingsIndex({
                 ) : (
                     <ul
                         className={cn(
-                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-5 3xl:grid-cols-4',
+                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-4 3xl:grid-cols-4',
                             filtering && 'opacity-60',
                         )}
                     >

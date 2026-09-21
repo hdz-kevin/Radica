@@ -210,7 +210,7 @@ export function ListingImageUploader({
 
     return (
         <fieldset className="grid gap-3">
-            <legend className="text-sm font-medium mb-2">Fotos</legend>
+            <legend className="text-sm lg:text-base font-medium mb-2">Fotos</legend>
 
             <input
                 ref={pickerRef}
@@ -270,14 +270,14 @@ export function ListingImageUploader({
                         addFiles(event.dataTransfer.files);
                     }}
                     className={cn(
-                        'flex min-h-42 lg:min-h-72 w-full flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-sm transition-colors',
+                        'flex min-h-42 lg:min-h-80 w-full flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-sm lg:text-base transition-colors',
                         isFileDrag
                             ? 'border-ring bg-muted/60'
                             : 'border-input text-muted-foreground hover:bg-muted/40',
                     )}
                 >
-                    <ImageIcon className="size-8" />
-                    Subir imágenes
+                    <ImageIcon className="size-7" />
+                    Subir fotos
                 </button>
             ) : (
                 <div

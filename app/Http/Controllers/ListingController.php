@@ -59,12 +59,7 @@ class ListingController extends Controller
     {
         Gate::authorize('create', Listing::class);
 
-        return Inertia::render('listings/create', [
-            'defaults' => [
-                'state' => Listing::DEFAULT_STATE,
-                'city' => Listing::DEFAULT_CITY,
-            ],
-        ]);
+        return Inertia::render('listings/create');
     }
 
     /**

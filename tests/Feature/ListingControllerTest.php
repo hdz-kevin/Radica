@@ -283,14 +283,13 @@ describe('create', function () {
             ->assertRedirect(route('login'));
     });
 
-    test('renders the create form with default location', function () {
+    test('renders the create form', function () {
         $this->actingAs(User::factory()->create())
             ->get(route('listings.create'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/create')
-                ->where('defaults.state', Listing::DEFAULT_STATE)
-                ->where('defaults.city', Listing::DEFAULT_CITY)
+                ->missing('defaults')
             );
     });
 });
