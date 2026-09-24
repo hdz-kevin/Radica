@@ -22,3 +22,6 @@ Estado and ciudad are not shown on ListingForm and the POST does not send them; 
 
 ## Listing form desktop split is 3/7 photos
 On lg, ListingForm is a 11-column grid: ListingImageUploader spans 5 columns and the fields span 6. Mobile stays stacked.
+
+## Owner menu only on Mis publicaciones
+The catalog card has no owner menu and ListingCardResource does not send can. Mis publicaciones shows Ver, Editar, Publicar or Despublicar, and Eliminar from listing.can on ListingMineResource via Gate. Do not compare user ids on the client. The menu click must not follow the card link.

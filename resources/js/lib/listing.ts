@@ -21,6 +21,7 @@ export type ListingCard = {
     rent_amount: number;
     zone: string;
     city: string;
+    street_address: string | null;
     cover_url: string | null;
 };
 
@@ -31,6 +32,7 @@ export type CatalogFilters = {
 
 export type ListingMine = ListingCard & {
     is_published: boolean;
+    can: ListingPermissions;
 };
 
 export type ListingPermissions = {
@@ -118,6 +120,16 @@ export function categoryLabel(category: ListingCategoryValue): string {
 
 export function formatRent(amount: number): string {
     return rentFormatter.format(amount);
+}
+
+export function formatListingAddress(
+    streetAddress: string | null,
+    zone: string,
+    city: string,
+): string {
+    return [streetAddress, zone, city]
+        .filter((part) => part !== null && part !== '')
+        .join(', ');
 }
 
 export function yesNo(value: boolean): string {

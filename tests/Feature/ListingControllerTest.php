@@ -46,7 +46,9 @@ function listingPayload(array $overrides = []): array
 
 describe('index', function () {
     test('renders published listings for a guest', function () {
-        $published = Listing::factory()->create();
+        $published = Listing::factory()->create([
+            'street_address' => 'Av. Miguel Hidalgo 34',
+        ]);
         Listing::factory()->unpublished()->create();
         Listing::factory()->trashed()->create();
 
@@ -57,7 +59,9 @@ describe('index', function () {
                 ->has('listings', 1)
                 ->where('listings.0.id', $published->id)
                 ->where('listings.0.zone', $published->zone)
+                ->where('listings.0.street_address', 'Av. Miguel Hidalgo 34')
                 ->where('listings.0.cover_url', null)
+                ->missing('listings.0.can')
                 ->missing('listings.0.description')
                 ->where('filters.zone', '')
                 ->where('filters.category', null)
@@ -514,7 +518,9 @@ describe('mine', function () {
 
     test('lists only the authenticated user listings including unpublished ones', function () {
         $owner = User::factory()->create();
-        $minePublished = Listing::factory()->for($owner)->create();
+        $minePublished = Listing::factory()->for($owner)->create([
+            'street_address' => 'Morelos 12',
+        ]);
         $mineUnpublished = Listing::factory()->for($owner)->unpublished()->create();
         Listing::factory()->for($owner)->trashed()->create();
         Listing::factory()->create();
@@ -528,6 +534,9 @@ describe('mine', function () {
                 ->where('listings.0.id', $mineUnpublished->id)
                 ->where('listings.1.id', $minePublished->id)
                 ->where('listings.0.is_published', false)
+                ->where('listings.0.can.update', true)
+                ->where('listings.1.street_address', 'Morelos 12')
+                ->where('listings.1.can.update', true)
             );
     });
 });

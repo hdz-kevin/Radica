@@ -1,24 +1,15 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { show } from '@/actions/App/Http/Controllers/ListingController';
-import { ListingCover } from '@/components/listing-cover';
-import { Badge } from '@/components/ui/badge';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { ListingCard } from '@/components/listing-card';
 import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import {
     categoryLabel,
-    formatRent,
     listingCategories,
     type CatalogFilters,
-    type ListingCard,
+    type ListingCard as ListingCardData,
     type ListingCategoryValue,
 } from '@/lib/listing';
 import { cn } from '@/lib/utils';
@@ -58,7 +49,7 @@ export default function ListingsIndex({
     listings,
     filters,
 }: {
-    listings: ListingCard[];
+    listings: ListingCardData[];
     filters: CatalogFilters;
 }) {
     const [zone, setZone] = useState(filters.zone);
@@ -149,43 +140,13 @@ export default function ListingsIndex({
                 ) : (
                     <ul
                         className={cn(
-                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-4 3xl:grid-cols-4',
+                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-5 3xl:grid-cols-4',
                             filtering && 'opacity-60',
                         )}
                     >
                         {listings.map((listing) => (
-                            <li key={listing.id}>
-                                <Link
-                                    href={show(listing.id)}
-                                    prefetch
-                                    className="block h-full"
-                                >
-                                    <Card className="h-full transition-colors hover:bg-accent/40">
-                                        <ListingCover
-                                            url={listing.cover_url}
-                                            alt={listing.title}
-                                            className="mx-0"
-                                        />
-                                        <CardHeader>
-                                            <div className="flex items-center justify-between gap-2">
-                                                <Badge variant="secondary" className='text-[13px] px-2.5'>
-                                                    {categoryLabel(listing.category)}
-                                                </Badge>
-                                                <span className="text-base font-semibold">
-                                                    {formatRent(listing.rent_amount)}
-                                                </span>
-                                            </div>
-                                            <CardTitle className="line-clamp-2 text-base mt-1">
-                                                {listing.title}
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm font-medium text-gray-600">
-                                                {listing.zone}, {listing.city}
-                                            </p>
-                                        </CardContent>
-                                    </Card>
-                                </Link>
+                            <li key={listing.id} className="h-full">
+                                <ListingCard variant="public" listing={listing} />
                             </li>
                         ))}
                     </ul>
