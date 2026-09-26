@@ -103,6 +103,12 @@ export const listingCategories: ListingCategoryValue[] = [
 ];
 
 const categoryLabels: Record<ListingCategoryValue, string> = {
+    room: 'Cuarto',
+    apartment: 'Departamento',
+    house: 'Casa',
+};
+
+const categoryFilterLabels: Record<ListingCategoryValue, string> = {
     room: 'Cuartos',
     apartment: 'Departamentos',
     house: 'Casas',
@@ -116,6 +122,10 @@ const rentFormatter = new Intl.NumberFormat('es-MX', {
 
 export function categoryLabel(category: ListingCategoryValue): string {
     return categoryLabels[category];
+}
+
+export function categoryFilterLabel(category: ListingCategoryValue): string {
+    return categoryFilterLabels[category];
 }
 
 export function formatRent(amount: number): string {

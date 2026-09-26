@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import {
-    categoryLabel,
+    categoryFilterLabel,
     listingCategories,
     type CatalogFilters,
     type ListingCard as ListingCardData,
@@ -124,7 +124,7 @@ export default function ListingsIndex({
                                     value={listingCategory}
                                     className={categoryChipClassName}
                                 >
-                                    {categoryLabel(listingCategory)}
+                                    {categoryFilterLabel(listingCategory)}
                                 </ToggleGroupItem>
                             ))}
                         </ToggleGroup>
