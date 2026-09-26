@@ -21,7 +21,7 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                             aquí.
                         </p>
                     </div>
-                    <Button asChild>
+                    <Button asChild size="lg">
                         <Link href={create()}>Publicar</Link>
                     </Button>
                 </div>

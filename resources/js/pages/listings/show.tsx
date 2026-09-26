@@ -71,14 +71,14 @@ export default function ListingsShow({
                                 <Form {...unpublish.form(listing.id)}>
                                     {({ processing }) => (
                                         <Button type="submit" variant="outline" disabled={processing}>
-                                            Despublicar
+                                            Ocultar
                                         </Button>
                                     )}
                                 </Form>
                             ) : (
                                 <Form {...publish.form(listing.id)}>
                                     {({ processing }) => (
-                                        <Button type="submit" disabled={processing}>
+                                        <Button type="submit" variant='outline' disabled={processing}>
                                             Publicar
                                         </Button>
                                     )}

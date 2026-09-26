@@ -103,9 +103,9 @@ export const listingCategories: ListingCategoryValue[] = [
 ];
 
 const categoryLabels: Record<ListingCategoryValue, string> = {
-    room: 'Cuarto',
-    apartment: 'Departamento',
-    house: 'Casa',
+    room: 'Cuartos',
+    apartment: 'Departamentos',
+    house: 'Casas',
 };
 
 const rentFormatter = new Intl.NumberFormat('es-MX', {
