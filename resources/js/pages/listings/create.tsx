@@ -39,7 +39,7 @@ export default function ListingsCreate() {
                     </div>
                 ) : null}
 
-                <ListingForm {...store.form()} submitLabel="Publicar" />
+                <ListingForm {...store.form()} submitLabel="Crear publicación" />
             </div>
         </>
     );

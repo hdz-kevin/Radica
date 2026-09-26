@@ -254,9 +254,9 @@ export function ListingForm({
                                 type="submit"
                                 disabled={processing}
                                 size="lg"
-                                className="w-full rounded-md sm:w-auto h-11"
+                                className="w-full rounded-md sm:w-auto"
                             >
-                                {processing ? <Spinner /> : <Plus />}
+                                {processing && <Spinner /> }
                                 {submitLabel}
                             </Button>
                         </div>
