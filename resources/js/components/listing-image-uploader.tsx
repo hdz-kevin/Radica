@@ -312,7 +312,7 @@ export function ListingImageUploader({
                             onClick={removeSelected}
                             aria-label="Eliminar imagen"
                         >
-                            <Trash2 className="lg:size-5" />
+                            <Trash2 className="size-5 lg:size-6" />
                         </Button>
                     </div>
 
@@ -411,7 +411,7 @@ function SortableThumb({
                 />
             </button>
             {isCover ? (
-                <Badge className="absolute -top-1 -left-1 px-1 py-0 text-[10px]">
+                <Badge className="absolute -top-1 -left-1 px-1.5 py-0.5 text-[11px]">
                     Portada
                 </Badge>
             ) : null}
