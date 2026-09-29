@@ -12,7 +12,7 @@ export default function AppLogo() {
                 {/* <AppLogoIcon className="size-5 fill-current text-white dark:text-black" /> */}
                 <House className="size-5 text-white dark:text-black" />
             </div>
-            <div className="grid flex-1 text-left text-base">
+            <div className="grid flex-1 text-left text-lg">
                 <span className="mb-0.5 truncate leading-tight font-semibold">
                     RadicaMX
                 </span>

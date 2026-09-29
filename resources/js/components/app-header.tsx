@@ -128,7 +128,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
             </div>
             {breadcrumbs.length > 1 && (
                 <div className="border-sidebar-border/70 flex w-full">
-                    <div className="mx-auto flex h-13 w-[96%] items-center justify-start px-2 lg:px-4 text-neutral-500 xl:max-w-360 3xl:max-w-460">
+                    <div className="mx-auto flex h-13 w-[96%] items-center justify-start px-2 lg:px-4 text-neutral-500 xl:max-w-370 3xl:max-w-460">
                         <Breadcrumbs breadcrumbs={breadcrumbs} />
                     </div>
                 </div>
