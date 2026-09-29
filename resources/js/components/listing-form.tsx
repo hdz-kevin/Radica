@@ -6,7 +6,6 @@ import {
     MessageCircle,
     PawPrint,
     Phone,
-    Plus,
     Sofa,
     Tv,
     Wifi,
@@ -297,7 +296,7 @@ function ChipField({
             <Label
                 htmlFor={id}
                 className={cn(
-                    'border-input inline-flex h-10 lg:h-11 cursor-pointer items-center gap-2 rounded-md border px-4 font-medium transition-colors',
+                    'border-input inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border px-4 font-medium transition-colors',
                     'hover:bg-accent hover:text-accent-foreground',
                     'peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-checked:hover:bg-primary/90 peer-checked:hover:text-primary-foreground',
                     'peer-focus-visible:border-ring peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px]',

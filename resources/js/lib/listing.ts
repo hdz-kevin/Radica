@@ -136,8 +136,9 @@ export function formatListingAddress(
     streetAddress: string | null,
     zone: string,
     city: string,
+    state?: string,
 ): string {
-    return [streetAddress, zone, city]
+    return [streetAddress, zone, city, state]
         .filter((part) => part !== null && part !== '')
         .join(', ');
 }

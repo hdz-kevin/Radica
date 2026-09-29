@@ -111,7 +111,7 @@ function ListingCardBody({
                 />
                 <Badge
                     variant="outline"
-                    className={cn('absolute top-3 left-3 text-[14px] font-medium', overlayBadgeClassName)}
+                    className={cn('absolute top-3 left-3 text-[14px] lg:text-[15px] font-medium', overlayBadgeClassName)}
                 >
                     {categoryLabel(listing.category)}
                 </Badge>
