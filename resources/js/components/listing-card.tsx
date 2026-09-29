@@ -132,17 +132,21 @@ function ListingCardBody({
                     </Badge>
                 )}
             </div>
-            <div className="flex flex-col gap-2 px-4 py-4">
+            <div className="flex flex-col gap-2.5 px-4 py-4">
                 <div className="flex items-center justify-between gap-2">
-                    <span className="text-base font-semibold">
-                        {formatRent(listing.rent_amount)}
-                    </span>
+                    <CardTitle className="line-clamp-2 text-[17px] font-semibold">
+                        {listing.title}
+                    </CardTitle>
                     {menu}
                 </div>
-                <CardTitle className="line-clamp-2 text-base">
-                    {listing.title}
-                </CardTitle>
-                <p className=" text-sm">{address}</p>
+                <p className="text-base font-semibold">
+                    {formatRent(listing.rent_amount)}
+                    <span className="font-normal">
+                        {' '}
+                        / mes
+                    </span>
+                </p>
+                <p className="text-base">{address}</p>
             </div>
         </>
     );
