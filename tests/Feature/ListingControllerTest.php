@@ -59,6 +59,8 @@ describe('index', function () {
                 ->has('listings', 1)
                 ->where('listings.0.id', $published->id)
                 ->where('listings.0.zone', $published->zone)
+                ->where('listings.0.city', $published->city)
+                ->where('listings.0.state', $published->state)
                 ->where('listings.0.street_address', 'Av. Miguel Hidalgo 34')
                 ->where('listings.0.cover_url', null)
                 ->missing('listings.0.can')
@@ -536,6 +538,7 @@ describe('mine', function () {
                 ->where('listings.0.is_published', false)
                 ->where('listings.0.can.update', true)
                 ->where('listings.1.street_address', 'Morelos 12')
+                ->where('listings.1.state', $minePublished->state)
                 ->where('listings.1.can.update', true)
             );
     });

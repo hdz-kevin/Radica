@@ -43,6 +43,7 @@ export function ListingCard(props: ListingCardProps) {
         listing.street_address,
         listing.zone,
         listing.city,
+        listing.state,
     );
 
     if (props.variant !== 'mine') {

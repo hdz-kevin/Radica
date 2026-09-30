@@ -21,6 +21,7 @@ export type ListingCard = {
     rent_amount: number;
     zone: string;
     city: string;
+    state: string;
     street_address: string | null;
     cover_url: string | null;
 };
@@ -136,7 +137,7 @@ export function formatListingAddress(
     streetAddress: string | null,
     zone: string,
     city: string,
-    state?: string,
+    state: string,
 ): string {
     return [streetAddress, zone, city, state]
         .filter((part) => part !== null && part !== '')

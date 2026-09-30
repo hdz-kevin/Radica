@@ -19,6 +19,7 @@ class ListingCardResource extends JsonResource
      *     rent_amount: int,
      *     zone: string,
      *     city: string,
+     *     state: string,
      *     street_address: string|null,
      *     cover_url: string|null
      * }
@@ -32,6 +33,7 @@ class ListingCardResource extends JsonResource
             'rent_amount' => $this->rent_amount,
             'zone' => $this->zone,
             'city' => $this->city,
+            'state' => $this->state,
             'street_address' => $this->street_address,
             'cover_url' => $this->cover?->url(),
         ];
