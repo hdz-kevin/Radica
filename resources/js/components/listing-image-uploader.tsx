@@ -270,7 +270,7 @@ export function ListingImageUploader({
                         addFiles(event.dataTransfer.files);
                     }}
                     className={cn(
-                        'flex min-h-42 lg:min-h-80 w-full flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-sm lg:text-base transition-colors',
+                        'flex min-h-52 lg:min-h-80 w-full flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-4 py-10 text-sm lg:text-base transition-colors',
                         isFileDrag
                             ? 'border-ring bg-muted/60'
                             : 'border-input text-muted-foreground hover:bg-muted/40',
@@ -308,11 +308,11 @@ export function ListingImageUploader({
                             type="button"
                             variant="secondary"
                             size="icon"
-                            className="absolute top-2 right-2 size-8 lg:size-10"
+                            className="absolute top-2 right-2 size-8 lg:size-9"
                             onClick={removeSelected}
                             aria-label="Eliminar imagen"
                         >
-                            <Trash2 className="size-5 lg:size-6" />
+                            <Trash2 className="size-5 lg:size-5" />
                         </Button>
                     </div>
 
