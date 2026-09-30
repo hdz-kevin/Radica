@@ -144,6 +144,10 @@ export function formatListingAddress(
         .join(', ');
 }
 
+export function googleMapsUrl(address: string): string {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, México`)}`;
+}
+
 export function yesNo(value: boolean): string {
     return value ? 'Sí' : 'No';
 }

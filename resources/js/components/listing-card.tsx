@@ -1,5 +1,5 @@
 import { Form, Link } from '@inertiajs/react';
-import { EllipsisVertical, Eye, EyeOff } from 'lucide-react';
+import { EllipsisVertical, Eye, EyeOff, MapPinIcon } from 'lucide-react';
 import { type ReactNode } from 'react';
 import {
     destroy,
@@ -22,6 +22,7 @@ import {
     categoryLabel,
     formatListingAddress,
     formatRent,
+    googleMapsUrl,
     type ListingCard as ListingCardData,
     type ListingMine,
 } from '@/lib/listing';
@@ -45,20 +46,7 @@ export function ListingCard(props: ListingCardProps) {
         listing.city,
         listing.state,
     );
-
-    if (props.variant !== 'mine') {
-        return (
-            <Link href={show(listing.id)} prefetch className="block h-full">
-                <Card className={cardClassName}>
-                    <ListingCardBody
-                        listing={listing}
-                        address={address}
-                        variant="public"
-                    />
-                </Card>
-            </Link>
-        );
-    }
+    const variant = props.variant === 'mine' ? 'mine' : 'public';
 
     return (
         <Card className={cn('relative', cardClassName)}>
@@ -72,9 +60,9 @@ export function ListingCard(props: ListingCardProps) {
                 <ListingCardBody
                     listing={listing}
                     address={address}
-                    variant="mine"
+                    variant={variant}
                     menu={
-                        props.listing.can.update ? (
+                        props.variant === 'mine' && props.listing.can.update ? (
                             <div className="pointer-events-auto">
                                 <ListingCardMenu
                                     listing={props.listing}
@@ -112,7 +100,10 @@ function ListingCardBody({
                 />
                 <Badge
                     variant="outline"
-                    className={cn('absolute top-3 left-3 text-[14px] lg:text-[15px] font-medium', overlayBadgeClassName)}
+                    className={cn(
+                        'absolute top-3 left-3 text-[14px] lg:text-[15px] font-medium',
+                        overlayBadgeClassName,
+                    )}
                 >
                     {categoryLabel(listing.category)}
                 </Badge>
@@ -124,11 +115,7 @@ function ListingCardBody({
                             overlayBadgeClassName,
                         )}
                     >
-                        {isPublished ? (
-                            <Eye />
-                        ) : (
-                            <EyeOff />
-                        )}
+                        {isPublished ? <Eye /> : <EyeOff />}
                         {isPublished ? 'Publica' : 'Oculta'}
                     </Badge>
                 )}
@@ -142,12 +129,21 @@ function ListingCardBody({
                 </div>
                 <p className="text-base font-semibold">
                     {formatRent(listing.rent_amount)}
-                    <span className="font-normal">
-                        {' '}
-                        / mes
-                    </span>
+                    <span className="font-normal"> / mes</span>
                 </p>
-                <p className="text-base">{address}</p>
+                <a
+                    href={googleMapsUrl(address)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Abrir ${address} en Google Maps`}
+                    className="focus-visible:ring-ring pointer-events-auto inline-flex w-fit items-start gap-1.5 rounded-sm text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                >
+                    <MapPinIcon
+                        aria-hidden="true"
+                        className="mt-1 size-4 shrink-0"
+                    />
+                    <span>{address}</span>
+                </a>
             </div>
         </>
     );
@@ -186,7 +182,11 @@ function ListingCardMenu({
                     (isPublished ? (
                         <Form {...unpublish.form(listing.id)}>
                             {({ processing }) => (
-                                <DropdownMenuItem asChild className='w-full' disabled={processing}>
+                                <DropdownMenuItem
+                                    asChild
+                                    className="w-full"
+                                    disabled={processing}
+                                >
                                     <button type="submit" disabled={processing}>
                                         Ocultar
                                     </button>
@@ -196,7 +196,11 @@ function ListingCardMenu({
                     ) : (
                         <Form {...publish.form(listing.id)}>
                             {({ processing }) => (
-                                <DropdownMenuItem asChild className='w-full' disabled={processing}>
+                                <DropdownMenuItem
+                                    asChild
+                                    className="w-full"
+                                    disabled={processing}
+                                >
                                     <button type="submit" disabled={processing}>
                                         Publicar
                                     </button>
@@ -208,12 +212,14 @@ function ListingCardMenu({
                     <Form
                         {...destroy.form(listing.id)}
                         onBefore={() =>
-                            confirm('¿Borrar esta publicación? No se puede deshacer.')
+                            confirm(
+                                '¿Borrar esta publicación? No se puede deshacer.',
+                            )
                         }
                     >
                         {({ processing }) => (
                             <DropdownMenuItem
-                                className='w-full'
+                                className="w-full"
                                 variant="destructive"
                                 asChild
                                 disabled={processing}

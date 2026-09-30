@@ -1,12 +1,12 @@
 import { Form, Head, Link, setLayoutProps } from '@inertiajs/react';
 import {
-    Bath,
-    Bed,
+    BathIcon,
+    BedSingle,
     Car,
     Droplet,
     EllipsisVertical,
     Flame,
-    MapPin,
+    MapPinIcon,
     MessageCircle,
     PawPrint,
     Phone,
@@ -35,6 +35,7 @@ import {
 import {
     formatListingAddress,
     formatRent,
+    googleMapsUrl,
     telUrl,
     type ListingPermissions,
     type ListingShow,
@@ -84,6 +85,12 @@ export default function ListingsShow({
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
     const includedAmenities = amenityChips.filter((chip) => listing[chip.name]);
     const showOwnerActions = can.update || can.delete || can.publish;
+    const address = formatListingAddress(
+        listing.street_address,
+        listing.zone,
+        listing.city,
+        listing.state,
+    );
 
     return (
         <>
@@ -107,7 +114,7 @@ export default function ListingsShow({
                             <ListingCover
                                 url={null}
                                 alt=""
-                                className="min-h-52 rounded-lg border-0 bg-muted lg:min-h-72"
+                                className="bg-muted min-h-52 rounded-lg border-0 lg:min-h-72"
                             />
                         )}
                     </div>
@@ -115,41 +122,46 @@ export default function ListingsShow({
                     <div className="flex min-w-0 flex-col gap-8 lg:col-span-6">
                         <div className="flex flex-col gap-2.5">
                             <div className="flex items-center justify-between gap-2">
-                                <h1 className="min-w-0 text-lg lg:text-xl font-semibold tracking-tight">
+                                <h1 className="min-w-0 text-lg font-semibold tracking-tight lg:text-xl">
                                     {listing.title}
                                 </h1>
                                 {showOwnerActions ? (
-                                    <ListingOwnerMenu listing={listing} can={can} />
+                                    <ListingOwnerMenu
+                                        listing={listing}
+                                        can={can}
+                                    />
                                 ) : null}
                             </div>
                             <p className="text-base font-semibold lg:text-lg">
                                 {formatRent(listing.rent_amount)}
-                                <span className="text-base lg:text-lg font-normal">
+                                <span className="text-base font-normal lg:text-lg">
                                     {' '}
                                     / mes
                                 </span>
                             </p>
-                            <p className="inline-flex items-center gap-2 text-base">
-                                <MapPin className="size-4 shrink-0 lg:size-5" />
-                                {formatListingAddress(
-                                    listing.street_address,
-                                    listing.zone,
-                                    listing.city,
-                                    listing.state
-                                )}
-                            </p>
+                            <a
+                                href={googleMapsUrl(address)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`Abrir ${address} en Google Maps`}
+                                className="focus-visible:ring-ring inline-flex w-fit items-center gap-2 rounded-sm text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                            >
+                                <MapPinIcon className="size-4 shrink-0 lg:size-5" />
+                                {address}
+                            </a>
                         </div>
 
-                        <p className="whitespace-pre-wrap text-base leading-7">
+                        <p className="text-base leading-8 whitespace-pre-wrap">
                             {listing.description}
                         </p>
 
                         {listing.category !== 'room' &&
-                            (listing.bedrooms !== null || listing.bathrooms !== null) && (
-                                <p className="flex flex-wrap gap-x-4 gap-y-1 text-base">
+                            (listing.bedrooms !== null ||
+                                listing.bathrooms !== null) && (
+                                <p className="flex flex-wrap gap-x-5 gap-y-1 text-base">
                                     {listing.bedrooms !== null && (
                                         <span className="inline-flex items-center gap-2">
-                                            <Bed className="size-5" />
+                                            <BedSingle className="size-5 lg:size-6" />
                                             {countLabel(
                                                 listing.bedrooms,
                                                 'recámara',
@@ -159,8 +171,12 @@ export default function ListingsShow({
                                     )}
                                     {listing.bathrooms !== null && (
                                         <span className="inline-flex items-center gap-2">
-                                            <Bath className="size-5" />
-                                            {countLabel(listing.bathrooms, 'baño', 'baños')}
+                                            <BathIcon className="size-5 lg:size-6" />
+                                            {countLabel(
+                                                listing.bathrooms,
+                                                'baño',
+                                                'baños',
+                                            )}
                                         </span>
                                     )}
                                 </p>
@@ -168,7 +184,7 @@ export default function ListingsShow({
 
                         {includedAmenities.length > 0 && (
                             <section className="grid gap-3">
-                                <h2 className="text-sm lg:text-base font-medium">
+                                <h2 className="text-sm font-medium lg:text-base">
                                     Amenidades y servicios
                                 </h2>
                                 <ul className="flex flex-wrap gap-2.5">
@@ -185,8 +201,8 @@ export default function ListingsShow({
                         )}
 
                         {(showWhatsApp || showPhone) && (
-                            <section className='grid gap-3'>
-                                <h2 className="text-sm lg:text-base font-medium">
+                            <section className="grid gap-3">
+                                <h2 className="text-sm font-medium lg:text-base">
                                     Contactar
                                 </h2>
                                 <div className="flex flex-wrap gap-3">
@@ -197,7 +213,7 @@ export default function ListingsShow({
                                             className="w-full rounded-md sm:w-auto"
                                         >
                                             <a href={telUrl(phoneNumber)}>
-                                                <Phone className='size-5' />
+                                                <Phone className="size-5" />
                                                 Llamar
                                             </a>
                                         </Button>
@@ -214,13 +230,12 @@ export default function ListingsShow({
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >
-                                                <MessageCircle className='size-5' />
+                                                <MessageCircle className="size-5" />
                                                 WhatsApp
                                             </a>
                                         </Button>
                                     ) : null}
                                 </div>
-
                             </section>
                         )}
                     </div>
@@ -244,10 +259,10 @@ function ListingOwnerMenu({
                     type="button"
                     variant="outline"
                     size="icon"
-                    className="size-9 lg:size-10 shrink-0"
+                    className="size-9 shrink-0 shadow"
                     aria-label="Opciones de la publicación"
                 >
-                    <EllipsisVertical className="size-4 lg:size-5" />
+                    <EllipsisVertical className="size-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -260,7 +275,11 @@ function ListingOwnerMenu({
                     (listing.is_published ? (
                         <Form {...unpublish.form(listing.id)}>
                             {({ processing }) => (
-                                <DropdownMenuItem asChild className="w-full" disabled={processing}>
+                                <DropdownMenuItem
+                                    asChild
+                                    className="w-full"
+                                    disabled={processing}
+                                >
                                     <button type="submit" disabled={processing}>
                                         Ocultar
                                     </button>
@@ -270,7 +289,11 @@ function ListingOwnerMenu({
                     ) : (
                         <Form {...publish.form(listing.id)}>
                             {({ processing }) => (
-                                <DropdownMenuItem asChild className="w-full" disabled={processing}>
+                                <DropdownMenuItem
+                                    asChild
+                                    className="w-full"
+                                    disabled={processing}
+                                >
                                     <button type="submit" disabled={processing}>
                                         Publicar
                                     </button>
@@ -282,7 +305,9 @@ function ListingOwnerMenu({
                     <Form
                         {...destroy.form(listing.id)}
                         onBefore={() =>
-                            confirm('¿Borrar esta publicación? No se puede deshacer.')
+                            confirm(
+                                '¿Borrar esta publicación? No se puede deshacer.',
+                            )
                         }
                     >
                         {({ processing }) => (
@@ -320,11 +345,11 @@ function ListingGallery({
 
     return (
         <div className="grid gap-3">
-            <div className="overflow-hidden rounded-lg bg-muted">
+            <div className="bg-muted overflow-hidden rounded-lg">
                 <img
                     src={active.url}
                     alt={title}
-                    className="aspect-video w-full min-h-56 object-cover lg:min-h-72"
+                    className="aspect-video min-h-56 w-full object-cover lg:min-h-72"
                 />
             </div>
             {images.length > 1 ? (
@@ -337,7 +362,9 @@ function ListingGallery({
                                 aria-label={
                                     image.is_cover ? 'Portada' : 'Seleccionar foto'
                                 }
-                                aria-current={index === activeIndex ? 'true' : undefined}
+                                aria-current={
+                                    index === activeIndex ? 'true' : undefined
+                                }
                                 className={cn(
                                     'overflow-hidden rounded-md border',
                                     index === activeIndex && 'ring-2 ring-gray-500',
@@ -357,9 +384,15 @@ function ListingGallery({
     );
 }
 
-function AmenityChip({ label, icon: Icon }: { label: string; icon: LucideIcon }) {
+function AmenityChip({
+    label,
+    icon: Icon,
+}: {
+    label: string;
+    icon: LucideIcon;
+}) {
     return (
-        <span className="border-gray-200 bg-muted/50 inline-flex h-10 items-center gap-2 rounded-md border px-4 text-sm font-medium">
+        <span className="bg-muted/40 inline-flex h-10 items-center gap-2 rounded-md border border-gray-200 px-4 text-sm font-medium">
             <Icon className="size-5" />
             {label}
         </span>
