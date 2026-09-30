@@ -24,6 +24,7 @@ export type ListingCard = {
     state: string;
     street_address: string | null;
     cover_url: string | null;
+    is_favorited: boolean;
 };
 
 export type CatalogFilters = {
@@ -31,7 +32,7 @@ export type CatalogFilters = {
     category: ListingCategoryValue | null;
 };
 
-export type ListingMine = ListingCard & {
+export type ListingMine = Omit<ListingCard, 'is_favorited'> & {
     is_published: boolean;
     can: ListingPermissions;
 };

@@ -65,6 +65,14 @@ class ListingPolicy
     }
 
     /**
+     * Any authenticated user may save a published listing, including their own.
+     */
+    public function favorite(User $user, Listing $listing): bool
+    {
+        return $listing->isPublished();
+    }
+
+    /**
      * Determine whether the user can restore the model.
      */
     public function restore(User $user, Listing $listing): bool

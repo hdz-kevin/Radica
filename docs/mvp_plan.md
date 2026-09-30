@@ -11,8 +11,9 @@ Stack: Laravel 13, Inertia + React, Fortify. Por rebanadas (tests Pest de lo que
 | 2 | Publicar / editar / despublicar (dueño) | Hecha |
 | 3 | Fotos 1–15 (`listing_images`) | Hecha |
 | 4 | Filtros en vivo: `LIKE` en `zone` (debounce + Inertia/`useHttp`) | Hecha |
-| 5 | Google + Facebook (Socialite ^5.29+; [CVE-2026-73683](https://github.com/advisories/ghsa-cr46-5p72-vh72)) | |
-| 6 | `users.is_admin` + Gate; tu usuario vía `ADMIN_EMAIL`. Sin panel | |
+| 5 | Favoritos: pivote `listing_favorites`; corazón en card y ficha; página solo con publicadas | Hecha |
+| 6 | Google + Facebook (Socialite ^5.29+; [CVE-2026-73683](https://github.com/advisories/ghsa-cr46-5p72-vh72)) | |
+| 7 | `users.is_admin` + Gate; tu usuario vía `ADMIN_EMAIL`. Sin panel | |
 
 Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: migraciones en `database/migrations`.
 
@@ -20,9 +21,9 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 ## Alcance
 
-**Sí:** catálogo sin login; filtros de zona; CRUD de **propias** publicaciones; `is_published` (crear publicado; el dueño despublica a mano); Fortify + Google + Facebook; flag admin sin pantallas extra.
+**Sí:** catálogo sin login; filtros de zona; CRUD de **propias** publicaciones; `is_published` (crear publicado; el dueño despublica a mano); favoritos personales de publicaciones publicadas; Fortify + Google + Facebook; flag admin sin pantallas extra.
 
-**No:** mapa/pines/coords/geocoding; catálogo de colonias (archivo o tablas); chat, favoritos, reseñas, pagos, contratos; roles; Reverb; panel para moderar ajenos; `Location` 1:1; país, CP, moneda en BD (renta en UI = MXN).
+**No:** mapa/pines/coords/geocoding; catálogo de colonias (archivo o tablas); chat, reseñas, pagos, contratos; roles; Reverb; panel para moderar ajenos; `Location` 1:1; país, CP, moneda en BD (renta en UI = MXN).
 
 ---
 
@@ -40,7 +41,9 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 **Fotos.** 1–15, disco `public`, `position` más baja = portada (`is_cover` en esa fila). El límite vive en Form Request, no en CHECK SQL. Factories pueden ir sin fotos (cards usan placeholder).
 
-**Auth (rebanada 5).** Fortify se queda. Socialite: Google y Facebook; `password` nullable; tabla `social_accounts` (`provider`+`provider_id` unique; un provider por usuario). Email ya verificado por el provider → `email_verified_at`. Mismo email → vincular, no duplicar. Facebook: App Review (`public_profile` + `email`); Google puede salir antes.
+**Favoritos (rebanada 5).** Pivote `listing_favorites` (`user_id` + `listing_id` unique, timestamps; `created_at` = cuándo se guardó). Sin modelo extra y sin contador público. Solo una publicación `is_published`; si no, 404 (también el dueño). Despublicar no borra la fila: la página Favoritos usa `published()`, y al republicar vuelve. Soft delete sí suelta el favorito. Se puede guardar la propia si está publicada. Invitado ve el corazón; el clic guarda la página actual como destino de login y no marca solo. Tras iniciar sesión, lo guarda a mano.
+
+**Auth (rebanada 6).** Fortify se queda. Socialite: Google y Facebook; `password` nullable; tabla `social_accounts` (`provider`+`provider_id` unique; un provider por usuario). Email ya verificado por el provider → `email_verified_at`. Mismo email → vincular, no duplicar. Facebook: App Review (`public_profile` + `email`); Google puede salir antes.
 
 ---
 
@@ -48,8 +51,8 @@ Esquema visual: [`docs/db-schema.drawio`](db-schema.drawio). Columnas vigentes: 
 
 Pendiente de rebanada, no de reabrir el diseño:
 
-- **`social_accounts` (5):** sin guardar tokens de OAuth.
-- **`users`:** `password` nullable (5); `is_admin` default false + index (6); `avatar_path` nullable (OAuth/futuro).
+- **`social_accounts` (6):** sin guardar tokens de OAuth.
+- **`users`:** `password` nullable (6); `is_admin` default false + index (7); `avatar_path` nullable (OAuth/futuro).
 
 Índices de catálogo ya en `listings`: `(is_published, published_at)`, `(city, zone)`, `category`. SQLite ahora; portable a MySQL/PostgreSQL. Sin PostGIS.
 
@@ -63,7 +66,8 @@ No hay tablas `categories`, `roles`, `conversations`, `locations`, `settings`.
 - **Ficha:** galería, datos, WhatsApp/Llamar según flags; zona/dirección; 404 si no está publicado (el dueño sí la ve).
 - **Publicar/editar:** un form; campos extra por categoría; fotos; canales; zona texto + dirección opcional. Teléfono solo en perfil (aviso al crear si falta).
 - **Mis publicaciones:** propias, publicadas y no (sin soft-deleted).
+- **Favoritos:** las que el usuario guardó y siguen publicadas, la más reciente primero. Vacío con enlace al catálogo. Corazón en la card del catálogo y en la ficha publicada; no en Mis publicaciones.
 - **Perfil:** `phone_number` (pega a todos los anuncios).
 - **Login:** Fortify + botones Google/Facebook.
 
-Policies: `view` si `isPublished` o dueño/admin; `update`/`delete`/publicar/despublicar dueño o admin.
+Policies: `view` si `isPublished` o dueño/admin; `update`/`delete`/publicar/despublicar dueño o admin; `favorite` solo si está publicada.

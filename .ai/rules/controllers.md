@@ -13,3 +13,6 @@ Show still uses abort(404) for unpublished or unauthorized view. create/edit/upd
 
 ## Catalog filters use query params on GET /
 Public catalog filters are query params on ListingController@index (route home): zone (trimmed, LIKE substring) and category (ListingCategory::tryFrom; unknown values are ignored, not 422). Echo the applied filters as the Inertia filters prop. Do not add a JSON search endpoint.
+
+## Favorite only published listings
+Saving or removing a favorite of an unpublished listing is abort(404), including for the owner. ListingPolicy::favorite is true only when isPublished(). Store uses syncWithoutDetaching and destroy uses detach; both are idempotent and return back() with no toast. Guests who tap the heart hit GET favorites/login, which sets url.intended to a same-app relative path (otherwise /) and redirects to login. That does not attach a favorite.

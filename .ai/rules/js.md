@@ -25,3 +25,6 @@ On lg, ListingForm is a 11-column grid: ListingImageUploader spans 5 columns and
 
 ## Owner menu only on Mis publicaciones
 The catalog card has no owner menu and ListingCardResource does not send can. Mis publicaciones shows Ver, Editar, Publicar or Despublicar, and Eliminar from listing.can on ListingMineResource via Gate. Do not compare user ids on the client. The menu click must not follow the card link.
+
+## Favorite heart does not auto-save for guests
+The heart is on public catalog cards and beside the title on a published show page. On cards it uses pointer-events-auto so it does not follow the card link. It is not on Mis publicaciones. Guests still see it; the link is favorites.login with return set to the current page, and the listing is not saved until they tap again after login. Main nav order is Catálogo, Favoritos, Publicar, Mis publicaciones. Favoritos reuses the public card.

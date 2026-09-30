@@ -8,6 +8,7 @@ import {
     show,
     unpublish,
 } from '@/actions/App/Http/Controllers/ListingController';
+import { FavoriteButton } from '@/components/favorite-button';
 import { ListingCover } from '@/components/listing-cover';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -118,6 +119,14 @@ function ListingCardBody({
                         {isPublished ? <Eye /> : <EyeOff />}
                         {isPublished ? 'Publica' : 'Oculta'}
                     </Badge>
+                )}
+                {variant === 'public' && 'is_favorited' in listing && (
+                    <div className="pointer-events-auto absolute top-3 right-3">
+                        <FavoriteButton
+                            listingId={listing.id}
+                            favorited={listing.is_favorited}
+                        />
+                    </div>
                 )}
             </div>
             <div className="flex flex-col gap-2.5 px-4 py-4">

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -46,6 +47,7 @@ use Illuminate\Support\Facades\Storage;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property bool $is_favorited
  * @property-read User $user
  * @property-read Collection<int, ListingImage> $images
  * @property-read ListingImage|null $cover
@@ -85,6 +87,8 @@ class Listing extends Model
     protected static function booted(): void
     {
         static::deleting(function (Listing $listing): void {
+            $listing->favoritedBy()->detach();
+
             $listing->loadMissing('images');
 
             foreach ($listing->images as $image) {
@@ -149,6 +153,16 @@ class Listing extends Model
     }
 
     /**
+     * Users who saved this listing to view later.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function favoritedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'listing_favorites')->withTimestamps();
+    }
+
+    /**
      * Photos for this listing, in display order.
      *
      * @return HasMany<ListingImage, $this>
@@ -177,6 +191,25 @@ class Listing extends Model
     protected function published(Builder $query): void
     {
         $query->where('is_published', true);
+    }
+
+    /**
+     * Flag whether the given user has saved each listing.
+     *
+     * Guests skip the exists subquery; the card resource treats a missing flag as false.
+     *
+     * @param  Builder<Listing>  $query
+     */
+    #[Scope]
+    protected function withFavoritedBy(Builder $query, ?User $user): void
+    {
+        if ($user === null) {
+            return;
+        }
+
+        $query->withExists([
+            'favoritedBy as is_favorited' => fn (Builder $favorites) => $favorites->whereKey($user->id),
+        ]);
     }
 
     /**

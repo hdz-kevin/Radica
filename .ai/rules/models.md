@@ -31,3 +31,6 @@ Listing::inZone() uses whereLike on zone after addcslashes for %, _, and \\. Use
 
 ## inZone ignores spaces in zone text
 Listing::inZone() compares REPLACE(zone, ' ', '') with the search text after stripping spaces, then addcslashes for %, _, and \\. whereLike stays case-insensitive. Do not fold accents. ofCategory() is unchanged.
+
+## Favorites are a pivot, not a model
+Favorites are a listing_favorites pivot (user_id + listing_id unique, withTimestamps). No Favorite model and no public count. Listing::deleting detaches favorites because soft delete does not fire the FK cascade. Catalog and Favoritos flag the viewer with withFavoritedBy(); guests skip that subquery. Favoritos lists favoritedListings()->published() newest pivot created_at first. Unpublish keeps the row; it reappears when published again.

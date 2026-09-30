@@ -21,7 +21,8 @@ class ListingCardResource extends JsonResource
      *     city: string,
      *     state: string,
      *     street_address: string|null,
-     *     cover_url: string|null
+     *     cover_url: string|null,
+     *     is_favorited: bool
      * }
      */
     public function toArray(Request $request): array
@@ -36,6 +37,7 @@ class ListingCardResource extends JsonResource
             'state' => $this->state,
             'street_address' => $this->street_address,
             'cover_url' => $this->cover?->url(),
+            'is_favorited' => (bool) $this->is_favorited,
         ];
     }
 }

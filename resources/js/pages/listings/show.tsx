@@ -24,6 +24,7 @@ import {
     show,
     unpublish,
 } from '@/actions/App/Http/Controllers/ListingController';
+import { FavoriteButton } from '@/components/favorite-button';
 import { ListingCover } from '@/components/listing-cover';
 import { Button } from '@/components/ui/button';
 import {
@@ -63,9 +64,11 @@ const amenityChips = [
 export default function ListingsShow({
     listing,
     can,
+    favorited,
 }: {
     listing: ListingShow;
     can: ListingPermissions;
+    favorited: boolean;
 }) {
     setLayoutProps({
         breadcrumbs: [
@@ -125,16 +128,24 @@ export default function ListingsShow({
                                 <h1 className="min-w-0 text-lg font-semibold tracking-tight lg:text-xl">
                                     {listing.title}
                                 </h1>
-                                {showOwnerActions ? (
-                                    <ListingOwnerMenu
-                                        listing={listing}
-                                        can={can}
-                                    />
-                                ) : null}
+                                <div className="flex shrink-0 items-center gap-2">
+                                    {listing.is_published ? (
+                                        <FavoriteButton
+                                            listingId={listing.id}
+                                            favorited={favorited}
+                                        />
+                                    ) : null}
+                                    {showOwnerActions ? (
+                                        <ListingOwnerMenu
+                                            listing={listing}
+                                            can={can}
+                                        />
+                                    ) : null}
+                                </div>
                             </div>
-                            <p className="text-base font-semibold lg:text-lg">
+                            <p className="text-lg font-semibold">
                                 {formatRent(listing.rent_amount)}
-                                <span className="text-base font-normal lg:text-lg">
+                                <span className="text-lg font-normal">
                                     {' '}
                                     / mes
                                 </span>

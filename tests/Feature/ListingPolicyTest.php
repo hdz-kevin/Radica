@@ -59,3 +59,20 @@ test('another user cannot update delete publish or unpublish a listing', functio
     expect($policy->publish($other, $listing))->toBeFalse();
     expect($policy->unpublish($other, $listing))->toBeFalse();
 });
+
+test('any user can favorite a published listing, including the owner', function () {
+    $listing = Listing::factory()->create();
+    $policy = new ListingPolicy;
+
+    expect($policy->favorite(User::factory()->create(), $listing))->toBeTrue();
+    expect($policy->favorite($listing->user, $listing))->toBeTrue();
+});
+
+test('nobody can favorite an unpublished listing', function () {
+    $owner = User::factory()->create();
+    $listing = Listing::factory()->for($owner)->unpublished()->create();
+    $policy = new ListingPolicy;
+
+    expect($policy->favorite($owner, $listing))->toBeFalse();
+    expect($policy->favorite(User::factory()->create(), $listing))->toBeFalse();
+});

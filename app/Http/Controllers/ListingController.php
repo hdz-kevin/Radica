@@ -36,6 +36,7 @@ class ListingController extends Controller
         $listings = Listing::query()
             ->published()
             ->with('cover')
+            ->withFavoritedBy($request->user())
             ->when($zone !== '', fn ($query) => $query->inZone($zone))
             ->when($category, fn ($query, ListingCategory $category) => $query->ofCategory($category))
             ->latest('published_at')
@@ -93,7 +94,7 @@ class ListingController extends Controller
     /**
      * Show an individual listing.
      */
-    public function show(Listing $listing): Response
+    public function show(Request $request, Listing $listing): Response
     {
         if (! Gate::allows('view', $listing)) {
             abort(404);
@@ -108,6 +109,7 @@ class ListingController extends Controller
                 'delete' => Gate::allows('delete', $listing),
                 'publish' => Gate::allows('publish', $listing),
             ],
+            'favorited' => $request->user()?->favoritedListings()->whereKey($listing->id)->exists() ?? false,
         ]);
     }
 
