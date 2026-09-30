@@ -113,7 +113,7 @@ export default function ListingsShow({
                     </div>
 
                     <div className="flex min-w-0 flex-col gap-8 lg:col-span-6">
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-2.5">
                             <div className="flex items-center justify-between gap-2">
                                 <h1 className="min-w-0 text-xl font-semibold tracking-tight lg:text-2xl">
                                     {listing.title}
@@ -129,7 +129,7 @@ export default function ListingsShow({
                                     / mes
                                 </span>
                             </p>
-                            <p className="inline-flex items-center gap-2 text-sm lg:text-base">
+                            <p className="inline-flex items-center gap-2 text-base lg:text-[17px]">
                                 <MapPin className="size-4 shrink-0 lg:size-5" />
                                 {formatListingAddress(
                                     listing.street_address,
@@ -140,13 +140,13 @@ export default function ListingsShow({
                             </p>
                         </div>
 
-                        <p className="whitespace-pre-wrap text-sm leading-7 lg:text-base">
+                        <p className="whitespace-pre-wrap text-base leading-7 lg:text-[17px]">
                             {listing.description}
                         </p>
 
                         {listing.category !== 'room' &&
                             (listing.bedrooms !== null || listing.bathrooms !== null) && (
-                                <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm lg:text-base">
+                                <p className="flex flex-wrap gap-x-4 gap-y-1 text-base lg:text-[17px]">
                                     {listing.bedrooms !== null && (
                                         <span className="inline-flex items-center gap-2">
                                             <Bed className="size-5" />
@@ -168,7 +168,7 @@ export default function ListingsShow({
 
                         {includedAmenities.length > 0 && (
                             <section className="grid gap-3">
-                                <h2 className="text-sm font-medium lg:text-base">
+                                <h2 className="text-sm lg:text-base font-medium">
                                     Amenidades y servicios
                                 </h2>
                                 <ul className="flex flex-wrap gap-2.5">
@@ -186,12 +186,25 @@ export default function ListingsShow({
 
                         {(showWhatsApp || showPhone) && (
                             <section className='grid gap-3'>
-                                <h2 className="text-sm font-medium lg:text-base">
+                                <h2 className="text-sm lg:text-base font-medium">
                                     Contacto
                                 </h2>
                                 <div className="flex flex-wrap gap-2.5">
+                                    {showPhone && phoneNumber ? (
+                                        <Button
+                                            asChild
+                                            size="lg"
+                                            className="w-full rounded-md sm:w-auto"
+                                        >
+                                            <a href={telUrl(phoneNumber)}>
+                                                <Phone className='size-5' />
+                                                Llamar
+                                            </a>
+                                        </Button>
+                                    ) : null}
                                     {showWhatsApp && phoneNumber ? (
                                         <Button
+                                            variant="outline"
                                             asChild
                                             size="lg"
                                             className="w-full rounded-md sm:w-auto"
@@ -203,19 +216,6 @@ export default function ListingsShow({
                                             >
                                                 <MessageCircle className='size-5' />
                                                 WhatsApp
-                                            </a>
-                                        </Button>
-                                    ) : null}
-                                    {showPhone && phoneNumber ? (
-                                        <Button
-                                            variant="outline"
-                                            asChild
-                                            size="lg"
-                                            className="w-full rounded-md sm:w-auto"
-                                        >
-                                            <a href={telUrl(phoneNumber)}>
-                                                <Phone className='size-5' />
-                                                Teléfono
                                             </a>
                                         </Button>
                                     ) : null}
@@ -359,7 +359,7 @@ function ListingGallery({
 
 function AmenityChip({ label, icon: Icon }: { label: string; icon: LucideIcon }) {
     return (
-        <span className="border-gray-200 inline-flex h-10 items-center gap-2 rounded-md border px-4 text-sm lg:font-medium">
+        <span className="border-gray-200 inline-flex h-10 items-center gap-2 rounded-md border px-4 text-sm lg:text-base font-medium">
             <Icon className="size-5" />
             {label}
         </span>
