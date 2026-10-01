@@ -84,6 +84,15 @@ export default function ListingsIndex({
             <Head title="Rentas en Teziutlán" />
 
             <div className="flex flex-col gap-6 sm:gap-8 mt-4">
+                <div>
+                    <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
+                        Publicaciones
+                    </h1>
+                    <p className="text-muted-foreground mt-1 text-sm lg:text-base">
+                        Filtra por colonia de Teziutlán o por categorías
+                    </p>
+                </div>
+
                 <section className="flex flex-col items-center gap-6 lg:flex-row lg:items-center" aria-label="Filtros">
                     <div className="w-full max-w-lg lg:max-w-md">
                         <div className="relative">
@@ -94,10 +103,10 @@ export default function ListingsIndex({
                                 id="zone"
                                 value={zone}
                                 maxLength={255}
-                                placeholder="Centro, El Fresnillo, Xoloco…"
+                                placeholder="Centro, El Fresnillo, Francia, El Carmen…"
                                 aria-label="Zona o colonia"
                                 onChange={(event) => setZone(event.target.value)}
-                                className="h-10 pl-9 sm:pl-9 lg:text-[15px] lg:placeholder:text-[15px] rounded-full border-gray-300 dark:border-input"
+                                className="h-10 pl-9 sm:pl-9 text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base rounded-full border-gray-300 dark:border-input"
                             />
                         </div>
                     </div>
@@ -140,7 +149,7 @@ export default function ListingsIndex({
                 ) : (
                     <ul
                         className={cn(
-                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-5 3xl:grid-cols-4',
+                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-4 3xl:grid-cols-4',
                             filtering && 'opacity-60',
                         )}
                     >

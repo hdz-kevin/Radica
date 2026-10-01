@@ -1,4 +1,4 @@
-import { Heart, House, List, Plus } from 'lucide-react';
+import { Heart, House, ListCheck, Plus } from 'lucide-react';
 import { home } from '@/routes';
 import { index as favorites } from '@/routes/favorites';
 import { create, mine } from '@/routes/listings';
@@ -7,7 +7,7 @@ import type { NavItem } from '@/types';
 export function mainNavItems(): NavItem[] {
     return [
         {
-            title: 'Catálogo',
+            title: 'Publicaciones',
             href: home(),
             icon: House,
         },
@@ -24,7 +24,7 @@ export function mainNavItems(): NavItem[] {
         {
             title: 'Mis publicaciones',
             href: mine(),
-            icon: List,
+            icon: ListCheck,
         },
     ];
 }
