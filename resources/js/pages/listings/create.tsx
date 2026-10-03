@@ -16,7 +16,7 @@ export default function ListingsCreate() {
 
             <div className="flex flex-col gap-6 w-full">
                 <div>
-                    <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
+                    <h1 className="text-2xl font-semibold tracking-tight">
                         Publicar vivienda
                     </h1>
                     <p className="text-muted-foreground mt-2 text-sm lg:text-base">

@@ -85,7 +85,7 @@ export default function ListingsIndex({
 
             <div className="flex flex-col gap-6 sm:gap-8 mt-4">
                 <div>
-                    <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
+                    <h1 className="text-2xl font-semibold tracking-tight">
                         Publicaciones
                     </h1>
                     <p className="text-muted-foreground mt-1 text-sm lg:text-base">

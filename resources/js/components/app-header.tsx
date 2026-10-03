@@ -115,7 +115,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                         Crear cuenta
                                     </Link>
                                 </Button>
-                                <Button variant="secondary" asChild size="lg">
+                                <Button variant="ghost" asChild size="lg">
                                     <Link href={login()}>
                                         <LogIn className="size-4" />
                                         Iniciar sesión
