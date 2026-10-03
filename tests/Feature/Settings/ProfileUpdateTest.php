@@ -97,6 +97,21 @@ test('phone number can be cleared on the profile', function () {
     expect($user->fresh()->phone_number)->toBeNull();
 });
 
+test('a user without a password can delete their account', function () {
+    $user = User::factory()->create([
+        'password' => null,
+        'google_id' => 'google-1',
+    ]);
+
+    $this->actingAs($user)
+        ->delete(route('profile.destroy'))
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('home'));
+
+    $this->assertGuest();
+    expect($user->fresh())->toBeNull();
+});
+
 test('correct password must be provided to delete account', function () {
     $user = User::factory()->create();
 

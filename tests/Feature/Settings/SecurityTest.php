@@ -61,6 +61,37 @@ test('password can be updated', function () {
     expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
 });
 
+test('a user without a password can set one', function () {
+    $user = User::factory()->create([
+        'password' => null,
+        'google_id' => 'google-1',
+    ]);
+
+    $this->actingAs($user)
+        ->from(route('security.edit'))
+        ->put(route('user-password.update'), [
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('security.edit'));
+
+    expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
+});
+
+test('current password is required when the account already has one', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->from(route('security.edit'))
+        ->put(route('user-password.update'), [
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])
+        ->assertSessionHasErrors('current_password')
+        ->assertRedirect(route('security.edit'));
+});
+
 test('correct password must be provided to update password', function () {
     $user = User::factory()->create();
 

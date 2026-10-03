@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { GoogleAuthButton } from '@/components/google-auth-button';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -13,13 +14,40 @@ import { request } from '@/routes/password';
 
 type Props = {
     status?: string;
+    error?: string;
     canResetPassword: boolean;
 };
 
-export default function Login({ status, canResetPassword }: Props) {
+export default function Login({ status, error, canResetPassword }: Props) {
     return (
         <>
             <Head title="Log in" />
+
+            <div className="flex flex-col gap-6">
+                {status && (
+                    <div className="text-center text-sm font-medium text-green-600">
+                        {status}
+                    </div>
+                )}
+
+                {error && (
+                    <div className="text-center text-sm font-medium text-red-600">
+                        {error}
+                    </div>
+                )}
+
+                <GoogleAuthButton />
+
+                <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background text-muted-foreground px-2">
+                            o
+                        </span>
+                    </div>
+                </div>
 
             <Form
                 {...store.form()}
@@ -98,12 +126,7 @@ export default function Login({ status, canResetPassword }: Props) {
                     </>
                 )}
             </Form>
-
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            </div>
         </>
     );
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ListingFavoriteController;
 use Illuminate\Support\Facades\Route;
@@ -7,6 +8,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ListingController::class, 'index'])->name('home');
 
 Route::get('favorites/login', [ListingFavoriteController::class, 'redirectToLogin'])->name('favorites.login');
+
+Route::middleware(['guest', 'throttle:google-auth'])->group(function () {
+    Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');

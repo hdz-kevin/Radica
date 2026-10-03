@@ -20,7 +20,8 @@ use Illuminate\Support\Carbon;
  * @property string $email
  * @property string|null $phone_number
  * @property Carbon|null $email_verified_at
- * @property string $password
+ * @property string|null $password
+ * @property string|null $google_id
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -29,8 +30,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Listing> $listings
  */
-#[Fillable(['name', 'email', 'password', 'phone_number'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+#[Fillable(['name', 'email', 'password', 'phone_number', 'google_id'])]
+#[Hidden(['password', 'google_id', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -73,5 +74,13 @@ class User extends Authenticatable
     public function hasPhone(): bool
     {
         return filled($this->phone_number);
+    }
+
+    /**
+     * Whether the user can sign in with a local password.
+     */
+    public function hasPassword(): bool
+    {
+        return filled($this->password);
     }
 }

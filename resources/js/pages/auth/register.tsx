@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { GoogleAuthButton } from '@/components/google-auth-button';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -17,6 +18,20 @@ export default function Register({ passwordRules }: Props) {
     return (
         <>
             <Head title="Register" />
+            <div className="flex flex-col gap-6">
+                <GoogleAuthButton />
+
+                <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background text-muted-foreground px-2">
+                            o
+                        </span>
+                    </div>
+                </div>
+
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
@@ -110,6 +125,7 @@ export default function Register({ passwordRules }: Props) {
                     </>
                 )}
             </Form>
+            </div>
         </>
     );
 }

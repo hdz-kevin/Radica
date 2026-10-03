@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Settings;
 
 use App\Concerns\PasswordValidationRules;
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,8 +18,14 @@ class ProfileDeleteRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'password' => $this->currentPasswordRules(),
-        ];
+        $user = $this->user();
+
+        if ($user instanceof User && $user->hasPassword()) {
+            return [
+                'password' => $this->currentPasswordRules(),
+            ];
+        }
+
+        return [];
     }
 }
