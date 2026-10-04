@@ -42,7 +42,7 @@ export default function Login({ status, error, canResetPassword }: Props) {
                     <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
+                    <div className="relative flex justify-center text-[14px] uppercase">
                         <span className="bg-background text-muted-foreground px-2">
                             o
                         </span>
@@ -58,30 +58,29 @@ export default function Login({ status, error, canResetPassword }: Props) {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">Correo electrónico</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     name="email"
                                     required
-                                    autoFocus
                                     tabIndex={1}
                                     autoComplete="email"
-                                    placeholder="email@example.com"
+                                    placeholder="Correo electrónico"
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
+                                    <Label htmlFor="password">Contraseña</Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
-                                            className="ml-auto text-sm"
+                                            className="ml-auto text-[14px] lg:text-sm"
                                             tabIndex={5}
                                         >
-                                            Forgot your password?
+                                            Olvidaste tu contraseña?
                                         </TextLink>
                                     )}
                                 </div>
@@ -91,7 +90,7 @@ export default function Login({ status, error, canResetPassword }: Props) {
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="Password"
+                                    placeholder="Contraseña"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -102,10 +101,11 @@ export default function Login({ status, error, canResetPassword }: Props) {
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <Label htmlFor="remember">Recordarme</Label>
                             </div>
 
                             <Button
+                                size="lg"
                                 type="submit"
                                 className="mt-4 w-full"
                                 tabIndex={4}
@@ -113,14 +113,14 @@ export default function Login({ status, error, canResetPassword }: Props) {
                                 data-test="login-button"
                             >
                                 {processing && <Spinner />}
-                                Log in
+                                Iniciar sesión
                             </Button>
                         </div>
 
-                        <div className="text-muted-foreground text-center text-sm">
-                            Don't have an account?{' '}
+                        <div className="text-muted-foreground text-center text-sm lg:text-base">
+                            No tienes una cuenta?{' '}
                             <TextLink href={register()} tabIndex={5}>
-                                Sign up
+                                Crear cuenta
                             </TextLink>
                         </div>
                     </>
@@ -132,6 +132,6 @@ export default function Login({ status, error, canResetPassword }: Props) {
 }
 
 Login.layout = {
-    title: 'Log in to your account',
-    description: 'Enter your email and password below to log in',
+    title: 'Iniciar sesión',
+    description: 'Continúa con tu cuenta de google o ingresa tu correo y contraseña',
 };
