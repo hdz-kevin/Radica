@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Features;
@@ -98,4 +99,27 @@ test('already verified user visiting verification link is redirected without fir
 
     Event::assertNotDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+});
+
+test('verification email is written in Spanish', function () {
+    $this->app->setLocale('es');
+
+    $user = User::factory()->unverified()->create();
+
+    $mail = (new VerifyEmail)->toMail($user);
+
+    expect($mail->subject)->toBe('Verifica tu email')
+        ->and($mail->introLines)->toBe([
+            'Para verificar tu email y confirmar tu cuenta, haz clic en el siguiente enlace:',
+        ])
+        ->and($mail->actionText)->toBe('Verificar email')
+        ->and($mail->outroLines)->toBe([
+            'Si tú no creaste la cuenta, puedes ignorar este mensaje.',
+        ]);
+
+    expect($mail->render()->toHtml())
+        ->toContain('¡Hola!')
+        ->toContain('Saludos,')
+        ->toContain('Todos los derechos reservados.')
+        ->toContain('Si tienes problemas para hacer clic en el enlace "Verificar email"');
 });
