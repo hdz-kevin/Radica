@@ -42,7 +42,7 @@ export default function Login({ status, error, canResetPassword }: Props) {
                     <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t" />
                     </div>
-                    <div className="relative flex justify-center text-[14px] uppercase">
+                    <div className="relative flex justify-center text-sm uppercase">
                         <span className="bg-background text-muted-foreground px-2">
                             o
                         </span>

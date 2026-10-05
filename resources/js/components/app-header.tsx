@@ -109,15 +109,13 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                             </DropdownMenu>
                         ) : (
                             <div className="flex shrink-0 items-center md:gap-1">
-                                <Button variant="ghost" asChild size="lg" className="hidden xl:flex">
+                                <Button variant="ghost" asChild className="hidden xl:flex">
                                     <Link href={register()}>
-                                        <UserPlus2 className="size-4" />
                                         Crear cuenta
                                     </Link>
                                 </Button>
-                                <Button variant="ghost" asChild size="lg">
+                                <Button variant="ghost" asChild>
                                     <Link href={login()}>
-                                        <LogIn className="size-4" />
                                         Iniciar sesión
                                     </Link>
                                 </Button>
