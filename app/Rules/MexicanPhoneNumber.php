@@ -23,7 +23,7 @@ class MexicanPhoneNumber implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || preg_match(self::NATIONAL_PATTERN, $value) !== 1) {
-            $fail('The :attribute must be a 10-digit Mexican mobile number.');
+            $fail('validation.mexican_phone')->translate();
         }
     }
 

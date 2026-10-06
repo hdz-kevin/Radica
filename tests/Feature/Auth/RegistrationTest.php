@@ -33,6 +33,81 @@ test('new users can register', function () {
     Notification::assertSentTo($user, VerifyEmail::class);
 });
 
+test('empty registration shows spanish required messages', function () {
+    $this->app->setLocale('es');
+
+    $this->post(route('register.store'), [])
+        ->assertSessionHasErrors([
+            'name' => 'El nombre es obligatorio.',
+            'email' => 'El correo electrónico es obligatorio.',
+            'password' => 'La contraseña es obligatoria.',
+        ]);
+
+    $this->assertGuest();
+});
+
+test('invalid registration email shows a spanish message', function () {
+    $this->app->setLocale('es');
+
+    $this->post(route('register.store'), [
+        'name' => 'Test User',
+        'email' => 'not-an-email',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasErrors([
+        'email' => 'El correo electrónico no es válido.',
+    ]);
+
+    $this->assertGuest();
+});
+
+test('taken registration email shows a spanish message', function () {
+    $this->app->setLocale('es');
+
+    User::factory()->create(['email' => 'taken@example.com']);
+
+    $this->post(route('register.store'), [
+        'name' => 'Test User',
+        'email' => 'taken@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasErrors([
+        'email' => 'El correo electrónico ya está registrado.',
+    ]);
+
+    $this->assertGuest();
+});
+
+test('short registration password shows a spanish message', function () {
+    $this->app->setLocale('es');
+
+    $this->post(route('register.store'), [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'short',
+        'password_confirmation' => 'short',
+    ])->assertSessionHasErrors([
+        'password' => 'La contraseña debe tener al menos 8 caracteres.',
+    ]);
+
+    $this->assertGuest();
+});
+
+test('mismatched registration passwords show a spanish message', function () {
+    $this->app->setLocale('es');
+
+    $this->post(route('register.store'), [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'different',
+    ])->assertSessionHasErrors([
+        'password' => 'Las contraseñas no coinciden.',
+    ]);
+
+    $this->assertGuest();
+});
+
 test('unverified users are sent to the verification notice', function () {
     $user = User::factory()->unverified()->create();
 

@@ -339,8 +339,7 @@ describe('store', function () {
         $this->actingAs($user)
             ->from(route('listings.create'))
             ->post(route('listings.store'), listingPayload())
-            ->assertRedirect(route('listings.create'))
-            ->assertSessionHasErrors('phone_number');
+            ->assertRedirect(route('listings.create'));
 
         expect($user->listings()->count())->toBe(0);
         expect($user->fresh()->phone_number)->toBeNull();
@@ -425,6 +424,36 @@ describe('store', function () {
             ->is_published->toBeTrue();
     });
 
+    test('store shows spanish messages when required fields are missing', function () {
+        $this->app->setLocale('es');
+
+        $user = User::factory()->withPhone()->create();
+
+        $this->actingAs($user)
+            ->from(route('listings.create'))
+            ->post(route('listings.store'), listingPayload([
+                'title' => '',
+                'description' => '',
+                'zone' => '',
+                'rent_amount' => '',
+                'bedrooms' => '',
+                'bathrooms' => '',
+                'images' => [],
+            ]))
+            ->assertRedirect(route('listings.create'))
+            ->assertSessionHasErrors([
+                'title' => 'El título es obligatorio.',
+                'description' => 'La descripción es obligatoria.',
+                'zone' => 'La colonia es obligatoria.',
+                'rent_amount' => 'La renta mensual es obligatoria.',
+                'bedrooms' => 'El número de recámaras es obligatorio.',
+                'bathrooms' => 'El número de baños es obligatorio.',
+                'images' => 'Sube al menos una foto.',
+            ]);
+
+        expect($user->listings()->count())->toBe(0);
+    });
+
     test('rejects a listing without photos', function () {
         $user = User::factory()->withPhone()->create();
 
@@ -497,6 +526,8 @@ describe('store', function () {
     });
 
     test('rejects a photo larger than 10 MB', function () {
+        $this->app->setLocale('es');
+
         $user = User::factory()->withPhone()->create();
         $file = listingImage('grande.jpg')->size(ListingImage::MAX_FILE_KILOBYTES + 1);
 
@@ -506,7 +537,9 @@ describe('store', function () {
                 'images' => [$file],
             ]))
             ->assertRedirect(route('listings.create'))
-            ->assertSessionHasErrors('images.0');
+            ->assertSessionHasErrors([
+                'images.0' => 'Cada foto no debe pesar más de 10 MB.',
+            ]);
 
         expect($user->listings()->count())->toBe(0);
     });

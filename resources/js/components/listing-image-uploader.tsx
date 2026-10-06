@@ -339,7 +339,6 @@ export function ListingImageUploader({
                                     <button
                                         type="button"
                                         onClick={openPicker}
-                                        disabled={atMax}
                                         aria-label="Añadir fotos"
                                         className={cn(
                                             'flex size-17 lg:size-20 items-center justify-center rounded-md border-2 border-dashed',

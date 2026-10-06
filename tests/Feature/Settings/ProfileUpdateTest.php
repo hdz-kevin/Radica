@@ -97,7 +97,27 @@ test('saving a phone number does not prefix it twice', function () {
     expect($user->fresh()->phone_number)->toBe('5215512345678');
 });
 
+test('profile shows spanish messages when name and email are missing', function () {
+    $this->app->setLocale('es');
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->from(route('profile.edit'))
+        ->patch(route('profile.update'), [
+            'name' => '',
+            'email' => '',
+        ])
+        ->assertSessionHasErrors([
+            'name' => 'El nombre es obligatorio.',
+            'email' => 'El correo electrónico es obligatorio.',
+        ])
+        ->assertRedirect(route('profile.edit'));
+});
+
 test('phone number must be 10 digits', function () {
+    $this->app->setLocale('es');
+
     $user = User::factory()->create();
 
     $this->actingAs($user)
@@ -108,7 +128,7 @@ test('phone number must be 10 digits', function () {
             'phone_number' => '5215512345678',
         ])
         ->assertSessionHasErrors([
-            'phone_number' => 'The phone number must be a 10-digit Mexican mobile number.',
+            'phone_number' => 'El teléfono debe ser un número celular de 10 dígitos.',
         ])
         ->assertRedirect(route('profile.edit'));
 

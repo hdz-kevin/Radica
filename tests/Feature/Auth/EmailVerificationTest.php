@@ -108,11 +108,11 @@ test('verification email is written in Spanish', function () {
 
     $mail = (new VerifyEmail)->toMail($user);
 
-    expect($mail->subject)->toBe('Verifica tu email')
+    expect($mail->subject)->toBe('Verifica tu correo electrónico')
         ->and($mail->introLines)->toBe([
-            'Para verificar tu email y confirmar tu cuenta, haz clic en el siguiente enlace:',
+            'Para verificar tu correo electrónico y confirmar tu cuenta, haz clic en el siguiente enlace:',
         ])
-        ->and($mail->actionText)->toBe('Verificar email')
+        ->and($mail->actionText)->toBe('Verificar correo electrónico')
         ->and($mail->outroLines)->toBe([
             'Si tú no creaste la cuenta, puedes ignorar este mensaje.',
         ]);
@@ -121,5 +121,5 @@ test('verification email is written in Spanish', function () {
         ->toContain('¡Hola!')
         ->toContain('Saludos,')
         ->toContain('Todos los derechos reservados.')
-        ->toContain('Si tienes problemas para hacer clic en el enlace "Verificar email"');
+        ->toContain('Si tienes problemas para hacer clic en el enlace "Verificar correo electrónico"');
 });

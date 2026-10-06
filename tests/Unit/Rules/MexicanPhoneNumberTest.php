@@ -10,7 +10,7 @@ test('a 10-digit national number is valid', function (string $phoneNumber) {
 ]);
 
 test('a number that is not 10 national digits is rejected', function (mixed $phoneNumber) {
-    expect(phoneRuleFailure($phoneNumber))->toBe('The :attribute must be a 10-digit Mexican mobile number.');
+    expect(phoneRuleFailure($phoneNumber))->toBe('validation.mexican_phone');
 })->with([
     'too short' => '551234567',
     'too long' => '55123456789',
@@ -26,8 +26,13 @@ function phoneRuleFailure(mixed $phoneNumber): ?string
     (new MexicanPhoneNumber)->validate(
         'phone_number',
         $phoneNumber,
-        function (string $failure) use (&$message): void {
+        function (string $failure) use (&$message) {
             $message = $failure;
+
+            return new class
+            {
+                public function translate(): void {}
+            };
         },
     );
 

@@ -51,6 +51,7 @@ export default function Profile({
                         preserveScroll: true,
                     }}
                     className="space-y-6"
+                    noValidate
                 >
                     {({ processing, errors }) => (
                         <>

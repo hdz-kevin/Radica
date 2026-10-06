@@ -42,6 +42,18 @@ test('users with two factor enabled are redirected to two factor challenge', fun
     $this->assertGuest();
 });
 
+test('empty login shows spanish required messages', function () {
+    $this->app->setLocale('es');
+
+    $this->post(route('login.store'), [])
+        ->assertSessionHasErrors([
+            'email' => 'El correo electrónico es obligatorio.',
+            'password' => 'La contraseña es obligatoria.',
+        ]);
+
+    $this->assertGuest();
+});
+
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 

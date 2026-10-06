@@ -65,6 +65,7 @@ export function ListingForm({
             method={method}
             encType="multipart/form-data"
             className="flex flex-col gap-8 lg:mt-4 novalidate"
+            noValidate
         >
             {({ processing, errors }) => (
                 <div className="flex flex-col gap-8 lg:grid lg:grid-cols-11 lg:items-start">

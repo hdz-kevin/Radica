@@ -106,11 +106,11 @@ return [
     'not_regex' => 'El formato del campo :attribute no es válido.',
     'numeric' => 'El campo :attribute debe ser un número.',
     'password' => [
-        'letters' => 'El campo :attribute debe contener al menos una letra.',
-        'mixed' => 'El campo :attribute debe contener al menos una letra mayúscula y una minúscula.',
-        'numbers' => 'El campo :attribute debe contener al menos un número.',
-        'symbols' => 'El campo :attribute debe contener al menos un símbolo.',
-        'uncompromised' => 'El :attribute proporcionado ha aparecido en una filtración de datos. Por favor, elige un :attribute diferente.',
+        'letters' => 'La contraseña debe contener al menos una letra.',
+        'mixed' => 'La contraseña debe contener al menos una mayúscula y una minúscula.',
+        'numbers' => 'La contraseña debe contener al menos un número.',
+        'symbols' => 'La contraseña debe contener al menos un símbolo.',
+        'uncompromised' => 'Esta contraseña apareció en una filtración de datos. Elige otra.',
     ],
     'present' => 'El campo :attribute debe estar presente.',
     'present_if' => 'El campo :attribute debe estar presente cuando :other sea :value.',
@@ -148,6 +148,113 @@ return [
     'url' => 'El campo :attribute debe ser una URL válida.',
     'ulid' => 'El campo :attribute debe ser un ULID válido.',
     'uuid' => 'El campo :attribute debe ser un UUID válido.',
+    'mexican_phone' => 'El teléfono debe ser un número celular de 10 dígitos.',
 
-    'attributes' => [],
+    'custom' => [
+        'name' => [
+            'required' => 'El nombre es obligatorio.',
+            'string' => 'El nombre debe ser texto.',
+            'max' => [
+                'string' => 'El nombre no debe tener más de :max caracteres.',
+            ],
+        ],
+        'email' => [
+            'required' => 'El correo electrónico es obligatorio.',
+            'string' => 'El correo electrónico debe ser texto.',
+            'email' => 'El correo electrónico no es válido.',
+            'max' => [
+                'string' => 'El correo electrónico no debe tener más de :max caracteres.',
+            ],
+            'unique' => 'El correo electrónico ya está registrado.',
+        ],
+        'password' => [
+            'required' => 'La contraseña es obligatoria.',
+            'string' => 'La contraseña debe ser texto.',
+            'confirmed' => 'Las contraseñas no coinciden.',
+            'min' => [
+                'string' => 'La contraseña debe tener al menos :min caracteres.',
+            ],
+        ],
+        'title' => [
+            'required' => 'El título es obligatorio.',
+            'max' => [
+                'string' => 'El título no debe tener más de :max caracteres.',
+            ],
+        ],
+        'description' => [
+            'required' => 'La descripción es obligatoria.',
+            'max' => [
+                'string' => 'La descripción no debe tener más de :max caracteres.',
+            ],
+        ],
+        'zone' => [
+            'required' => 'La colonia es obligatoria.',
+            'max' => [
+                'string' => 'La colonia no debe tener más de :max caracteres.',
+            ],
+        ],
+        'street_address' => [
+            'max' => [
+                'string' => 'La dirección no debe tener más de :max caracteres.',
+            ],
+        ],
+        'category' => [
+            'required' => 'La categoría es obligatoria.',
+            'enum' => 'La categoría seleccionada no es válida.',
+        ],
+        'rent_amount' => [
+            'required' => 'La renta mensual es obligatoria.',
+            'integer' => 'La renta mensual debe contener solo dígitos numéricos.',
+            'min' => [
+                'numeric' => 'La renta mensual debe ser al menos :min.',
+            ],
+        ],
+        'bedrooms' => [
+            'required' => 'El número de recámaras es obligatorio.',
+            'integer' => 'El número de recámaras debe ser un número entero.',
+            'min' => [
+                'numeric' => 'El número de recámaras debe ser al menos :min.',
+            ],
+        ],
+        'bathrooms' => [
+            'required' => 'El número de baños es obligatorio.',
+            'integer' => 'El número de baños debe ser un número entero.',
+            'min' => [
+                'numeric' => 'El número de baños debe ser al menos :min.',
+            ],
+        ],
+        'images' => [
+            'required' => 'Sube al menos una foto.',
+            'min' => [
+                'array' => 'Sube al menos :min foto.',
+            ],
+            'max' => [
+                'array' => 'No puedes subir más de :max fotos.',
+            ],
+        ],
+        'images.*' => [
+            'image' => 'Cada archivo debe ser una foto.',
+            'mimes' => 'Cada foto debe ser jpeg, jpg, png, webp o avif.',
+            'max' => [
+                'file' => 'Cada foto no debe pesar más de 10 MB.',
+            ],
+        ],
+    ],
+
+    'attributes' => [
+        'name' => 'nombre',
+        'email' => 'correo electrónico',
+        'password' => 'contraseña',
+        'password_confirmation' => 'confirmación de contraseña',
+        'phone_number' => 'teléfono',
+        'title' => 'título',
+        'description' => 'descripción',
+        'zone' => 'colonia',
+        'street_address' => 'dirección',
+        'category' => 'categoría',
+        'rent_amount' => 'renta mensual',
+        'bedrooms' => 'recámaras',
+        'bathrooms' => 'baños',
+        'images' => 'fotos',
+    ],
 ];

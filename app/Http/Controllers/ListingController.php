@@ -69,9 +69,7 @@ class ListingController extends Controller
     public function store(StoreListingRequest $request, SyncListingImages $sync): RedirectResponse
     {
         if (! $request->user()->hasPhone()) {
-            return back()->withErrors([
-                'phone_number' => 'Guarda tu teléfono de contacto en tu perfil.',
-            ]);
+            return back();
         }
 
         // Create the listing and sync the images
