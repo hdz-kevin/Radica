@@ -34,3 +34,6 @@ Listing::inZone() compares REPLACE(zone, ' ', '') with the search text after str
 
 ## Favorites are a pivot, not a model
 Favorites are a listing_favorites pivot (user_id + listing_id unique, withTimestamps). No Favorite model and no public count. Listing::deleting detaches favorites because soft delete does not fire the FK cascade. Catalog and Favoritos flag the viewer with withFavoritedBy(); guests skip that subquery. Favoritos lists favoritedListings()->published() newest pivot created_at first. Unpublish keeps the row; it reappears when published again.
+
+## Store profile phones as 521 plus 10 digits
+The profile form submits the 10 national digits. User persists phone_number as 521 plus those digits via MexicanPhoneNumber::forStorage, because WhatsApp links use that value unchanged. Values that already start with 521 are stored as-is. Do not ask the user to type 521.

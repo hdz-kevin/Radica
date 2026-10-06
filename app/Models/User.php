@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Rules\MexicanPhoneNumber;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -66,6 +68,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function favoritedListings(): BelongsToMany
     {
         return $this->belongsToMany(Listing::class, 'listing_favorites')->withTimestamps();
+    }
+
+    /**
+     * Persist the 10 national digits with the WhatsApp prefix.
+     */
+    protected function phoneNumber(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value): ?string => MexicanPhoneNumber::forStorage($value),
+        );
     }
 
     /**

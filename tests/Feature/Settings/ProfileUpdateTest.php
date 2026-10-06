@@ -74,12 +74,45 @@ test('phone number can be saved on the profile', function () {
         ->patch(route('profile.update'), [
             'name' => $user->name,
             'email' => $user->email,
-            'phone_number' => '5215512345678',
+            'phone_number' => '5512345678',
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('profile.edit'));
 
     expect($user->fresh()->phone_number)->toBe('5215512345678');
+});
+
+test('saving a phone number does not prefix it twice', function () {
+    $user = User::factory()->withPhone()->create();
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone_number' => '5512345678',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    expect($user->fresh()->phone_number)->toBe('5215512345678');
+});
+
+test('phone number must be 10 digits', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->from(route('profile.edit'))
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone_number' => '5215512345678',
+        ])
+        ->assertSessionHasErrors([
+            'phone_number' => 'The phone number must be a 10-digit Mexican mobile number.',
+        ])
+        ->assertRedirect(route('profile.edit'));
+
+    expect($user->fresh()->phone_number)->toBeNull();
 });
 
 test('phone number can be cleared on the profile', function () {

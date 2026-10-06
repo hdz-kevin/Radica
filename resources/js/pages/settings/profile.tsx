@@ -15,6 +15,14 @@ type PageProps = {
     auth: Auth;
 };
 
+function nationalPhoneNumber(phoneNumber: string | null | undefined): string {
+    if (!phoneNumber?.startsWith('521')) {
+        return phoneNumber ?? '';
+    }
+
+    return phoneNumber.slice(3);
+}
+
 export default function Profile({
     mustVerifyEmail,
     status,
@@ -92,17 +100,18 @@ export default function Profile({
                                 <Input
                                     id="phone_number"
                                     className="mt-1 block w-full"
-                                    defaultValue={auth.user?.phone_number ?? ''}
+                                    defaultValue={nationalPhoneNumber(
+                                        auth.user?.phone_number,
+                                    )}
                                     name="phone_number"
                                     inputMode="numeric"
                                     autoComplete="tel"
-                                    placeholder="5215512345678"
+                                    placeholder="2321234567"
                                 />
                                 <p className="text-muted-foreground text-sm">
-                                    Mexican mobile number as 521 followed by 10
-                                    digits. Used on all your listings.
+                                    10-digit mobile number, without the country
+                                    code. Used on all your listings.
                                 </p>
-                                {/* TODO: Agregar validación. Traducir y mejorar mensaje. */}
                                 {auth.user?.phone_number == null ? (
                                     <p className="text-muted-foreground text-sm">
                                         If this is empty, your listings will
