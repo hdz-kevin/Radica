@@ -102,11 +102,11 @@ class ListingFactory extends Factory
         return $this->afterCreating(function (Listing $listing) use ($count): void {
             for ($i = 0; $i < $count; $i++) {
                 $path = 'listings/'.$listing->id.'/'.fake()->uuid().'.jpg';
-                Storage::disk(ListingImage::DISK)->put($path, 'fake-image');
+                Storage::disk(ListingImage::storageDisk())->put($path, 'fake-image');
 
                 ListingImage::factory()->for($listing)->create([
                     'path' => $path,
-                    'disk' => ListingImage::DISK,
+                    'disk' => ListingImage::storageDisk(),
                     'position' => $i,
                     'is_cover' => $i === 0,
                 ]);

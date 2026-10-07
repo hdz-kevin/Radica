@@ -79,7 +79,7 @@ class SyncListingImages
                     throw new RuntimeException('Missing uploaded image for order slot.');
                 }
 
-                $path = $file->store('listings/'.$listing->id, ListingImage::DISK);
+                $path = $file->store('listings/'.$listing->id, ListingImage::storageDisk());
 
                 if (! is_string($path)) {
                     throw new RuntimeException('Unable to store listing image.');
@@ -87,7 +87,7 @@ class SyncListingImages
 
                 $image = $listing->images()->make([
                     'path' => $path,
-                    'disk' => ListingImage::DISK,
+                    'disk' => ListingImage::storageDisk(),
                 ]);
             } else {
                 $image = $existingById->get((int) $item);

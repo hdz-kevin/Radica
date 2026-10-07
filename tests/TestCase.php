@@ -13,7 +13,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        Storage::fake(ListingImage::DISK);
+        Storage::fake(ListingImage::storageDisk());
     }
 
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void

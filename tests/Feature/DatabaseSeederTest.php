@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
 test('the database seeder creates a varied catalog for filter work', function () {
-    Storage::fake(ListingImage::DISK);
+    Storage::fake(ListingImage::storageDisk());
 
     $this->seed();
 
@@ -24,7 +24,7 @@ test('the database seeder creates a varied catalog for filter work', function ()
 
     expect($cover)->not->toBeNull();
 
-    $bytes = Storage::disk(ListingImage::DISK)->get($cover->path);
+    $bytes = Storage::disk(ListingImage::storageDisk())->get($cover->path);
 
     expect($bytes)->toStartWith("\xFF\xD8");
     expect(strlen($bytes))->toBeGreaterThan(10 * 1024);

@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Listing Image Disk
+    |--------------------------------------------------------------------------
+    |
+    | Local development stores listing photos on the public disk. Production
+    | sets LISTING_IMAGE_DISK=s3 so uploads go to the Cloud object-storage
+    | bucket.
+    |
+    */
+
+    'listing_image_disk' => env('LISTING_IMAGE_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |

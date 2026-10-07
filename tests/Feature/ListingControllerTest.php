@@ -302,7 +302,7 @@ describe('create', function () {
 
 describe('store', function () {
     beforeEach(function () {
-        Storage::fake(ListingImage::DISK);
+        Storage::fake(ListingImage::storageDisk());
     });
 
     test('redirects guests to login', function () {
@@ -487,7 +487,7 @@ describe('store', function () {
             ->position->toBe(0)
             ->is_cover->toBeTrue();
 
-        Storage::disk(ListingImage::DISK)->assertExists($image->path);
+        Storage::disk(ListingImage::storageDisk())->assertExists($image->path);
 
         $this->get(route('listings.show', $listing))
             ->assertOk()
@@ -504,6 +504,26 @@ describe('store', function () {
                 ->component('listings/index')
                 ->where('listings.0.cover_url', $image->url())
             );
+    });
+
+    test('stores a photo on the configured listing image disk', function () {
+        config(['filesystems.listing_image_disk' => 'listing-images']);
+        Storage::fake('listing-images');
+
+        $user = User::factory()->withPhone()->create();
+
+        $this->actingAs($user)
+            ->post(route('listings.store'), listingPayload([
+                'images' => [listingImage('sala.jpg')],
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $image = $user->listings()->first()->images()->first();
+
+        expect($image->disk)->toBe('listing-images');
+        Storage::disk('listing-images')->assertExists($image->path);
+        Storage::disk(ListingImage::DISK)->assertMissing($image->path);
     });
 
     test('rejects a listing with more than 15 photos', function () {
@@ -611,7 +631,7 @@ describe('edit', function () {
 
 describe('update', function () {
     beforeEach(function () {
-        Storage::fake(ListingImage::DISK);
+        Storage::fake(ListingImage::storageDisk());
     });
 
     test('updates a listing for the owner without requiring an existing phone', function () {
@@ -720,8 +740,8 @@ describe('update', function () {
             ->is_cover->toBeFalse()
             ->position->toBe(1);
 
-        Storage::disk(ListingImage::DISK)->assertMissing($removed->path);
-        Storage::disk(ListingImage::DISK)->assertExists($images[1]->path);
+        Storage::disk(ListingImage::storageDisk())->assertMissing($removed->path);
+        Storage::disk(ListingImage::storageDisk())->assertExists($images[1]->path);
         $this->assertDatabaseMissing('listing_images', ['id' => $removed->id]);
     });
 
@@ -795,7 +815,7 @@ describe('update', function () {
             ->is_cover->toBeFalse()
             ->position->toBe(2);
 
-        Storage::disk(ListingImage::DISK)->assertExists($images[0]->path);
+        Storage::disk(ListingImage::storageDisk())->assertExists($images[0]->path);
     });
 
     test('interleaves a new photo between kept photos', function () {
@@ -827,7 +847,7 @@ describe('update', function () {
             ->is_cover->toBeFalse()
             ->position->toBe(2);
 
-        Storage::disk(ListingImage::DISK)->assertExists($images[1]->path);
+        Storage::disk(ListingImage::storageDisk())->assertExists($images[1]->path);
     });
 
     test('rejects an update when new photo slots do not match uploaded files', function () {
@@ -922,7 +942,7 @@ describe('publish', function () {
 
 describe('destroy', function () {
     beforeEach(function () {
-        Storage::fake(ListingImage::DISK);
+        Storage::fake(ListingImage::storageDisk());
     });
 
     test('soft deletes a listing for the owner', function () {
@@ -964,6 +984,6 @@ describe('destroy', function () {
 
         $this->assertSoftDeleted($listing);
         $this->assertDatabaseMissing('listing_images', ['listing_id' => $listing->id]);
-        Storage::disk(ListingImage::DISK)->assertMissing($path);
+        Storage::disk(ListingImage::storageDisk())->assertMissing($path);
     });
 });

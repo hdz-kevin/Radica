@@ -31,6 +31,20 @@ class ListingImage extends Model
     public const MAX_FILE_KILOBYTES = 10240;
 
     /**
+     * Disk that receives listing images. Defaults to the local public disk.
+     */
+    public static function storageDisk(): string
+    {
+        $disk = config('filesystems.listing_image_disk');
+
+        if (! is_string($disk) || $disk === '') {
+            return self::DISK;
+        }
+
+        return $disk;
+    }
+
+    /**
      * @var array<string, mixed>
      */
     protected $attributes = [

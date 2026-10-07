@@ -95,7 +95,7 @@ class Listing extends Model
                 Storage::disk($image->disk)->delete($image->path);
             }
 
-            Storage::disk(ListingImage::DISK)->deleteDirectory('listings/'.$listing->id);
+            Storage::disk(ListingImage::storageDisk())->deleteDirectory('listings/'.$listing->id);
             $listing->images()->delete();
         });
     }

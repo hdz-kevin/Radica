@@ -19,7 +19,7 @@ class ListingImageFactory extends Factory
         return [
             'listing_id' => Listing::factory(),
             'path' => 'listings/placeholder.jpg',
-            'disk' => ListingImage::DISK,
+            'disk' => ListingImage::storageDisk(),
             'position' => 0,
             'is_cover' => true,
         ];

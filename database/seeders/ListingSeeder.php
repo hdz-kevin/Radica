@@ -1676,11 +1676,11 @@ class ListingSeeder extends Seeder
         for ($position = 0; $position < $count; $position++) {
             $fixture = $fixtures[($listing->id + $position) % count($fixtures)];
             $path = 'listings/'.$listing->id.'/'.Str::uuid().'.jpg';
-            Storage::disk(ListingImage::DISK)->put($path, File::get($fixture));
+            Storage::disk(ListingImage::storageDisk())->put($path, File::get($fixture));
 
             ListingImage::factory()->for($listing)->create([
                 'path' => $path,
-                'disk' => ListingImage::DISK,
+                'disk' => ListingImage::storageDisk(),
                 'position' => $position,
                 'is_cover' => $position === 0,
             ]);
