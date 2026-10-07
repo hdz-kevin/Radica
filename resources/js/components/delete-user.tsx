@@ -24,15 +24,13 @@ export default function DeleteUser() {
         <div className="space-y-6">
             <Heading
                 variant="small"
-                title="Delete account"
-                description="Delete your account and all of its resources"
+                title="Eliminar cuenta"
+                description="Elimina tu cuenta y todos sus datos"
             />
             <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
                 <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
-                    <p className="font-medium">Warning</p>
-                    <p className="text-sm">
-                        Please proceed with caution, this cannot be undone.
-                    </p>
+                    <p className="font-medium">Advertencia</p>
+                    <p className="text-sm">Esta acción no se puede deshacer.</p>
                 </div>
 
                 <Dialog>
@@ -41,18 +39,18 @@ export default function DeleteUser() {
                             variant="destructive"
                             data-test="delete-user-button"
                         >
-                            Delete account
+                            Eliminar cuenta
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogTitle>
-                            Are you sure you want to delete your account?
+                            ¿Seguro que quieres eliminar tu cuenta?
                         </DialogTitle>
                         <DialogDescription>
-                            Once your account is deleted, all of its resources
-                            and data will also be permanently deleted.
+                            Al eliminar tu cuenta, todos sus datos se borrarán
+                            de forma permanente.
                             {hasPassword &&
-                                ' Please enter your password to confirm you would like to permanently delete your account.'}
+                                ' Escribe tu contraseña para confirmar que quieres eliminar tu cuenta de forma permanente.'}
                         </DialogDescription>
 
                         <Form
@@ -72,14 +70,14 @@ export default function DeleteUser() {
                                                 htmlFor="password"
                                                 className="sr-only"
                                             >
-                                                Password
+                                                Contraseña
                                             </Label>
 
                                             <PasswordInput
                                                 id="password"
                                                 name="password"
                                                 ref={passwordInput}
-                                                placeholder="Password"
+                                                placeholder="Ingresa tu contraseña"
                                                 autoComplete="current-password"
                                             />
 
@@ -97,7 +95,7 @@ export default function DeleteUser() {
                                                     resetAndClearErrors()
                                                 }
                                             >
-                                                Cancel
+                                                Cancelar
                                             </Button>
                                         </DialogClose>
 
@@ -110,7 +108,7 @@ export default function DeleteUser() {
                                                 type="submit"
                                                 data-test="confirm-delete-user-button"
                                             >
-                                                Delete account
+                                                Eliminar cuenta
                                             </button>
                                         </Button>
                                     </DialogFooter>

@@ -34,15 +34,15 @@ export default function Profile({
 
     return (
         <>
-            <Head title="Profile settings" />
+            <Head title="Perfil" />
 
-            <h1 className="sr-only">Profile settings</h1>
+            <h1 className="sr-only">Configuración de perfil</h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Profile"
-                    description="Update your name, email, and phone number"
+                    title="Perfil"
+                    description="Puedes actualizar tu nombre, correo y teléfono"
                 />
 
                 <Form
@@ -56,7 +56,7 @@ export default function Profile({
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">Nombre</Label>
 
                                 <Input
                                     id="name"
@@ -65,7 +65,7 @@ export default function Profile({
                                     name="name"
                                     required
                                     autoComplete="name"
-                                    placeholder="Full name"
+                                    placeholder="Nombre completo"
                                 />
 
                                 <InputError
@@ -75,7 +75,7 @@ export default function Profile({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">Correo electrónico</Label>
 
                                 <Input
                                     id="email"
@@ -85,7 +85,7 @@ export default function Profile({
                                     name="email"
                                     required
                                     autoComplete="username"
-                                    placeholder="Email address"
+                                    placeholder="Correo electrónico"
                                 />
 
                                 <InputError
@@ -95,9 +95,7 @@ export default function Profile({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="phone_number">
-                                    Phone number
-                                </Label>
+                                <Label htmlFor="phone_number">Teléfono</Label>
                                 <Input
                                     id="phone_number"
                                     className="mt-1 block w-full"
@@ -107,18 +105,11 @@ export default function Profile({
                                     name="phone_number"
                                     inputMode="numeric"
                                     autoComplete="tel"
-                                    placeholder="2321234567"
+                                    placeholder="232 123 4567"
                                 />
-                                <p className="text-muted-foreground text-sm">
-                                    10-digit mobile number, without the country
-                                    code. Used on all your listings.
+                                <p className="text-muted-foreground text-sm lg:text-base">
+                                    Número de teléfono al que podrán contactarte
                                 </p>
-                                {auth.user?.phone_number == null ? (
-                                    <p className="text-muted-foreground text-sm">
-                                        If this is empty, your listings will
-                                        have no WhatsApp or call button.
-                                    </p>
-                                ) : null}
                                 <InputError
                                     className="mt-2"
                                     message={errors.phone_number}
@@ -128,23 +119,23 @@ export default function Profile({
                             {mustVerifyEmail &&
                                 auth.user?.email_verified_at === null && (
                                     <div>
-                                        <p className="text-muted-foreground -mt-4 text-sm">
-                                            Your email address is unverified.{' '}
+                                        <p className="text-muted-foreground -mt-2 text-sm lg:text-base">
+                                            Tu correo electrónico no está
+                                            verificado.{' '}
                                             <Link
                                                 href={send()}
                                                 as="button"
                                                 className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                             >
-                                                Click here to re-send the
-                                                verification email.
+                                                Haz clic aquí para reenviarte el correo de verificación.
                                             </Link>
                                         </p>
 
                                         {status ===
                                             'verification-link-sent' && (
-                                            <div className="mt-2 text-sm font-medium text-green-600">
-                                                A new verification link has been
-                                                sent to your email address.
+                                            <div className="mt-2 text-sm lg:text-base font-medium text-green-600">
+                                                Te enviamos un nuevo enlace de
+                                                verificación a tu correo.
                                             </div>
                                         )}
                                     </div>
@@ -155,7 +146,7 @@ export default function Profile({
                                     disabled={processing}
                                     data-test="update-profile-button"
                                 >
-                                    Save
+                                    Guardar
                                 </Button>
                             </div>
                         </>
@@ -163,7 +154,7 @@ export default function Profile({
                 </Form>
             </div>
 
-            <DeleteUser />
+            {/* <DeleteUser /> */}
         </>
     );
 }
@@ -171,7 +162,7 @@ export default function Profile({
 Profile.layout = {
     breadcrumbs: [
         {
-            title: 'Profile settings',
+            title: 'Configuración del perfil',
             href: edit(),
         },
     ],

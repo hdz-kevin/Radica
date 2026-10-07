@@ -23,7 +23,7 @@ return [
     'can' => 'El campo :attribute contiene un valor no autorizado.',
     'confirmed' => 'La confirmación del campo :attribute no coincide.',
     'contains' => 'El campo :attribute no contiene un valor requerido.',
-    'current_password' => 'La contraseña es incorrecta.',
+    'current_password' => 'Contraseña actual incorrecta.',
     'date' => 'El campo :attribute no es una fecha válida.',
     'date_equals' => 'El campo :attribute debe ser una fecha igual a :date.',
     'date_format' => 'El campo :attribute no corresponde al formato :format.',
@@ -148,7 +148,7 @@ return [
     'url' => 'El campo :attribute debe ser una URL válida.',
     'ulid' => 'El campo :attribute debe ser un ULID válido.',
     'uuid' => 'El campo :attribute debe ser un UUID válido.',
-    'mexican_phone' => 'El teléfono debe ser un número celular de 10 dígitos.',
+    'mexican_phone' => 'El número de teléfono debe contener 10 dígitos.',
 
     'custom' => [
         'name' => [
@@ -174,6 +174,9 @@ return [
             'min' => [
                 'string' => 'La contraseña debe tener al menos :min caracteres.',
             ],
+        ],
+        'current_password' => [
+            'required' => 'Ingresa tu contraseña actual',
         ],
         'title' => [
             'required' => 'El título es obligatorio.',
@@ -245,6 +248,7 @@ return [
         'name' => 'nombre',
         'email' => 'correo electrónico',
         'password' => 'contraseña',
+        'current_password' => 'contraseña actual',
         'password_confirmation' => 'confirmación de contraseña',
         'phone_number' => 'teléfono',
         'title' => 'título',
