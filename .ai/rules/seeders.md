@@ -6,7 +6,7 @@ paths:
 # Seeders
 
 ## Seeders hold catalog variety, factories stay deterministic
-DatabaseSeeder creates 20 users (test@example.com plus 19 landlords) and 100 Teziutlán listings with 1–5 public-disk JPEGs so filter work has volume. Zone names are a private array in ListingSeeder, not a colonia catalog. Do not randomize ListingFactory::definition() (tests expect zone Centro and rent 12000); put realistic variety only in seeders.
+DatabaseSeeder creates 10 users (test@example.com plus 9 landlords) and 50 Teziutlán listings with 1–5 public-disk JPEGs so filter work has volume. Zone names are a private array in ListingSeeder, not a colonia catalog. Do not randomize ListingFactory::definition() (tests expect zone Centro and rent 12000); put realistic variety only in seeders.
 
 ## Seed listing photos from Unsplash fixtures
 Listing seed photos come from committed Unsplash JPEGs in database/seeders/fixtures/listings/{apartment,room,house}/ (10 per category). Copy and recycle those files onto the public disk. Do not generate colored GD placeholders.

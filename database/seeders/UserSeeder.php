@@ -40,16 +40,6 @@ class UserSeeder extends Seeder
             'Sofía Guadalupe Díaz',
             'Fernando Castillo',
             'Paola Martínez',
-            'Ricardo Vázquez',
-            'Gabriela Ortiz',
-            'Alejandro Mendoza',
-            'Karina López',
-            'Diego Armando Cruz',
-            'Valeria Sánchez',
-            'Roberto Navarro',
-            'Itzel Ramírez',
-            'Héctor Aguilar',
-            'Montserrat Peña',
         ];
     }
 

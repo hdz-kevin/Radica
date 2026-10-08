@@ -11,8 +11,8 @@ test('the database seeder creates a varied catalog for filter work', function ()
 
     $this->seed();
 
-    $this->assertDatabaseCount('users', 20);
-    $this->assertDatabaseCount('listings', 100);
+    $this->assertDatabaseCount('users', 10);
+    $this->assertDatabaseCount('listings', 50);
 
     expect(Listing::query()->published()->count())->toBeGreaterThanOrEqual(40);
 
