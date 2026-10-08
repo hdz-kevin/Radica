@@ -128,7 +128,7 @@ test('phone number must be 10 digits', function () {
             'phone_number' => '5215512345678',
         ])
         ->assertSessionHasErrors([
-            'phone_number' => 'El teléfono debe ser un número celular de 10 dígitos.',
+            'phone_number' => 'El número de teléfono debe contener 10 dígitos.',
         ])
         ->assertRedirect(route('profile.edit'));
 

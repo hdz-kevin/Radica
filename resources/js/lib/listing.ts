@@ -153,10 +153,16 @@ export function yesNo(value: boolean): string {
     return value ? 'Sí' : 'No';
 }
 
+const WHATSAPP_MOBILE_NUMBER = /^521\d{10}$/;
+
 export function whatsAppUrl(phoneNumber: string): string {
     return `https://wa.me/${phoneNumber}`;
 }
 
 export function telUrl(phoneNumber: string): string {
-    return `tel:+${phoneNumber}`;
+    const dialable = WHATSAPP_MOBILE_NUMBER.test(phoneNumber)
+        ? `52${phoneNumber.slice(3)}`
+        : phoneNumber;
+
+    return `tel:+${dialable}`;
 }
