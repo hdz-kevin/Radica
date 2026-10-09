@@ -12,17 +12,17 @@ export function AppBottomNav() {
             aria-label="Navegación principal"
             className="bg-background fixed inset-x-0 bottom-0 z-40 border-t border-t-neutral-200 dark:border-t-neutral-800 pb-[env(safe-area-inset-bottom)] lg:hidden"
         >
-            <ul className="mx-auto flex h-16 max-w-lg items-stretch">
+            <ul className="mx-auto flex h-16 max-w-lg items-stretch justify-between px-2.5">
                 {items.map((item) => {
                     const isActive = isCurrentUrl(item.href);
 
                     return (
-                        <li key={item.title} className="min-w-0 flex-1">
+                        <li key={item.title} className="">
                             <Link
                                 href={item.href}
                                 prefetch
                                 className={cn(
-                                    'flex h-full flex-col items-center justify-center gap-1 px-1 text-[11px] leading-none font-medium',
+                                    'flex h-full flex-col items-center justify-center gap-1 px-1 text-[12px] leading-none font-medium',
                                     isActive
                                         ? 'text-foreground'
                                         : 'text-muted-foreground',
