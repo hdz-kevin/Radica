@@ -13,16 +13,15 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
             <div className="flex flex-col gap-6 sm:gap-8">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-semibold tracking-tight">
+                        <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
                             Mis publicaciones
                         </h1>
-                        <p className="text-muted-foreground mt-1 text-sm">
-                            Publicadas y ocultas. Las eliminadas no aparecen
-                            aquí.
+                        <p className="text-muted-foreground mt-1 text-sm lg:text-base">
+                            Puedes publicar, editar, ocultar o eliminar tus publicaciones.
                         </p>
                     </div>
-                    <Button asChild size="lg">
-                        <Link href={create()}>Publicar</Link>
+                    <Button asChild>
+                        <Link href={create()}> Crear publicación</Link>
                     </Button>
                 </div>
 
@@ -30,7 +29,7 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                     <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
                         Aún no tienes publicaciones.{' '}
                         <Link href={create()} className="underline-offset-4 hover:underline">
-                            Publica la primera
+                            Crea tu primera publicación
                         </Link>
                         .
                     </p>

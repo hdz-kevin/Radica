@@ -15,10 +15,10 @@ export default function FavoritesIndex({
 
             <div className="flex flex-col gap-6 sm:gap-8">
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight">
+                    <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
                         Favoritos
                     </h1>
-                    <p className="text-muted-foreground mt-1 text-sm">
+                    <p className="text-muted-foreground mt-1 text-sm lg:text-base">
                         Publicaciones que guardaste para ver más tarde.
                     </p>
                 </div>

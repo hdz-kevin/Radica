@@ -102,7 +102,7 @@ function ListingCardBody({
                 <Badge
                     variant="outline"
                     className={cn(
-                        'absolute top-3 left-3 text-[14px] lg:text-[15px] font-medium',
+                        'absolute top-3 left-3 text-sm font-medium',
                         overlayBadgeClassName,
                     )}
                 >
@@ -112,7 +112,7 @@ function ListingCardBody({
                     <Badge
                         variant="outline"
                         className={cn(
-                            'absolute top-3 right-3 text-[14px] font-medium',
+                            'absolute top-3 right-3 text-sm font-medium',
                             overlayBadgeClassName,
                         )}
                     >
@@ -131,7 +131,7 @@ function ListingCardBody({
             </div>
             <div className="flex flex-col gap-2.5 px-4 py-4">
                 <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="line-clamp-2 text-[17px] font-semibold">
+                    <CardTitle className="line-clamp-2 text-base lg:text-[17px] font-semibold">
                         {listing.title}
                     </CardTitle>
                     {menu}
@@ -145,7 +145,7 @@ function ListingCardBody({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Abrir ${address} en Google Maps`}
-                    className="focus-visible:ring-ring pointer-events-auto inline-flex w-fit items-start gap-1.5 rounded-sm text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                    className="focus-visible:ring-ring pointer-events-auto inline-flex w-fit items-start gap-1.5 rounded-sm text-sm lg:text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
                 >
                     <MapPinIcon
                         aria-hidden="true"

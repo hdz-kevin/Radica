@@ -253,7 +253,6 @@ export function ListingForm({
                             <Button
                                 type="submit"
                                 disabled={processing}
-                                size="lg"
                                 className="w-full rounded-md sm:w-auto"
                             >
                                 {processing && <Spinner /> }

@@ -43,7 +43,7 @@ function visitCatalog(
 }
 
 const categoryChipClassName =
-    'rounded-full px-4 sm:px-6 sm:h-10 sm:min-w-10 first:rounded-full last:rounded-full border-gray-300 dark:border-input data-[variant=outline]:border-l data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:data-[state=on]:bg-primary/90 hover:data-[state=on]:text-primary-foreground dark:data-[state=on]:border-primary-foreground dark:data-[state=on]:bg-primary-foreground dark:data-[state=on]:text-primary dark:hover:data-[state=on]:bg-primary-foreground/90 dark:hover:data-[state=on]:text-primary';
+    'rounded-full text-sm lg:text-base px-4 sm:px-6 sm:h-10 sm:min-w-10 first:rounded-full last:rounded-full border-gray-300 dark:border-input data-[variant=outline]:border-l data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:data-[state=on]:bg-primary/90 hover:data-[state=on]:text-primary-foreground dark:data-[state=on]:border-primary-foreground dark:data-[state=on]:bg-primary-foreground dark:data-[state=on]:text-primary dark:hover:data-[state=on]:bg-primary-foreground/90 dark:hover:data-[state=on]:text-primary';
 
 export default function ListingsIndex({
     listings,
@@ -83,9 +83,9 @@ export default function ListingsIndex({
         <>
             <Head title="Rentas en Teziutlán" />
 
-            <div className="flex flex-col gap-6 sm:gap-8 mt-4">
+            <div className="flex flex-col gap-5 lg:gap-8 mt-4">
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight">
+                    <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
                         Publicaciones
                     </h1>
                     <p className="text-muted-foreground mt-1 text-sm lg:text-base">
@@ -93,7 +93,7 @@ export default function ListingsIndex({
                     </p>
                 </div>
 
-                <section className="flex flex-col items-center gap-6 lg:flex-row lg:items-center" aria-label="Filtros">
+                <section className="flex flex-col items-center gap-3 lg:gap-6 lg:flex-row lg:items-center" aria-label="Filtros">
                     <div className="w-full max-w-lg lg:max-w-md">
                         <div className="relative">
                             <span className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

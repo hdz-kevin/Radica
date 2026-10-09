@@ -123,13 +123,13 @@ export default function ListingsShow({
                     </div>
 
                     <div className="flex min-w-0 flex-col gap-8 lg:col-span-6">
-                        <div className="flex flex-col gap-2.5">
+                        <div className="flex flex-col gap-2.5 lg:gap-3">
                             <div className="flex items-center justify-between gap-2">
                                 <h1 className="min-w-0 text-lg font-semibold tracking-tight lg:text-xl">
                                     {listing.title}
                                 </h1>
                                 <div className="flex shrink-0 items-center gap-2">
-                                    {listing.is_published ? (
+                                    {listing.is_published && !showOwnerActions ? (
                                         <FavoriteButton
                                             listingId={listing.id}
                                             favorited={favorited}
@@ -143,9 +143,9 @@ export default function ListingsShow({
                                     ) : null}
                                 </div>
                             </div>
-                            <p className="text-lg font-semibold">
+                            <p className="text-base lg:text-lg font-semibold">
                                 {formatRent(listing.rent_amount)}
-                                <span className="text-lg font-normal">
+                                <span className="text-base lg:text-lg font-normal">
                                     {' '}
                                     / mes
                                 </span>
@@ -155,21 +155,21 @@ export default function ListingsShow({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={`Abrir ${address} en Google Maps`}
-                                className="focus-visible:ring-ring inline-flex w-fit items-center gap-2 rounded-sm text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                                className="focus-visible:ring-ring inline-flex w-fit items-center gap-2 rounded-sm text-sm lg:text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
                             >
                                 <MapPinIcon className="size-4 shrink-0 lg:size-5" />
                                 {address}
                             </a>
                         </div>
 
-                        <p className="text-base leading-8 whitespace-pre-wrap">
+                        <p className="text-sm lg:text-base leading-7 lg:leading-8 whitespace-pre-wrap">
                             {listing.description}
                         </p>
 
                         {listing.category !== 'room' &&
                             (listing.bedrooms !== null ||
                                 listing.bathrooms !== null) && (
-                                <p className="flex flex-wrap gap-x-5 gap-y-1 text-base">
+                                <p className="flex flex-wrap gap-x-5 gap-y-1 text-sm lg:text-base">
                                     {listing.bedrooms !== null && (
                                         <span className="inline-flex items-center gap-2">
                                             <BedSingle className="size-5 lg:size-6" />
@@ -198,7 +198,7 @@ export default function ListingsShow({
                                 <h2 className="text-sm font-medium lg:text-base">
                                     Amenidades y servicios
                                 </h2>
-                                <ul className="flex flex-wrap gap-2.5">
+                                <ul className="flex flex-wrap gap-3">
                                     {includedAmenities.map((chip) => (
                                         <li key={chip.name}>
                                             <AmenityChip
@@ -220,7 +220,6 @@ export default function ListingsShow({
                                     {showPhone && phoneNumber ? (
                                         <Button
                                             asChild
-                                            size="lg"
                                             className="w-full rounded-md sm:w-auto"
                                         >
                                             <a href={telUrl(phoneNumber)}>
@@ -233,7 +232,6 @@ export default function ListingsShow({
                                         <Button
                                             variant="outline"
                                             asChild
-                                            size="lg"
                                             className="w-full rounded-md sm:w-auto"
                                         >
                                             <a
@@ -403,7 +401,7 @@ function AmenityChip({
     icon: LucideIcon;
 }) {
     return (
-        <span className="bg-muted/40 inline-flex h-10 items-center gap-2 rounded-md border border-gray-200 px-4 text-sm font-medium">
+        <span className="bg-muted/40 inline-flex h-9 lg:h-10 items-center gap-2 rounded-md border border-gray-200 px-3 lg:px-4 text-sm font-medium lg:text-base">
             <Icon className="size-5" />
             {label}
         </span>
