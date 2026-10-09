@@ -17,7 +17,7 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                             Mis publicaciones
                         </h1>
                         <p className="text-muted-foreground mt-1 text-sm lg:text-base">
-                            Puedes publicar, editar, ocultar o eliminar tus publicaciones.
+                            Puedes crear publicaciones, editarlas, ocultarlas o eliminarlas.
                         </p>
                     </div>
                     <Button asChild>
@@ -26,7 +26,7 @@ export default function ListingsMine({ listings }: { listings: ListingMine[] }) 
                 </div>
 
                 {listings.length === 0 ? (
-                    <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
+                    <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm lg:text-base">
                         Aún no tienes publicaciones.{' '}
                         <Link href={create()} className="underline-offset-4 hover:underline">
                             Crea tu primera publicación

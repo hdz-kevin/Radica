@@ -129,7 +129,7 @@ function ListingCardBody({
                     </div>
                 )}
             </div>
-            <div className="flex flex-col gap-2.5 px-4 py-4">
+            <div className="flex flex-col gap-1.5 lg:gap-2 px-4 py-4">
                 <div className="flex items-center justify-between gap-2">
                     <CardTitle className="line-clamp-2 text-base lg:text-[17px] font-semibold">
                         {listing.title}

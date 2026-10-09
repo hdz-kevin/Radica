@@ -24,7 +24,7 @@ export default function FavoritesIndex({
                 </div>
 
                 {listings.length === 0 ? (
-                    <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
+                    <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm lg:text-base">
                         Aún no tienes favoritos.{' '}
                         <Link
                             href={home()}

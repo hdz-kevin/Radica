@@ -83,7 +83,7 @@ export default function ListingsIndex({
         <>
             <Head title="Rentas en Teziutlán" />
 
-            <div className="flex flex-col gap-5 lg:gap-8 mt-4">
+            <div className="flex flex-col gap-5 lg:gap-8">
                 <div>
                     <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
                         Publicaciones
@@ -141,7 +141,7 @@ export default function ListingsIndex({
                 </section>
 
                 {listings.length === 0 ? (
-                    <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
+                    <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm lg:text-base">
                         {hasActiveFilters
                             ? 'No hay publicaciones que coincidan.'
                             : 'No hay publicaciones todavía.'}
