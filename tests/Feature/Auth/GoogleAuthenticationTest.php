@@ -32,14 +32,14 @@ test('authenticated users are not sent to google', function () {
 
     $this->actingAs($user)
         ->get(route('auth.google.redirect'))
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('home'));
 });
 
 test('a new google user is signed in', function () {
     Socialite::fake('google', googleUser());
 
     $this->get(route('auth.google.callback'))
-        ->assertRedirect('/dashboard');
+        ->assertRedirect(route('home'));
 
     $user = User::query()->where('email', 'ada@example.com')->first();
 
@@ -76,7 +76,7 @@ test('the same google account signs into the existing user', function () {
     ]));
 
     $this->get(route('auth.google.callback'))
-        ->assertRedirect('/dashboard');
+        ->assertRedirect(route('home'));
 
     $user->refresh();
 
@@ -97,7 +97,7 @@ test('an unverified local account is linked and its password is cleared', functi
     Socialite::fake('google', googleUser());
 
     $this->get(route('auth.google.callback'))
-        ->assertRedirect('/dashboard');
+        ->assertRedirect(route('home'));
 
     $user->refresh();
 
@@ -119,7 +119,7 @@ test('a verified local account keeps its password when linked', function () {
     Socialite::fake('google', googleUser());
 
     $this->get(route('auth.google.callback'))
-        ->assertRedirect('/dashboard');
+        ->assertRedirect(route('home'));
 
     $user->refresh();
 

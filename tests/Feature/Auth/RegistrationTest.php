@@ -26,7 +26,7 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('home', absolute: false));
 
     $user = User::query()->where('email', 'test@example.com')->first();
 
@@ -112,6 +112,6 @@ test('unverified users are sent to the verification notice', function () {
     $user = User::factory()->unverified()->create();
 
     $this->actingAs($user)
-        ->get(route('dashboard'))
+        ->get(route('listings.mine'))
         ->assertRedirect(route('verification.notice'));
 });

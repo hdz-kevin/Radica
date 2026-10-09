@@ -15,8 +15,6 @@ Route::middleware(['guest', 'throttle:google-auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-
     Route::get('listings/mine', [ListingController::class, 'mine'])->name('listings.mine');
     Route::resource('listings', ListingController::class)->except(['index', 'show']);
     Route::post('listings/{listing}/publish', [ListingController::class, 'publish'])->name('listings.publish');
