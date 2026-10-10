@@ -107,7 +107,7 @@ trait ListingValidationRules
 
                 $validator->errors()->add(
                     'contact_via_whatsapp',
-                    'Elige al menos un canal de contacto: WhatsApp o llamada.',
+                    'Selecciona al menos un canal de contacto o ambas',
                 );
             },
         ];
