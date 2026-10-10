@@ -154,7 +154,7 @@ export default function Profile({
                 </Form>
             </div>
 
-            {/* <DeleteUser /> */}
+            <DeleteUser />
         </>
     );
 }

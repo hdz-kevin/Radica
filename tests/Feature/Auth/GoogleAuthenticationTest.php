@@ -47,6 +47,7 @@ test('a new google user is signed in', function () {
         ->and($user->google_id)->toBe('google-1')
         ->and($user->password)->toBeNull()
         ->and($user->email_verified_at)->not->toBeNull()
+        ->and($user->terms_accepted_at)->not->toBeNull()
         ->and($user->name)->toBe('Ada Lovelace');
 
     $this->assertAuthenticatedAs($user);
@@ -55,7 +56,7 @@ test('a new google user is signed in', function () {
 test('google login returns to the intended url', function () {
     Socialite::fake('google', googleUser());
 
-    $this->get(route('favorites.login', ['return' => '/favorites']));
+    $this->get(route('login.intended', ['return' => '/favorites']));
 
     $this->get(route('auth.google.callback'))
         ->assertRedirect(url('/favorites'));
@@ -125,7 +126,8 @@ test('a verified local account keeps its password when linked', function () {
 
     expect($user->google_id)->toBe('google-1')
         ->and(Hash::check('password', $user->password))->toBeTrue()
-        ->and($user->email_verified_at)->not->toBeNull();
+        ->and($user->email_verified_at)->not->toBeNull()
+        ->and($user->terms_accepted_at)->toBeNull();
 
     $this->assertAuthenticatedAs($user);
 });

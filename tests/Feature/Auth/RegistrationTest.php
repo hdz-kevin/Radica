@@ -23,6 +23,7 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => 'on',
     ]);
 
     $this->assertAuthenticated();
@@ -30,7 +31,25 @@ test('new users can register', function () {
 
     $user = User::query()->where('email', 'test@example.com')->first();
 
+    expect($user->terms_accepted_at)->not->toBeNull();
+
     Notification::assertSentTo($user, VerifyEmail::class);
+});
+
+test('registration requires accepting the terms', function () {
+    $this->app->setLocale('es');
+
+    $this->post(route('register.store'), [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasErrors([
+        'terms' => 'Debes aceptar los Términos y el Aviso de Privacidad.',
+    ]);
+
+    $this->assertGuest();
+    expect(User::query()->count())->toBe(0);
 });
 
 test('empty registration shows spanish required messages', function () {

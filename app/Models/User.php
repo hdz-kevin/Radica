@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $email_verified_at
  * @property string|null $password
  * @property string|null $google_id
+ * @property Carbon|null $terms_accepted_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -40,6 +41,17 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     /**
+     * The listings FK cascade skips Listing::deleting, which removes the photo
+     * files, so listings are force deleted through Eloquent first.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user): void {
+            $user->listings()->withTrashed()->each(fn (Listing $listing): ?bool => $listing->forceDelete());
+        });
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -49,6 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'terms_accepted_at' => 'datetime',
         ];
     }
 

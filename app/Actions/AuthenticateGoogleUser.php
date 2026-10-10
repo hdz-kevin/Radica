@@ -78,6 +78,7 @@ class AuthenticateGoogleUser
             'password' => null,
             'google_id' => $googleId,
             'email_verified_at' => now(),
+            'terms_accepted_at' => now(),
         ]);
         $user->save();
 

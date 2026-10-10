@@ -56,16 +56,6 @@ class ListingFavoriteController extends Controller
     }
 
     /**
-     * Send a guest to login and bring them back to the page they were on.
-     */
-    public function redirectToLogin(Request $request): RedirectResponse
-    {
-        redirect()->setIntendedUrl($this->safeReturnUrl($request->string('return')->toString()));
-
-        return to_route('login');
-    }
-
-    /**
      * Unpublished listings are hidden the same way as the public show page.
      */
     private function ensurePublished(Listing $listing): void
@@ -73,24 +63,5 @@ class ListingFavoriteController extends Controller
         if (! Gate::allows('favorite', $listing)) {
             abort(404);
         }
-    }
-
-    /**
-     * Accept only a same-app relative path. Anything else returns to the catalog.
-     */
-    private function safeReturnUrl(string $return): string
-    {
-        if (
-            $return === ''
-            || ! str_starts_with($return, '/')
-            || str_starts_with($return, '//')
-            || str_contains($return, '\\')
-            || str_contains($return, '://')
-            || str_contains($return, '..')
-        ) {
-            return url('/');
-        }
-
-        return url($return);
     }
 }

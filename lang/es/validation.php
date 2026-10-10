@@ -178,6 +178,9 @@ return [
         'current_password' => [
             'required' => 'Ingresa tu contraseña actual',
         ],
+        'terms' => [
+            'accepted' => 'Debes aceptar los Términos y el Aviso de Privacidad.',
+        ],
         'title' => [
             'required' => 'El título es obligatorio.',
             'max' => [

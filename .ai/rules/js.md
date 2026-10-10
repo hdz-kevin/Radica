@@ -27,7 +27,10 @@ On lg, ListingForm is a 11-column grid: ListingImageUploader spans 5 columns and
 The catalog card has no owner menu and ListingCardResource does not send can. Mis publicaciones shows Ver, Editar, Publicar or Despublicar, and Eliminar from listing.can on ListingMineResource via Gate. Do not compare user ids on the client. The menu click must not follow the card link.
 
 ## Favorite heart does not auto-save for guests
-The heart is on public catalog cards and beside the title on a published show page. On cards it uses pointer-events-auto so it does not follow the card link. It is not on Mis publicaciones. Guests still see it; the link is favorites.login with return set to the current page, and the listing is not saved until they tap again after login. Main nav order is Catálogo, Favoritos, Publicar, Mis publicaciones. Favoritos reuses the public card.
+The heart is on public catalog cards and beside the title on a published show page. On cards it uses pointer-events-auto so it does not follow the card link. It is not on Mis publicaciones. Guests still see it; the link is login.intended with return set to the current page, and the listing is not saved until they tap again after login. Main nav order is Catálogo, Favoritos, Publicar, Mis publicaciones. Favoritos reuses the public card.
 
 ## Profile phone field shows 10 national digits
 The profile phone field shows and submits the 10 national digits. Strip a stored 521 prefix for display (nationalPhoneNumber). Do not put 521 in the placeholder or ask the user to type it. Listing WhatsApp links use the stored 521 value. Call links drop that extra 1 and use 52 plus the 10 national digits.
+
+## Guests go to login through login.intended
+Guest CTAs that should return to the current page (favorite heart, contact button on show) link to login.intended with query return=page.url (import { intended } from '@/routes/login'). favorites.login no longer exists. Run wayfinder:generate with --with-form, otherwise .form() helpers disappear.

@@ -232,7 +232,8 @@ describe('show', function () {
                 ->component('listings/show')
                 ->where('listing.id', $listing->id)
                 ->where('listing.zone', $listing->zone)
-                ->where('listing.user.phone_number', $owner->phone_number)
+                ->where('listing.user.has_phone', true)
+                ->where('listing.user.phone_number', null)
                 ->missing('listing.user.email')
                 ->has('listing.images', 0)
                 ->missing('listing.bathroom_type')
@@ -242,6 +243,19 @@ describe('show', function () {
                 ->where('can.update', false)
                 ->where('can.delete', false)
                 ->where('can.publish', false)
+            );
+    });
+
+    test('shows the owner phone number to an authenticated visitor', function () {
+        $owner = User::factory()->withPhone()->create();
+        $listing = Listing::factory()->for($owner)->create();
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('listings.show', $listing))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('listing.user.has_phone', true)
+                ->where('listing.user.phone_number', $owner->phone_number)
             );
     });
 

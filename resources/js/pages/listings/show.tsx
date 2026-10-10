@@ -1,4 +1,4 @@
-import { Form, Head, Link, setLayoutProps } from '@inertiajs/react';
+import { Form, Head, Link, setLayoutProps, usePage } from '@inertiajs/react';
 import {
     BathIcon,
     BedSingle,
@@ -6,10 +6,13 @@ import {
     Droplet,
     EllipsisVertical,
     Flame,
+    LogIn,
+    LucideLogIn,
     MapPinIcon,
     MessageCircle,
     PawPrint,
     Phone,
+    ShieldAlert,
     Sofa,
     Tv,
     Wifi,
@@ -45,6 +48,8 @@ import {
 } from '@/lib/listing';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
+import { terms } from '@/routes/legal';
+import { intended } from '@/routes/login';
 
 const amenityChips = [
     { name: 'is_furnished', label: 'Amueblado', icon: Sofa },
@@ -83,9 +88,15 @@ export default function ListingsShow({
         ],
     });
 
+    const page = usePage();
+    const isGuest = !page.props.auth.user;
     const phoneNumber = listing.user.phone_number;
     const showWhatsApp = listing.contact_via_whatsapp && phoneNumber !== null;
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
+    const showContactLogin =
+        isGuest &&
+        listing.user.has_phone &&
+        (listing.contact_via_whatsapp || listing.contact_via_phone);
     const includedAmenities = amenityChips.filter((chip) => listing[chip.name]);
     const showOwnerActions = can.update || can.delete || can.publish;
     const address = formatListingAddress(
@@ -172,7 +183,7 @@ export default function ListingsShow({
                                 <p className="flex flex-wrap gap-x-5 gap-y-1 text-sm lg:text-base">
                                     {listing.bedrooms !== null && (
                                         <span className="inline-flex items-center gap-2">
-                                            <BedSingle className="size-5 lg:size-6" />
+                                            <BedSingle className="size-4 lg:size-5" />
                                             {countLabel(
                                                 listing.bedrooms,
                                                 'recámara',
@@ -182,7 +193,7 @@ export default function ListingsShow({
                                     )}
                                     {listing.bathrooms !== null && (
                                         <span className="inline-flex items-center gap-2">
-                                            <BathIcon className="size-5 lg:size-6" />
+                                            <BathIcon className="size-4 lg:size-5" />
                                             {countLabel(
                                                 listing.bathrooms,
                                                 'baño',
@@ -211,12 +222,26 @@ export default function ListingsShow({
                             </section>
                         )}
 
-                        {(showWhatsApp || showPhone) && (
+                        {(showWhatsApp || showPhone || showContactLogin) && (
                             <section className="grid gap-3">
                                 <h2 className="text-sm font-medium lg:text-base">
                                     Contactar
                                 </h2>
                                 <div className="flex flex-wrap gap-3">
+                                    {showContactLogin ? (
+                                        <Button
+                                            asChild
+                                            className="w-full rounded-md sm:w-auto"
+                                        >
+                                            <Link
+                                                href={intended({
+                                                    query: { return: page.url },
+                                                })}
+                                            >
+                                                Inicia sesión para contactar
+                                            </Link>
+                                        </Button>
+                                    ) : null}
                                     {showPhone && phoneNumber ? (
                                         <Button
                                             asChild
@@ -245,6 +270,20 @@ export default function ListingsShow({
                                         </Button>
                                     ) : null}
                                 </div>
+                                <p className="lg:mt-0.5 text-muted-foreground flex gap-2 rounded-md border px-3 py-2 text-xs lg:text-sm">
+                                    <ShieldAlert className="mt-0.5 size-4 shrink-0" />
+                                    <span>
+                                        Radica no verifica los anuncios. Recomendamos
+                                        no depositar dinero antes de conocer el
+                                        inmueble.{' '}
+                                        <Link
+                                            href={terms()}
+                                            className="underline underline-offset-4"
+                                        >
+                                            Consejos de seguridad
+                                        </Link>
+                                    </span>
+                                </p>
                             </section>
                         )}
                     </div>
@@ -402,7 +441,7 @@ function AmenityChip({
 }) {
     return (
         <span className="bg-muted/40 inline-flex h-9 lg:h-10 items-center gap-2 rounded-md border border-gray-200 px-3 lg:px-4 text-sm font-medium lg:text-base">
-            <Icon className="size-5" />
+            <Icon className="size-4" />
             {label}
         </span>
     );

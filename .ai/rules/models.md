@@ -37,3 +37,6 @@ Favorites are a listing_favorites pivot (user_id + listing_id unique, withTimest
 
 ## Store profile phones as 521 plus 10 digits
 The profile form submits the 10 national digits. User persists phone_number as 521 plus those digits via MexicanPhoneNumber::forStorage, because WhatsApp links use that value unchanged. Values that already start with 521 are stored as-is. Do not ask the user to type 521.
+
+## User deletion force deletes listings through Eloquent
+The listings.user_id FK cascade does not fire Listing::deleting, so photo files would be orphaned. User::deleting force deletes every listing withTrashed() first. Keep that hook when changing account deletion.

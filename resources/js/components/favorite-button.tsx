@@ -1,7 +1,7 @@
 import { Form, Link, usePage } from '@inertiajs/react';
 import { Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { login } from '@/routes/favorites';
+import { intended } from '@/routes/login';
 import { destroy, store } from '@/routes/listings/favorite';
 
 type FavoriteButtonProps = {
@@ -42,7 +42,7 @@ export function FavoriteButton({
     if (!auth.user) {
         return (
             <Link
-                href={login({ query: { return: page.url } })}
+                href={intended({ query: { return: page.url } })}
                 aria-label="Inicia sesión para guardar en favoritos"
                 className={favoriteControlClassName(className)}
             >

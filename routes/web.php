@@ -1,13 +1,18 @@
 <?php
 
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ListingFavoriteController;
+use App\Http\Controllers\LoginRedirectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ListingController::class, 'index'])->name('home');
 
-Route::get('favorites/login', [ListingFavoriteController::class, 'redirectToLogin'])->name('favorites.login');
+Route::get('terminos', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('privacidad', [LegalController::class, 'privacy'])->name('legal.privacy');
+
+Route::get('login/continue', LoginRedirectController::class)->name('login.intended');
 
 Route::middleware(['guest', 'throttle:google-auth'])->group(function () {
     Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');

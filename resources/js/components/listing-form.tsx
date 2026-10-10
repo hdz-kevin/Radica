@@ -225,7 +225,7 @@ export function ListingForm({
                         <fieldset className="grid gap-3">
                             <legend className="text-sm lg:text-base font-medium">Vías de contacto</legend>
                             <p className="text-muted-foreground text-sm lg:text-base mt-1">
-                                Por dónde quieres ser contactado?
+                                Por dónde quieres ser contactado? Elige al menos una opción.
                             </p>
                             <div className="flex flex-wrap gap-2.5">
                                 {contactChips.map((chip) => (

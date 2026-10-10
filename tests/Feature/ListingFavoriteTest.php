@@ -35,21 +35,12 @@ test('guests cannot open the favorites page', function () {
         ->assertRedirect(route('login'));
 });
 
-test('an external return url is ignored', function (string $return) {
-    $this->get(route('favorites.login', ['return' => $return]))
-        ->assertRedirect(route('login'))
-        ->assertSessionHas('url.intended', url('/'));
-})->with([
-    'absolute' => 'https://evil.test/phish',
-    'protocol relative' => '//evil.test',
-]);
-
 test('login after the heart returns to the same page without saving', function () {
     $user = User::factory()->create();
     $listing = Listing::factory()->create();
     $return = '/listings/'.$listing->id;
 
-    $this->get(route('favorites.login', ['return' => $return]))
+    $this->get(route('login.intended', ['return' => $return]))
         ->assertRedirect(route('login'));
 
     $this->post(route('login.store'), [

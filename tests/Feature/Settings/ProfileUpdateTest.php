@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Listing;
+use App\Models\ListingImage;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -65,6 +68,24 @@ test('user can delete their account', function () {
 
     $this->assertGuest();
     expect($user->fresh())->toBeNull();
+});
+
+test('deleting the account removes all of its listings and photo files', function () {
+    $user = User::factory()->create();
+    $listing = Listing::factory()->for($user)->withImages(1)->create();
+    $trashed = Listing::factory()->for($user)->trashed()->create();
+    $path = $listing->images()->first()->path;
+    $user->favoritedListings()->attach($otherListing = Listing::factory()->create());
+
+    $this->actingAs($user)
+        ->delete(route('profile.destroy'), ['password' => 'password'])
+        ->assertRedirect(route('home'));
+
+    expect(Listing::withTrashed()->whereKey([$listing->id, $trashed->id])->exists())->toBeFalse();
+    $this->assertDatabaseMissing('listing_images', ['listing_id' => $listing->id]);
+    $this->assertDatabaseMissing('listing_favorites', ['user_id' => $user->id]);
+    $this->assertModelExists($otherListing);
+    Storage::disk(ListingImage::storageDisk())->assertMissing($path);
 });
 
 test('phone number can be saved on the profile', function () {
