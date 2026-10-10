@@ -17,7 +17,7 @@ type Props = {
 export default function Register({ passwordRules }: Props) {
     return (
         <>
-            <Head title="Register" />
+            <Head title="Crear cuenta" />
             <div className="flex flex-col gap-4">
                 <GoogleAuthButton />
 

@@ -1,7 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LogIn, User2, UserPlus, UserPlus2 } from 'lucide-react';
+import { User2 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +19,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { mainNavItems } from '@/lib/main-nav';
 import { cn } from '@/lib/utils';
 import { home, login, register } from '@/routes';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -29,11 +28,48 @@ type Props = {
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
+function HeaderNav({ items }: { items: NavItem[] }) {
+    const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+
+    return (
+        <NavigationMenu className="flex h-full items-stretch">
+            <NavigationMenuList className="flex h-full items-stretch space-x-2">
+                {items.map((item) => (
+                    <NavigationMenuItem
+                        key={item.title}
+                        className="relative flex h-full items-center"
+                    >
+                        <Link
+                            href={item.href}
+                            className={cn(
+                                navigationMenuTriggerStyle(),
+                                whenCurrentUrl(item.href, activeItemStyles),
+                                'h-9 cursor-pointer px-3 text-base',
+                            )}
+                        >
+                            {item.icon && (
+                                <item.icon className="mr-2 size-4" />
+                            )}
+                            {item.title}
+                        </Link>
+                        {isCurrentUrl(item.href) && (
+                            <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white" />
+                        )}
+                    </NavigationMenuItem>
+                ))}
+            </NavigationMenuList>
+        </NavigationMenu>
+    );
+}
+
 export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage();
     const { auth } = page.props;
     const navItems = mainNavItems();
-    const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+    const guestAuthItems: NavItem[] = [
+        { title: 'Crear cuenta', href: register() },
+        { title: 'Iniciar sesión', href: login() },
+    ];
 
     return (
         <>
@@ -51,40 +87,11 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
                     <div className="flex h-full items-center justify-center">
                         <div className="hidden h-full items-center lg:flex">
-                            <NavigationMenu className="flex h-full items-stretch">
-                                <NavigationMenuList className="flex h-full items-stretch space-x-2">
-                                    {navItems.map((item, index) => (
-                                        <NavigationMenuItem
-                                            key={index}
-                                            className="relative flex h-full items-center"
-                                        >
-                                            <Link
-                                                href={item.href}
-                                                className={cn(
-                                                    navigationMenuTriggerStyle(),
-                                                    whenCurrentUrl(
-                                                        item.href,
-                                                        activeItemStyles,
-                                                    ),
-                                                    'h-9 cursor-pointer px-3 text-base',
-                                                )}
-                                            >
-                                                {item.icon && (
-                                                    <item.icon className="mr-2 size-4" />
-                                                )}
-                                                {item.title}
-                                            </Link>
-                                            {isCurrentUrl(item.href) && (
-                                                <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
-                                            )}
-                                        </NavigationMenuItem>
-                                    ))}
-                                </NavigationMenuList>
-                            </NavigationMenu>
+                            <HeaderNav items={navItems} />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-end space-x-2">
+                    <div className="flex h-full items-center justify-end space-x-2">
                         {auth.user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -108,18 +115,18 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
-                            <div className="flex shrink-0 items-center md:gap-1">
-                                <Button variant="ghost" asChild className="hidden xl:flex">
-                                    <Link href={register()}>
-                                        Crear cuenta
-                                    </Link>
+                            <>
+                                <div className="hidden h-full lg:flex">
+                                    <HeaderNav items={guestAuthItems} />
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    asChild
+                                    className="lg:hidden"
+                                >
+                                    <Link href={login()}>Iniciar sesión</Link>
                                 </Button>
-                                <Button variant="ghost" asChild>
-                                    <Link href={login()}>
-                                        Iniciar sesión
-                                    </Link>
-                                </Button>
-                            </div>
+                            </>
                         )}
                     </div>
                 </div>

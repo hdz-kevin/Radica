@@ -22,7 +22,7 @@ type Props = {
 export default function Login({ status, error, canResetPassword }: Props) {
     return (
         <>
-            <Head title="Log in" />
+            <Head title="Iniciar sesión" />
 
             <div className="flex flex-col gap-4">
                 {status && (

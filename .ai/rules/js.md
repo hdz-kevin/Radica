@@ -34,3 +34,6 @@ The profile phone field shows and submits the 10 national digits. Strip a stored
 
 ## Guests go to login through login.intended
 Guest CTAs that should return to the current page (favorite heart, contact button on show) link to login.intended with query return=page.url (import { intended } from '@/routes/login'). favorites.login no longer exists. Run wayfinder:generate with --with-form, otherwise .form() helpers disappear.
+
+## Auth screens keep the app navigation
+Auth pages (login, register, forgot password, reset password, verify email) use the app header from lg up and the bottom nav below lg. Desktop guests always see both Crear cuenta and Iniciar sesión, with the same active underline as Inicio and Favoritos. Protected links still redirect to login; the chrome stays.
