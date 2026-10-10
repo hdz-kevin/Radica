@@ -17,3 +17,6 @@ Login and register show “Al continuar aceptas los Términos y el Aviso de Priv
 
 ## Email registration redirects to verification
 Email registration redirects to verification.notice (/email/verify) via App\Http\Responses\RegisterResponse, bound in FortifyServiceProvider. Do not point fortify.home at that route: login and Google still use fortify.home (/). Google sets email_verified_at when it creates the user.
+
+## Google login always remembers the user
+Google sign-in calls Auth::login($user, remember: true). There is no remember checkbox on that path, and the session cookie alone expires after SESSION_LIFETIME (120 minutes). The remember cookie is what keeps the user signed in afterwards.

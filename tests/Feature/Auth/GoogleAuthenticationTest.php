@@ -53,6 +53,28 @@ test('a new google user is signed in', function () {
     $this->assertAuthenticatedAs($user);
 });
 
+test('google sign in stays signed in after the session expires', function () {
+    Socialite::fake('google', googleUser());
+
+    $response = $this->get(route('auth.google.callback'));
+
+    $user = User::query()->where('email', 'ada@example.com')->first();
+    $cookie = $response->getCookie(auth()->guard()->getRecallerName(), decrypt: false);
+
+    expect($user?->remember_token)->not->toBeEmpty();
+    expect($cookie)->not->toBeNull()
+        ->and($cookie->getExpiresTime())->toBeGreaterThan(now()->addDay()->getTimestamp());
+
+    $this->flushSession();
+    auth()->forgetGuards();
+
+    $this->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+        ->get(route('home'));
+
+    $this->assertAuthenticatedAs($user);
+    expect(auth()->viaRemember())->toBeTrue();
+});
+
 test('google login returns to the intended url', function () {
     Socialite::fake('google', googleUser());
 

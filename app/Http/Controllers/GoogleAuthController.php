@@ -23,7 +23,7 @@ class GoogleAuthController extends Controller
     }
 
     /**
-     * Complete Google sign-in and open a Laravel session.
+     * Complete Google sign-in and remember the user after the session expires.
      */
     public function callback(AuthenticateGoogleUser $authenticate): RedirectResponse
     {
@@ -45,7 +45,7 @@ class GoogleAuthController extends Controller
             return to_route('login')->with('error', $this->rejectionMessage($googleUser));
         }
 
-        Auth::login($user);
+        Auth::login($user, remember: true);
 
         return redirect()->intended(config('fortify.home'));
     }
