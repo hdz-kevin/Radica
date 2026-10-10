@@ -22,8 +22,6 @@ test('new users can register', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
-        'password_confirmation' => 'password',
-        'terms' => 'on',
     ]);
 
     $this->assertAuthenticated();
@@ -36,20 +34,16 @@ test('new users can register', function () {
     Notification::assertSentTo($user, VerifyEmail::class);
 });
 
-test('registration requires accepting the terms', function () {
-    $this->app->setLocale('es');
-
+test('registration records terms acceptance without a checkbox', function () {
     $this->post(route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
-        'password_confirmation' => 'password',
-    ])->assertSessionHasErrors([
-        'terms' => 'Debes aceptar los Términos y el Aviso de Privacidad.',
-    ]);
+    ])->assertRedirect(route('home', absolute: false));
 
-    $this->assertGuest();
-    expect(User::query()->count())->toBe(0);
+    $this->assertAuthenticated();
+
+    expect(User::query()->where('email', 'test@example.com')->first()->terms_accepted_at)->not->toBeNull();
 });
 
 test('empty registration shows spanish required messages', function () {
@@ -112,19 +106,17 @@ test('short registration password shows a spanish message', function () {
     $this->assertGuest();
 });
 
-test('mismatched registration passwords show a spanish message', function () {
-    $this->app->setLocale('es');
+test('registration ignores a mismatched password confirmation', function () {
+    Notification::fake();
 
     $this->post(route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'different',
-    ])->assertSessionHasErrors([
-        'password' => 'Las contraseñas no coinciden.',
-    ]);
+    ])->assertRedirect(route('home', absolute: false));
 
-    $this->assertGuest();
+    $this->assertAuthenticated();
 });
 
 test('unverified users are sent to the verification notice', function () {

@@ -21,8 +21,8 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             ...$this->profileRules(),
-            'password' => $this->passwordRules(),
-            'terms' => ['accepted'],
+            // Registration omits confirmation because the form has a single password field.
+            'password' => $this->passwordRules(confirmed: false),
         ])->validate();
 
         $user = new User;

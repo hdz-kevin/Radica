@@ -13,9 +13,17 @@ export type FlashToast = {
     message: string;
 };
 
+export type AuthAlternateLink = {
+    prompt: string;
+    label: string;
+    href: string;
+};
+
 export type AuthLayoutProps = {
     children?: ReactNode;
     name?: string;
     title?: string;
     description?: string;
+    alternate?: AuthAlternateLink;
+    showFooter?: boolean;
 };
