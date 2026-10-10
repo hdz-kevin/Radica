@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class RegisterResponse implements RegisterResponseContract
 {
     /**
-     * Send a new user registration to the verification notice.
+     * Send a new email signup to the verification notice.
      *
      * @param  Request  $request
      */

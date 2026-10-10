@@ -2,7 +2,7 @@ import { privacy, terms } from '@/routes/legal';
 
 export function AuthConsentNotice() {
     return (
-        <p className="text-muted-foreground text-center text-sm leading-5">
+        <p className="text-muted-foreground text-center text-[13px] leading-5">
             Al continuar aceptas los{' '}
             <a
                 href={terms.url()}
