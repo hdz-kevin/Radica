@@ -25,7 +25,7 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('home', absolute: false));
+    $response->assertRedirect(route('verification.notice', absolute: false));
 
     $user = User::query()->where('email', 'test@example.com')->first();
 
@@ -39,7 +39,7 @@ test('registration records terms acceptance without a checkbox', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
-    ])->assertRedirect(route('home', absolute: false));
+    ])->assertRedirect(route('verification.notice', absolute: false));
 
     $this->assertAuthenticated();
 
@@ -114,7 +114,7 @@ test('registration ignores a mismatched password confirmation', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'different',
-    ])->assertRedirect(route('home', absolute: false));
+    ])->assertRedirect(route('verification.notice', absolute: false));
 
     $this->assertAuthenticated();
 });
