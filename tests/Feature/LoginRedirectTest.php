@@ -9,7 +9,7 @@ test('a same-app return path becomes the intended url', function () {
 test('an external return url is ignored', function (string $return) {
     $this->get(route('login.intended', ['return' => $return]))
         ->assertRedirect(route('login'))
-        ->assertSessionHas('url.intended', url('/'));
+        ->assertSessionHas('url.intended', route('listings.index'));
 })->with([
     'absolute' => 'https://evil.test/phish',
     'protocol relative' => '//evil.test',

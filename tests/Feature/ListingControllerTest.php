@@ -52,7 +52,7 @@ describe('index', function () {
         Listing::factory()->unpublished()->create();
         Listing::factory()->trashed()->create();
 
-        $this->get(route('home'))
+        $this->get(route('listings.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -80,7 +80,7 @@ describe('index', function () {
             'published_at' => now(),
         ]);
 
-        $this->get(route('home'))
+        $this->get(route('listings.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -95,7 +95,7 @@ describe('index', function () {
         Listing::factory()->unpublished()->create(['zone' => 'Centro']);
         Listing::factory()->trashed()->create(['zone' => 'Centro']);
 
-        $this->get(route('home', ['zone' => 'Centro']))
+        $this->get(route('listings.index', ['zone' => 'Centro']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -110,7 +110,7 @@ describe('index', function () {
         $centro = Listing::factory()->create(['zone' => 'Centro']);
         Listing::factory()->create(['zone' => 'El Carmen']);
 
-        $this->get(route('home', ['zone' => 'centro']))
+        $this->get(route('listings.index', ['zone' => 'centro']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -124,7 +124,7 @@ describe('index', function () {
         $carmen = Listing::factory()->create(['zone' => 'El Carmen']);
         Listing::factory()->create(['zone' => 'Centro']);
 
-        $this->get(route('home', ['zone' => 'elcarmen']))
+        $this->get(route('listings.index', ['zone' => 'elcarmen']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -138,7 +138,7 @@ describe('index', function () {
         Listing::factory()->create(['zone' => 'Centro']);
         Listing::factory()->create(['zone' => 'El Carmen']);
 
-        $this->get(route('home', ['zone' => $zone]))
+        $this->get(route('listings.index', ['zone' => $zone]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -154,7 +154,7 @@ describe('index', function () {
         $room = Listing::factory()->room()->create();
         Listing::factory()->apartment()->create();
 
-        $this->get(route('home', ['category' => 'room']))
+        $this->get(route('listings.index', ['category' => 'room']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -170,7 +170,7 @@ describe('index', function () {
         Listing::factory()->room()->create(['zone' => 'Centro']);
         Listing::factory()->apartment()->create(['zone' => 'El Carmen']);
 
-        $this->get(route('home', ['zone' => 'Centro', 'category' => 'apartment']))
+        $this->get(route('listings.index', ['zone' => 'Centro', 'category' => 'apartment']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -184,7 +184,7 @@ describe('index', function () {
     test('treats like wildcards in the zone query as literals', function () {
         Listing::factory()->create(['zone' => 'Centro']);
 
-        $this->get(route('home', ['zone' => '%']))
+        $this->get(route('listings.index', ['zone' => '%']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -197,7 +197,7 @@ describe('index', function () {
         Listing::factory()->room()->create();
         Listing::factory()->apartment()->create();
 
-        $this->get(route('home', ['category' => 'nope']))
+        $this->get(route('listings.index', ['category' => 'nope']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -210,7 +210,7 @@ describe('index', function () {
     test('renders an empty catalog when the filters match nothing', function () {
         Listing::factory()->create(['zone' => 'Centro']);
 
-        $this->get(route('home', ['zone' => 'Xoloco']))
+        $this->get(route('listings.index', ['zone' => 'Xoloco']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -512,7 +512,7 @@ describe('store', function () {
                 ->where('listing.images.0.url', $image->url())
             );
 
-        $this->get(route('home'))
+        $this->get(route('listings.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('listings/index')
@@ -905,7 +905,7 @@ describe('publish', function () {
             ->is_published->toBeFalse()
             ->published_at->toEqual($publishedAt);
 
-        $this->get(route('home'))
+        $this->get(route('listings.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->has('listings', 0));
 

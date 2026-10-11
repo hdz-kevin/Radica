@@ -1,13 +1,15 @@
 <?php
 
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ListingFavoriteController;
 use App\Http\Controllers\LoginRedirectController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [ListingController::class, 'index'])->name('home');
+Route::get('/', HomeController::class)->name('home');
+Route::get('listings', [ListingController::class, 'index'])->name('listings.index');
 
 Route::get('terminos', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('privacidad', [LegalController::class, 'privacy'])->name('legal.privacy');

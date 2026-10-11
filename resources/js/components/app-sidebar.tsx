@@ -14,12 +14,13 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { home } from '@/routes';
+import { index as listingsIndex } from '@/routes/listings';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Publicaciones',
-        href: home(),
+        href: listingsIndex(),
         icon: House,
     },
 ];

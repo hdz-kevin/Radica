@@ -15,7 +15,7 @@ Do not collect phone_number on the listing form. Create shows a warning plus a l
 Photo UI is ListingImageUploader at the start of ListingForm (mobile stacked, lg 7-column grid with images sticky left spanning 3 and fields spanning 4). Multipart images[] is rebuilt with DataTransfer from new File objects in visual order. Edit also posts image_order[] (existing id or the sentinel new). Cover is always the first item in that order; tapping a thumb only changes the large preview. Reorder with @dnd-kit (mouse distance, touch long-press). Copy is “1 a 15 fotos”. Cards use cover_url or the existing placeholder; show renders images in position order as a simple gallery.
 
 ## Catalog live filters are Inertia visits
-The catalog filters with debounced router.get to home, only listings and filters, preserveState, preserveScroll, and replace. Omit empty query keys. Do not use useHttp or a JSON search endpoint for this page.
+The catalog filters with debounced router.get to listings.index at /listings, only listings and filters, preserveState, preserveScroll, and replace. Omit empty query keys. Do not use useHttp or a JSON search endpoint for this page.
 
 ## Listing form hides Estado and Ciudad
 Estado and ciudad are not shown on ListingForm and the POST does not send them; the server assigns Puebla and Teziutlán. Amenities, utilities, and contact channels are pill chips (hidden 0 + checkbox 1). Recámaras and baños stay hidden when category is room.
@@ -35,5 +35,8 @@ The profile phone field shows and submits the 10 national digits. Strip a stored
 ## Guests go to login through login.intended
 Guest CTAs that should return to the current page (favorite heart, contact button on show) link to login.intended with query return=page.url (import { intended } from '@/routes/login'). favorites.login no longer exists. Run wayfinder:generate with --with-form, otherwise .form() helpers disappear.
 
-## Auth screens keep the app navigation
-Auth pages (login, register, forgot password, reset password, verify email) use the app header from lg up and the bottom nav below lg. Desktop guests always see both Crear cuenta and Iniciar sesión, with the same active underline as Inicio and Favoritos. Protected links still redirect to login; the chrome stays.
+## Entry auth screens use the landing header
+Login, register, and forgot password use LandingHeader on every viewport and do not render AppBottomNav. Reset password and verify email keep AppHeader from lg up and the bottom nav below lg. Protected links still redirect to login.
+
+## Landing uses a dedicated marketing header
+The home page uses LandingHeader: transparent, borderless, with brand and account entry actions. AppHeader remains unchanged for application pages. Add future marketing links to LandingHeader, not AppHeader.

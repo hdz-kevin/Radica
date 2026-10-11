@@ -7,7 +7,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 test('guests see listings as not favorited', function () {
     $listing = Listing::factory()->create();
 
-    $this->get(route('home'))
+    $this->get(route('listings.index'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->where('listings.0.id', $listing->id)
@@ -57,19 +57,19 @@ test('an authenticated user can save a published listing once', function () {
     $listing = Listing::factory()->create();
 
     $this->actingAs($user)
-        ->from(route('home'))
+        ->from(route('listings.index'))
         ->post(route('listings.favorite.store', $listing))
-        ->assertRedirect(route('home'));
+        ->assertRedirect(route('listings.index'));
 
     $this->actingAs($user)
-        ->from(route('home'))
+        ->from(route('listings.index'))
         ->post(route('listings.favorite.store', $listing))
-        ->assertRedirect(route('home'));
+        ->assertRedirect(route('listings.index'));
 
     expect($user->favoritedListings()->count())->toBe(1);
 
     $this->actingAs($user)
-        ->get(route('home'))
+        ->get(route('listings.index'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->where('listings.0.id', $listing->id)

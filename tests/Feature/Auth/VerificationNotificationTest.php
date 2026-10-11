@@ -28,7 +28,7 @@ test('does not send verification notification if email is verified', function ()
 
     $this->actingAs($user)
         ->post(route('verification.send'))
-        ->assertRedirect(route('home', absolute: false));
+        ->assertRedirect(route('listings.index', absolute: false));
 
     Notification::assertNothingSent();
 });

@@ -19,11 +19,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { mainNavItems } from '@/lib/main-nav';
 import { cn } from '@/lib/utils';
 import { home, login, register } from '@/routes';
-import type { BreadcrumbItem, NavItem } from '@/types';
-
-type Props = {
-    breadcrumbs?: BreadcrumbItem[];
-};
+import type { NavItem } from '@/types';
 
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -47,9 +43,7 @@ function HeaderNav({ items }: { items: NavItem[] }) {
                                 'h-9 cursor-pointer px-3 text-base',
                             )}
                         >
-                            {item.icon && (
-                                <item.icon className="mr-2 size-4" />
-                            )}
+                            {item.icon && <item.icon className="mr-2 size-4" />}
                             {item.title}
                         </Link>
                         {isCurrentUrl(item.href) && (
@@ -62,7 +56,7 @@ function HeaderNav({ items }: { items: NavItem[] }) {
     );
 }
 
-export function AppHeader({ breadcrumbs = [] }: Props) {
+export function AppHeader() {
     const page = usePage();
     const { auth } = page.props;
     const navItems = mainNavItems();
@@ -74,7 +68,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     return (
         <>
             <div className="border-sidebar-border/80 border-b">
-                <div className="mx-auto flex h-16 w-[96%] px-2 max-w-500 items-center justify-between gap-2 lg:h-18 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+                <div className="mx-auto flex h-16 w-[96%] max-w-500 items-center justify-between gap-2 px-2 lg:grid lg:h-18 lg:grid-cols-[1fr_auto_1fr]">
                     <div className="flex items-center justify-start">
                         <Link
                             href={home()}
@@ -95,8 +89,11 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         {auth.user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="size-10 rounded-full p-1">
-                                        <Avatar className="size-9 md:size-10 overflow-hidden rounded-full">
+                                    <Button
+                                        variant="ghost"
+                                        className="size-10 rounded-full p-1"
+                                    >
+                                        <Avatar className="size-9 overflow-hidden rounded-full md:size-10">
                                             <AvatarImage
                                                 src={auth.user.avatar}
                                                 alt={auth.user.name}

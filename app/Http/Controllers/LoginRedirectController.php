@@ -30,7 +30,7 @@ class LoginRedirectController extends Controller
             || str_contains($return, '://')
             || str_contains($return, '..')
         ) {
-            return url('/');
+            return route('listings.index');
         }
 
         return url($return);

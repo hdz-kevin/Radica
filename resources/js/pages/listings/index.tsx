@@ -14,6 +14,7 @@ import {
 } from '@/lib/listing';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
+import { index as listingsIndex } from '@/routes/listings';
 
 function visitCatalog(
     zone: string,
@@ -31,7 +32,7 @@ function visitCatalog(
         query.category = category;
     }
 
-    router.get(home.url(), query, {
+    router.get(listingsIndex.url(), query, {
         only: ['listings', 'filters'],
         preserveState: true,
         preserveScroll: true,
@@ -53,7 +54,9 @@ export default function ListingsIndex({
     filters: CatalogFilters;
 }) {
     const [zone, setZone] = useState(filters.zone);
-    const [category, setCategory] = useState<ListingCategoryValue | ''>(filters.category ?? '');
+    const [category, setCategory] = useState<ListingCategoryValue | ''>(
+        filters.category ?? '',
+    );
     const [filtering, setFiltering] = useState(false);
     const debouncedZone = useDebouncedValue(zone);
     const categoryRef = useRef(category);
@@ -71,7 +74,8 @@ export default function ListingsIndex({
     }, [debouncedZone, filters.zone]);
 
     function handleCategoryChange(value: string): void {
-        const next = (value === 'all' || value === '')
+        const next =
+            value === 'all' || value === ''
                 ? ''
                 : (value as ListingCategoryValue);
 
@@ -85,7 +89,7 @@ export default function ListingsIndex({
 
             <div className="flex flex-col gap-5 lg:gap-8">
                 <div>
-                    <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
+                    <h1 className="text-xl font-semibold tracking-tight lg:text-2xl">
                         Publicaciones
                     </h1>
                     <p className="text-muted-foreground mt-1 text-sm lg:text-base">
@@ -93,7 +97,10 @@ export default function ListingsIndex({
                     </p>
                 </div>
 
-                <section className="flex flex-col items-center gap-3 lg:gap-6 lg:flex-row lg:items-center" aria-label="Filtros">
+                <section
+                    className="flex flex-col items-center gap-3 lg:flex-row lg:items-center lg:gap-6"
+                    aria-label="Filtros"
+                >
                     <div className="w-full max-w-lg lg:max-w-md">
                         <div className="relative">
                             <span className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -105,13 +112,15 @@ export default function ListingsIndex({
                                 maxLength={255}
                                 placeholder="Centro, El Fresnillo, Francia, El Carmen…"
                                 aria-label="Zona o colonia"
-                                onChange={(event) => setZone(event.target.value)}
-                                className="h-10 pl-9 sm:pl-9 text-sm lg:text-base placeholder:text-sm lg:placeholder:text-base rounded-full border-gray-300 dark:border-input"
+                                onChange={(event) =>
+                                    setZone(event.target.value)
+                                }
+                                className="dark:border-input h-10 rounded-full border-gray-300 pl-9 text-sm placeholder:text-sm sm:pl-9 lg:text-base lg:placeholder:text-base"
                             />
                         </div>
                     </div>
 
-                    <div className="w-full min-w-0 overflow-x-auto [scrollbar-width:none] lg:w-max lg:max-w-full [&::-webkit-scrollbar]:hidden">
+                    <div className="w-full min-w-0 [scrollbar-width:none] overflow-x-auto lg:w-max lg:max-w-full [&::-webkit-scrollbar]:hidden">
                         <ToggleGroup
                             id="category-filter"
                             type="single"
@@ -149,13 +158,16 @@ export default function ListingsIndex({
                 ) : (
                     <ul
                         className={cn(
-                            'grid sm:grid-cols-2 lg:grid-cols-3 gap-4 3xl:grid-cols-4',
+                            'grid gap-4 sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4',
                             filtering && 'opacity-60',
                         )}
                     >
                         {listings.map((listing) => (
                             <li key={listing.id} className="h-full">
-                                <ListingCard variant="public" listing={listing} />
+                                <ListingCard
+                                    variant="public"
+                                    listing={listing}
+                                />
                             </li>
                         ))}
                     </ul>
@@ -170,6 +182,10 @@ ListingsIndex.layout = {
         {
             title: 'Inicio',
             href: home(),
+        },
+        {
+            title: 'Catálogo',
+            href: listingsIndex(),
         },
     ],
 };

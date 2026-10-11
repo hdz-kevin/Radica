@@ -6,8 +6,6 @@ import {
     Droplet,
     EllipsisVertical,
     Flame,
-    LogIn,
-    LucideLogIn,
     MapPinIcon,
     MessageCircle,
     PawPrint,
@@ -49,6 +47,7 @@ import {
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { terms } from '@/routes/legal';
+import { index as listingsIndex } from '@/routes/listings';
 import { intended } from '@/routes/login';
 
 const amenityChips = [
@@ -80,6 +79,10 @@ export default function ListingsShow({
             {
                 title: 'Inicio',
                 href: home(),
+            },
+            {
+                title: 'Publicaciones',
+                href: listingsIndex(),
             },
             {
                 title: listing.title,
@@ -140,7 +143,8 @@ export default function ListingsShow({
                                     {listing.title}
                                 </h1>
                                 <div className="flex shrink-0 items-center gap-2">
-                                    {listing.is_published && !showOwnerActions ? (
+                                    {listing.is_published &&
+                                    !showOwnerActions ? (
                                         <FavoriteButton
                                             listingId={listing.id}
                                             favorited={favorited}
@@ -154,9 +158,9 @@ export default function ListingsShow({
                                     ) : null}
                                 </div>
                             </div>
-                            <p className="text-base lg:text-lg font-semibold">
+                            <p className="text-base font-semibold lg:text-lg">
                                 {formatRent(listing.rent_amount)}
-                                <span className="text-base lg:text-lg font-normal">
+                                <span className="text-base font-normal lg:text-lg">
                                     {' '}
                                     / mes
                                 </span>
@@ -166,14 +170,14 @@ export default function ListingsShow({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={`Abrir ${address} en Google Maps`}
-                                className="focus-visible:ring-ring inline-flex w-fit items-center gap-2 rounded-sm text-sm lg:text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                                className="focus-visible:ring-ring inline-flex w-fit items-center gap-2 rounded-sm text-sm hover:underline focus-visible:ring-2 focus-visible:outline-none lg:text-base"
                             >
                                 <MapPinIcon className="size-4 shrink-0 lg:size-5" />
                                 {address}
                             </a>
                         </div>
 
-                        <p className="text-sm lg:text-base leading-7 lg:leading-8 whitespace-pre-wrap">
+                        <p className="text-sm leading-7 whitespace-pre-wrap lg:text-base lg:leading-8">
                             {listing.description}
                         </p>
 
@@ -270,12 +274,12 @@ export default function ListingsShow({
                                         </Button>
                                     ) : null}
                                 </div>
-                                <p className="lg:mt-0.5 text-muted-foreground flex gap-2 rounded-md border px-3 py-2 text-xs lg:text-sm">
+                                <p className="text-muted-foreground flex gap-2 rounded-md border px-3 py-2 text-xs lg:mt-0.5 lg:text-sm">
                                     <ShieldAlert className="mt-0.5 size-4 shrink-0" />
                                     <span>
-                                        Radica no verifica los anuncios. Recomendamos
-                                        no depositar dinero antes de conocer el
-                                        inmueble.{' '}
+                                        Radica no verifica los anuncios.
+                                        Recomendamos no depositar dinero antes
+                                        de conocer el inmueble.{' '}
                                         <Link
                                             href={terms()}
                                             className="underline underline-offset-4"
@@ -408,14 +412,17 @@ function ListingGallery({
                                 type="button"
                                 onClick={() => setActiveIndex(index)}
                                 aria-label={
-                                    image.is_cover ? 'Portada' : 'Seleccionar foto'
+                                    image.is_cover
+                                        ? 'Portada'
+                                        : 'Seleccionar foto'
                                 }
                                 aria-current={
                                     index === activeIndex ? 'true' : undefined
                                 }
                                 className={cn(
                                     'overflow-hidden rounded-md border',
-                                    index === activeIndex && 'ring-2 ring-gray-500',
+                                    index === activeIndex &&
+                                        'ring-2 ring-gray-500',
                                 )}
                             >
                                 <img
@@ -440,7 +447,7 @@ function AmenityChip({
     icon: LucideIcon;
 }) {
     return (
-        <span className="bg-muted/40 inline-flex h-9 lg:h-10 items-center gap-2 rounded-md border border-gray-200 px-3 lg:px-4 text-sm font-medium lg:text-base">
+        <span className="bg-muted/40 inline-flex h-9 items-center gap-2 rounded-md border border-gray-200 px-3 text-sm font-medium lg:h-10 lg:px-4 lg:text-base">
             <Icon className="size-4" />
             {label}
         </span>
@@ -458,8 +465,8 @@ ListingsShow.layout = {
             href: home(),
         },
         {
-            title: 'Publicación',
-            href: home(),
+            title: 'Publicaciones',
+            href: listingsIndex(),
         },
     ],
 };
