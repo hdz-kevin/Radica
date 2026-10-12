@@ -32,8 +32,11 @@ The heart is on public catalog cards and beside the title on a published show pa
 ## Profile phone field shows 10 national digits
 The profile phone field shows and submits the 10 national digits. Strip a stored 521 prefix for display (nationalPhoneNumber). Do not put 521 in the placeholder or ask the user to type it. Listing WhatsApp links use the stored 521 value. Call links drop that extra 1 and use 52 plus the 10 national digits.
 
+## Contact buttons on show are public
+Llamar and WhatsApp render for guests too, from listing.user.phone_number and the contact_via flags. There is no "Inicia sesión para contactar" button. Keep the antifraud notice under them.
+
 ## Guests go to login through login.intended
-Guest CTAs that should return to the current page (favorite heart, contact button on show) link to login.intended with query return=page.url (import { intended } from '@/routes/login'). favorites.login no longer exists. Run wayfinder:generate with --with-form, otherwise .form() helpers disappear.
+Guest CTAs that should return to the current page (favorite heart) link to login.intended with query return=page.url (import { intended } from '@/routes/login'). favorites.login no longer exists. Run wayfinder:generate with --with-form, otherwise .form() helpers disappear.
 
 ## Entry auth screens use the landing header
 Login, register, and forgot password use LandingHeader on every viewport and do not render AppBottomNav. Reset password and verify email keep AppHeader from lg up and the bottom nav below lg. Protected links still redirect to login.

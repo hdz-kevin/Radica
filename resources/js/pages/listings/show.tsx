@@ -1,4 +1,4 @@
-import { Form, Head, Link, setLayoutProps, usePage } from '@inertiajs/react';
+import { Form, Head, Link, setLayoutProps } from '@inertiajs/react';
 import {
     BathIcon,
     BedSingle,
@@ -48,8 +48,6 @@ import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { terms } from '@/routes/legal';
 import { index as listingsIndex } from '@/routes/listings';
-import { intended } from '@/routes/login';
-
 const amenityChips = [
     { name: 'is_furnished', label: 'Amueblado', icon: Sofa },
     { name: 'pets_allowed', label: 'Mascotas permitidas', icon: PawPrint },
@@ -91,15 +89,9 @@ export default function ListingsShow({
         ],
     });
 
-    const page = usePage();
-    const isGuest = !page.props.auth.user;
     const phoneNumber = listing.user.phone_number;
     const showWhatsApp = listing.contact_via_whatsapp && phoneNumber !== null;
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
-    const showContactLogin =
-        isGuest &&
-        listing.user.has_phone &&
-        (listing.contact_via_whatsapp || listing.contact_via_phone);
     const includedAmenities = amenityChips.filter((chip) => listing[chip.name]);
     const showOwnerActions = can.update || can.delete || can.publish;
     const address = formatListingAddress(
@@ -226,26 +218,12 @@ export default function ListingsShow({
                             </section>
                         )}
 
-                        {(showWhatsApp || showPhone || showContactLogin) && (
+                        {(showWhatsApp || showPhone) && (
                             <section className="grid gap-3">
                                 <h2 className="text-sm font-medium lg:text-base">
                                     Contactar
                                 </h2>
                                 <div className="flex flex-wrap gap-3">
-                                    {showContactLogin ? (
-                                        <Button
-                                            asChild
-                                            className="w-full rounded-md sm:w-auto"
-                                        >
-                                            <Link
-                                                href={intended({
-                                                    query: { return: page.url },
-                                                })}
-                                            >
-                                                Inicia sesión para contactar
-                                            </Link>
-                                        </Button>
-                                    ) : null}
                                     {showPhone && phoneNumber ? (
                                         <Button
                                             asChild
@@ -277,7 +255,6 @@ export default function ListingsShow({
                                 <p className="text-muted-foreground flex gap-2 rounded-md border px-3 py-2 text-xs lg:mt-0.5 lg:text-sm">
                                     <ShieldAlert className="mt-0.5 size-4 shrink-0" />
                                     <span>
-                                        Radica no verifica los anuncios.
                                         Recomendamos no depositar dinero antes
                                         de conocer el inmueble.{' '}
                                         <Link

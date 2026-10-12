@@ -44,7 +44,7 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                     <li>
                         <strong>Datos de contacto:</strong> número de teléfono,
                         si decides agregarlo en tu perfil. Es necesario para
-                        publicar un anuncio.
+                        publicar inmuebles y ser contactado por las personas interesadas.
                     </li>
                     <li>
                         <strong>Datos de tus publicaciones:</strong> tipo de
@@ -75,9 +75,9 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                     <li>Crear y administrar tu cuenta y permitirte iniciar sesión.</li>
                     <li>Publicar, mostrar, editar y ocultar tus anuncios de renta.</li>
                     <li>
-                        Mostrar tu teléfono a usuarios con una cuenta creada en Radica que
-                        quieran contactarte por llamada o WhatsApp sobre tus
-                        anuncios.
+                        Mostrar tu teléfono en tus publicaciones para que cualquier
+                        persona interesada pueda contactarte por llamada o
+                        WhatsApp según elijas.
                     </li>
                     <li>Guardar tus publicaciones favoritas.</li>
                     <li>
@@ -109,18 +109,15 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                     <li>
                         <strong>Visible para cualquier persona:</strong> el
                         título, la descripción, el precio, las características,
-                        las fotos, la zona o colonia y, solo si la escribes, la
-                        dirección del inmueble.
-                    </li>
-                    <li>
-                        <strong>Visible solo para usuarios con una cuenta en Radica:
-                        </strong> tu número de teléfono, en los
-                        anuncios donde elijas recibir llamadas o mensajes de
-                        WhatsApp.
+                        las fotos, la zona o colonia y, solo si la incluyes, la
+                        dirección del inmueble. También tu número de teléfono,
+                        en las publicaciones donde elijas ser contactado por
+                        llamada o WhatsApp.
                     </li>
                     <li>
                         <strong>Nunca público:</strong> tu correo electrónico,
-                        tu contraseña y tus favoritos.
+                        tu contraseña, tus favoritos y tus publicaciones
+                        ocultas.
                     </li>
                 </ul>
                 <p>
@@ -140,7 +137,7 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                     <li>
                         <strong>Proveedor de hospedaje y almacenamiento:</strong>{' '}
                         servidores donde viven la aplicación, la base de datos y
-                        las fotos de los anuncios.
+                        las fotos de las publicaciones.
                     </li>
                     <li>
                         <strong>Proveedor de correo electrónico:</strong> para

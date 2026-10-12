@@ -94,7 +94,6 @@ export type ListingShow = {
     contact_via_phone: boolean;
     images: ListingShowImage[];
     user: {
-        has_phone: boolean;
         phone_number: string | null;
     };
 } & IncludedUtilities;

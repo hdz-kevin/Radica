@@ -13,8 +13,6 @@ class ListingShowResource extends JsonResource
     /**
      * Transform Listing model into a simpler array for the listing show view.
      *
-     * Guests never receive the owner's phone number.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -48,10 +46,7 @@ class ListingShowResource extends JsonResource
                 'is_cover' => $image->is_cover,
             ])->values()->all(),
             'user' => [
-                // $this->user = Listing owner
-                'has_phone' => $this->user->hasPhone(),
-                // $request->user() = The user making the request
-                'phone_number' => $request->user() === null ? null : $this->user->phone_number,
+                'phone_number' => $this->user->phone_number,
             ],
         ];
     }
