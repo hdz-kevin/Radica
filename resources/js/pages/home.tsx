@@ -115,7 +115,7 @@ export default function Home({
                         <p className="text-muted-foreground max-w-xl text-base leading-relaxed sm:text-lg lg:text-xl">
                             Buscar un inmueble para rentar puede ser muy tedioso y tardado.
                             Radica acelera ese proceso y mejora la experiencia tanto
-                            para arrendadores como para arrendatarios.
+                            para arrendadores como para inquilinos.
                         </p>
                     </div>
 
