@@ -114,7 +114,7 @@ export default function Home({
                         </h1>
                         <p className="text-muted-foreground max-w-xl text-base leading-relaxed sm:text-lg lg:text-xl">
                             Buscar un inmueble para rentar puede ser muy tedioso y tardado.
-                            Radica facilita y acelera ese proceso. Mejora la experiencia tanto
+                            Radica acelera ese proceso y mejora la experiencia tanto
                             para arrendadores como para arrendatarios.
                         </p>
                     </div>
@@ -169,7 +169,7 @@ export default function Home({
 
                 {/* Publicaciones recientes */}
                 <section
-                    className="bg-muted/50 flex w-full flex-col items-center gap-8 rounded-3xl border p-5 sm:p-8 lg:p-10"
+                    className="bg-muted/50 flex w-full flex-col items-center gap-8 rounded-2xl border p-5 py-6 sm:p-8 lg:p-10"
                     aria-labelledby="publicaciones-recientes-title"
                 >
                     <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
@@ -269,7 +269,7 @@ export default function Home({
 
                 {/* Ventajas arrendadores */}
                 <section
-                    className="bg-muted/60 grid gap-10 rounded-3xl border p-6 sm:p-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:p-14"
+                    className="bg-muted/60 grid gap-10 rounded-2xl border p-6 sm:p-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:p-14"
                     aria-labelledby="publicar-title"
                 >
                     <div className="flex flex-col items-start gap-5">
@@ -351,13 +351,14 @@ export default function Home({
                     </ol>
                 </section>
 
-                <section className="bg-primary text-primary-foreground flex flex-col items-center gap-6 rounded-3xl px-6 py-12 text-center sm:px-10 sm:py-16">
+                <section className="bg-primary text-primary-foreground flex flex-col items-center gap-6 rounded-2xl px-6 py-12 text-center sm:px-10 sm:py-16">
                     <div className="flex max-w-2xl flex-col gap-3">
                         <h2 className="text-2xl font-semibold tracking-tight sm:text-4xl">
                             Rentar inmuebles puede ser más sencillo
                         </h2>
                         <p className="text-primary-foreground/75 text-base sm:text-lg">
-                            Estudiantes, trabajadores y familias que buscan un lugar para rentar se merecen una mejor opción.
+                            Estudiantes, trabajadores y familias están en busca de un lugar para rentar.
+                            El objetivo de Radica es facilitar ese proceso.
                         </p>
                     </div>
                     <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
