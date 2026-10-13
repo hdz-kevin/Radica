@@ -6,6 +6,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 test('the home page renders the public landing page', function () {
     $this->get(route('home'))
         ->assertOk()
+        ->assertDontSee('property="og:title"', false)
         ->assertInertia(fn (Assert $page) => $page
             ->component('home')
             ->has('featuredListings', 0)

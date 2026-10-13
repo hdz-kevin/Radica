@@ -1,5 +1,6 @@
 import { Form, Link, usePage } from '@inertiajs/react';
 import { Heart } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { intended } from '@/routes/login';
 import { destroy, store } from '@/routes/listings/favorite';
@@ -7,6 +8,7 @@ import { destroy, store } from '@/routes/listings/favorite';
 type FavoriteButtonProps = {
     listingId: number;
     favorited: boolean;
+    variant?: 'overlay' | 'plain';
     className?: string;
 };
 
@@ -34,19 +36,28 @@ function FavoriteHeart({ favorited }: { favorited: boolean }) {
 export function FavoriteButton({
     listingId,
     favorited,
+    variant = 'overlay',
     className,
 }: FavoriteButtonProps) {
     const page = usePage();
     const { auth } = page.props;
+    const controlClassName =
+        variant === 'plain'
+            ? cn(
+                  buttonVariants({ variant: 'outline', size: 'icon' }),
+                  'size-9 shrink-0 shadow',
+                  className,
+              )
+            : favoriteControlClassName(className);
 
     if (!auth.user) {
         return (
             <Link
                 href={intended({ query: { return: page.url } })}
                 aria-label="Inicia sesión para guardar en favoritos"
-                className={favoriteControlClassName(className)}
+                className={controlClassName}
             >
-                <FavoriteHeart favorited={false} />
+                <FavoriteIcon favorited={false} variant={variant} />
             </Link>
         );
     }
@@ -65,11 +76,32 @@ export function FavoriteButton({
                             ? 'Quitar de favoritos'
                             : 'Guardar en favoritos'
                     }
-                    className={favoriteControlClassName(className)}
+                    className={controlClassName}
                 >
-                    <FavoriteHeart favorited={favorited} />
+                    <FavoriteIcon favorited={favorited} variant={variant} />
                 </button>
             )}
         </Form>
     );
+}
+
+function FavoriteIcon({
+    favorited,
+    variant,
+}: {
+    favorited: boolean;
+    variant: 'overlay' | 'plain';
+}) {
+    if (variant === 'plain') {
+        return (
+            <Heart
+                className={cn(
+                    'size-4',
+                    favorited && 'fill-[#eb163d] stroke-[#eb163d]',
+                )}
+            />
+        );
+    }
+
+    return <FavoriteHeart favorited={favorited} />;
 }

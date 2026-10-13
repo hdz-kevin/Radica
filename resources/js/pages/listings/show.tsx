@@ -27,6 +27,7 @@ import {
 } from '@/actions/App/Http/Controllers/ListingController';
 import { FavoriteButton } from '@/components/favorite-button';
 import { ListingCover } from '@/components/listing-cover';
+import { ShareListingButton } from '@/components/share-listing-button';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -135,11 +136,19 @@ export default function ListingsShow({
                                     {listing.title}
                                 </h1>
                                 <div className="flex shrink-0 items-center gap-2">
+                                    {listing.is_published ? (
+                                        <ShareListingButton
+                                            listingId={listing.id}
+                                            title={listing.title}
+                                            text={`${formatRent(listing.rent_amount)} / mes · ${listing.zone}, ${listing.city}`}
+                                        />
+                                    ) : null}
                                     {listing.is_published &&
                                     !showOwnerActions ? (
                                         <FavoriteButton
                                             listingId={listing.id}
                                             favorited={favorited}
+                                            variant="plain"
                                         />
                                     ) : null}
                                     {showOwnerActions ? (

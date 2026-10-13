@@ -38,6 +38,22 @@
 
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
+
+        @php
+            $openGraph = \App\Support\ListingOpenGraph::fromPage($page);
+        @endphp
+        @if ($openGraph)
+            <meta property="og:type" content="website">
+            <meta property="og:locale" content="es_MX">
+            <meta property="og:site_name" content="{{ config('app.name') }}">
+            <meta property="og:title" content="{{ $openGraph['title'] }}">
+            <meta property="og:description" content="{{ $openGraph['description'] }}">
+            <meta property="og:url" content="{{ $openGraph['url'] }}">
+            @if ($openGraph['image'])
+                <meta property="og:image" content="{{ $openGraph['image'] }}">
+            @endif
+        @endif
+
         <x-inertia::head>
             <title>{{ config('app.name', 'Laravel') }}</title>
         </x-inertia::head>

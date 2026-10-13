@@ -255,6 +255,47 @@ describe('show', function () {
             );
     });
 
+    test('renders open graph tags for a published listing', function () {
+        $owner = User::factory()->withPhone()->create();
+        $listing = Listing::factory()->for($owner)->create([
+            'title' => 'Casa "Centro" & más',
+            'rent_amount' => 3500,
+            'zone' => 'Centro',
+        ]);
+        $cover = ListingImage::factory()->for($listing)->create([
+            'path' => 'listings/cover.jpg',
+            'position' => 0,
+            'is_cover' => true,
+        ]);
+        ListingImage::factory()->for($listing)->create([
+            'path' => 'listings/room.jpg',
+            'position' => 1,
+            'is_cover' => false,
+        ]);
+
+        $description = '$3,500 / mes · Centro, '.$listing->city;
+        $coverUrl = str_starts_with($cover->url(), 'http') ? $cover->url() : url($cover->url());
+
+        $this->get(route('listings.show', $listing))
+            ->assertOk()
+            ->assertSee('<meta property="og:title" content="'.e($listing->title).'">', false)
+            ->assertSee('<meta property="og:description" content="'.e($description).'">', false)
+            ->assertSee('<meta property="og:url" content="'.e(route('listings.show', $listing)).'">', false)
+            ->assertSee('<meta property="og:image" content="'.e($coverUrl).'">', false)
+            ->assertSee('<meta property="og:locale" content="es_MX">', false)
+            ->assertSee('<meta property="og:site_name" content="'.e(config('app.name')).'">', false)
+            ->assertDontSee('og:image" content="'.e(url('/storage/listings/room.jpg')).'"', false);
+    });
+
+    test('omits the open graph image when a listing has no photos', function () {
+        $listing = Listing::factory()->create();
+
+        $this->get(route('listings.show', $listing))
+            ->assertOk()
+            ->assertSee('<meta property="og:title" content="'.e($listing->title).'">', false)
+            ->assertDontSee('property="og:image"', false);
+    });
+
     test('returns 404 when a guest visits an unpublished listing', function () {
         $listing = Listing::factory()->unpublished()->create();
 
