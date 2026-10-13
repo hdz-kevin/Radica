@@ -54,7 +54,7 @@ export function ListingActionsMenu({
     can?: ListingPermissions;
     favorited?: boolean;
 }) {
-    const isOwner = Boolean(can?.update || can?.delete || can?.publish);
+    const PublishIcon = listing.is_published ? EyeOff : Eye;
 
     return (
         <DropdownMenu>
@@ -70,110 +70,87 @@ export function ListingActionsMenu({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                {isOwner && can ? (
-                    <OwnerActions listing={listing} can={can} />
-                ) : (
-                    <ViewerActions listing={listing} favorited={favorited} />
-                )}
+                <ShareMenuItem listing={listing} />
+                <SaveMenuItem listing={listing} favorited={favorited} />
+                {can?.update ? (
+                    <DropdownMenuItem asChild>
+                        <Link href={edit(listing.id)}>
+                            <Pencil />
+                            Editar
+                        </Link>
+                    </DropdownMenuItem>
+                ) : null}
+                {can?.publish ? (
+                    <Form
+                        {...(listing.is_published ? unpublish : publish).form(
+                            listing.id,
+                        )}
+                    >
+                        {({ processing }) => (
+                            <DropdownMenuItem
+                                asChild
+                                className="w-full"
+                                disabled={processing}
+                            >
+                                <button type="submit" disabled={processing}>
+                                    <PublishIcon />
+                                    {listing.is_published
+                                        ? 'Ocultar'
+                                        : 'Publicar'}
+                                </button>
+                            </DropdownMenuItem>
+                        )}
+                    </Form>
+                ) : null}
+                {can?.delete ? (
+                    <Form
+                        {...destroy.form(listing.id)}
+                        onBefore={() =>
+                            confirm(
+                                '¿Borrar esta publicación? No se puede deshacer.',
+                            )
+                        }
+                    >
+                        {({ processing }) => (
+                            <DropdownMenuItem
+                                asChild
+                                className="w-full"
+                                variant="destructive"
+                                disabled={processing}
+                            >
+                                <button type="submit" disabled={processing}>
+                                    <Trash2 />
+                                    Eliminar
+                                </button>
+                            </DropdownMenuItem>
+                        )}
+                    </Form>
+                ) : null}
             </DropdownMenuContent>
         </DropdownMenu>
     );
 }
 
-function OwnerActions({
-    listing,
-    can,
-}: {
-    listing: ListingActionsListing;
-    can: ListingPermissions;
-}) {
-    const Icon = listing.is_published ? EyeOff : Eye;
-
-    return (
-        <>
-            <ShareMenuItem listing={listing} />
-            {can.update ? (
-                <DropdownMenuItem asChild>
-                    <Link href={edit(listing.id)}>
-                        <Pencil />
-                        Editar
-                    </Link>
-                </DropdownMenuItem>
-            ) : null}
-            {can.publish ? (
-                <Form
-                    {...(listing.is_published ? unpublish : publish).form(
-                        listing.id,
-                    )}
-                >
-                    {({ processing }) => (
-                        <DropdownMenuItem
-                            asChild
-                            className="w-full"
-                            disabled={processing}
-                        >
-                            <button type="submit" disabled={processing}>
-                                <Icon />
-                                {listing.is_published ? 'Ocultar' : 'Publicar'}
-                            </button>
-                        </DropdownMenuItem>
-                    )}
-                </Form>
-            ) : null}
-            {can.delete ? (
-                <Form
-                    {...destroy.form(listing.id)}
-                    onBefore={() =>
-                        confirm(
-                            '¿Borrar esta publicación? No se puede deshacer.',
-                        )
-                    }
-                >
-                    {({ processing }) => (
-                        <DropdownMenuItem
-                            asChild
-                            className="w-full"
-                            variant="destructive"
-                            disabled={processing}
-                        >
-                            <button type="submit" disabled={processing}>
-                                <Trash2 />
-                                Eliminar
-                            </button>
-                        </DropdownMenuItem>
-                    )}
-                </Form>
-            ) : null}
-        </>
-    );
-}
-
-function ViewerActions({
-    listing,
-    favorited,
-}: {
-    listing: ListingActionsListing;
-    favorited: boolean;
-}) {
-    return (
-        <>
-            <SaveMenuItem listingId={listing.id} favorited={favorited} />
-            <ShareMenuItem listing={listing} />
-        </>
-    );
-}
-
 function SaveMenuItem({
-    listingId,
+    listing,
     favorited,
 }: {
-    listingId: number;
+    listing: ListingActionsListing;
     favorited: boolean;
 }) {
     const page = usePage();
     const heart = (
         <Heart className={cn(favorited && 'fill-[#eb163d] text-[#eb163d]')} />
     );
+
+    if (!listing.is_published) {
+        return (
+            <DropdownMenuItem disabled>
+                {heart}
+                Guardar
+            </DropdownMenuItem>
+        );
+    }
 
     if (!page.props.auth.user) {
         return (
@@ -190,8 +167,8 @@ function SaveMenuItem({
 
     return (
         <Form
-            {...action.form(listingId)}
-            invalidateCacheTags={[listingShowCacheTag(listingId)]}
+            {...action.form(listing.id)}
+            invalidateCacheTags={[listingShowCacheTag(listing.id)]}
             options={{ preserveScroll: true }}
         >
             {({ processing }) => (
@@ -211,6 +188,15 @@ function SaveMenuItem({
 }
 
 function ShareMenuItem({ listing }: { listing: ListingActionsListing }) {
+    if (!listing.is_published) {
+        return (
+            <DropdownMenuItem disabled>
+                <Share2 />
+                Compartir
+            </DropdownMenuItem>
+        );
+    }
+
     return (
         <DropdownMenuItem
             onSelect={() => {

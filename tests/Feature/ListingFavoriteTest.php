@@ -59,12 +59,20 @@ test('an authenticated user can save a published listing once', function () {
     $this->actingAs($user)
         ->from(route('listings.index'))
         ->post(route('listings.favorite.store', $listing))
-        ->assertRedirect(route('listings.index'));
+        ->assertRedirect(route('listings.index'))
+        ->assertInertiaFlash('toast', [
+            'type' => 'success',
+            'message' => 'La publicación se guardó en favoritos',
+        ]);
 
     $this->actingAs($user)
         ->from(route('listings.index'))
         ->post(route('listings.favorite.store', $listing))
-        ->assertRedirect(route('listings.index'));
+        ->assertRedirect(route('listings.index'))
+        ->assertInertiaFlash('toast', [
+            'type' => 'success',
+            'message' => 'La publicación se guardó en favoritos',
+        ]);
 
     expect($user->favoritedListings()->count())->toBe(1);
 
@@ -93,14 +101,22 @@ test('removing a favorite is idempotent', function () {
     $this->actingAs($user)
         ->from(route('listings.show', $listing))
         ->delete(route('listings.favorite.destroy', $listing))
-        ->assertRedirect(route('listings.show', $listing));
+        ->assertRedirect(route('listings.show', $listing))
+        ->assertInertiaFlash('toast', [
+            'type' => 'success',
+            'message' => 'La publicación se quitó de favoritos',
+        ]);
 
     expect($user->favoritedListings()->count())->toBe(0);
 
     $this->actingAs($user)
         ->from(route('listings.show', $listing))
         ->delete(route('listings.favorite.destroy', $listing))
-        ->assertRedirect(route('listings.show', $listing));
+        ->assertRedirect(route('listings.show', $listing))
+        ->assertInertiaFlash('toast', [
+            'type' => 'success',
+            'message' => 'La publicación se quitó de favoritos',
+        ]);
 
     $this->assertDatabaseCount('listing_favorites', 0);
 });

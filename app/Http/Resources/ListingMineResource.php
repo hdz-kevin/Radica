@@ -22,6 +22,7 @@ class ListingMineResource extends JsonResource
      *     street_address: string|null,
      *     is_published: bool,
      *     cover_url: string|null,
+     *     is_favorited: bool,
      *     can: array{update: bool, delete: bool, publish: bool}
      * }
      */
@@ -38,6 +39,7 @@ class ListingMineResource extends JsonResource
             'street_address' => $this->street_address,
             'is_published' => $this->is_published,
             'cover_url' => $this->cover?->url(),
+            'is_favorited' => (bool) $this->is_favorited,
             'can' => [
                 'update' => Gate::allows('update', $this->resource),
                 'delete' => Gate::allows('delete', $this->resource),

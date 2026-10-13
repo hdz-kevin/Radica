@@ -646,6 +646,24 @@ describe('mine', function () {
                 ->where('listings.1.can.update', true)
             );
     });
+
+    test('marks listings the owner has saved', function () {
+        $owner = User::factory()->create();
+        $saved = Listing::factory()->for($owner)->create();
+        $unsaved = Listing::factory()->for($owner)->create();
+        $owner->favoritedListings()->attach($saved);
+
+        $this->actingAs($owner)
+            ->get(route('listings.mine'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('listings/mine')
+                ->where('listings.0.id', $unsaved->id)
+                ->where('listings.0.is_favorited', false)
+                ->where('listings.1.id', $saved->id)
+                ->where('listings.1.is_favorited', true)
+            );
+    });
 });
 
 describe('edit', function () {

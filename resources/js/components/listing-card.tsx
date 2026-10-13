@@ -58,6 +58,7 @@ export function ListingCard(props: ListingCardProps) {
                                 <ListingActionsMenu
                                     listing={props.listing}
                                     can={props.listing.can}
+                                    favorited={props.listing.is_favorited}
                                 />
                             </div>
                         ) : null

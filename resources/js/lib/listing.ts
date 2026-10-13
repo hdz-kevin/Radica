@@ -32,7 +32,7 @@ export type CatalogFilters = {
     category: ListingCategoryValue | null;
 };
 
-export type ListingMine = Omit<ListingCard, 'is_favorited'> & {
+export type ListingMine = ListingCard & {
     is_published: boolean;
     can: ListingPermissions;
 };

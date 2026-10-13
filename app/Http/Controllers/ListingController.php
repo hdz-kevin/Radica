@@ -119,6 +119,7 @@ class ListingController extends Controller
         $listings = $request->user()
             ->listings()
             ->with('cover')
+            ->withFavoritedBy($request->user())
             ->latest('created_at')
             ->latest('id')
             ->get();

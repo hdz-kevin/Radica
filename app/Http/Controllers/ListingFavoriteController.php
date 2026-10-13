@@ -40,6 +40,11 @@ class ListingFavoriteController extends Controller
 
         $request->user()->favoritedListings()->syncWithoutDetaching([$listing->id]);
 
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'La publicación se guardó en favoritos',
+        ]);
+
         return back();
     }
 
@@ -51,6 +56,11 @@ class ListingFavoriteController extends Controller
         $this->ensurePublished($listing);
 
         $request->user()->favoritedListings()->detach($listing->id);
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'La publicación se quitó de favoritos',
+        ]);
 
         return back();
     }
