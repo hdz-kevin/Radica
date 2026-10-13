@@ -134,6 +134,10 @@ export function formatRent(amount: number): string {
     return rentFormatter.format(amount);
 }
 
+export function listingShowCacheTag(listingId: number): string {
+    return `listing-${listingId}`;
+}
+
 export function formatListingAddress(
     streetAddress: string | null,
     zone: string,

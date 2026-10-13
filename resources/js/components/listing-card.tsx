@@ -1,29 +1,18 @@
-import { Form, Link } from '@inertiajs/react';
-import { EllipsisVertical, Eye, EyeOff, MapPinIcon } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { Eye, EyeOff, MapPinIcon } from 'lucide-react';
 import { type ReactNode } from 'react';
-import {
-    destroy,
-    edit,
-    publish,
-    show,
-    unpublish,
-} from '@/actions/App/Http/Controllers/ListingController';
+import { show } from '@/actions/App/Http/Controllers/ListingController';
 import { FavoriteButton } from '@/components/favorite-button';
+import { ListingActionsMenu } from '@/components/listing-actions-menu';
 import { ListingCover } from '@/components/listing-cover';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardTitle } from '@/components/ui/card';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
     categoryLabel,
     formatListingAddress,
     formatRent,
     googleMapsUrl,
+    listingShowCacheTag,
     type ListingCard as ListingCardData,
     type ListingMine,
 } from '@/lib/listing';
@@ -54,6 +43,7 @@ export function ListingCard(props: ListingCardProps) {
             <Link
                 href={show(listing.id)}
                 prefetch
+                cacheTags={listingShowCacheTag(listing.id)}
                 aria-label={`${listing.title}, ${formatRent(listing.rent_amount)}, ${address}`}
                 className="absolute inset-0 z-0"
             />
@@ -63,11 +53,11 @@ export function ListingCard(props: ListingCardProps) {
                     address={address}
                     variant={variant}
                     menu={
-                        props.variant === 'mine' && props.listing.can.update ? (
+                        props.variant === 'mine' ? (
                             <div className="pointer-events-auto">
-                                <ListingCardMenu
+                                <ListingActionsMenu
                                     listing={props.listing}
-                                    isPublished={props.listing.is_published}
+                                    can={props.listing.can}
                                 />
                             </div>
                         ) : null
@@ -129,9 +119,9 @@ function ListingCardBody({
                     </div>
                 )}
             </div>
-            <div className="flex flex-col gap-1.5 lg:gap-2 px-4 py-4">
+            <div className="flex flex-col gap-1.5 px-4 py-4 lg:gap-2">
                 <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="line-clamp-2 text-base lg:text-[17px] font-semibold">
+                    <CardTitle className="line-clamp-2 text-base font-semibold lg:text-[17px]">
                         {listing.title}
                     </CardTitle>
                     {menu}
@@ -145,7 +135,7 @@ function ListingCardBody({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Abrir ${address} en Google Maps`}
-                    className="focus-visible:ring-ring pointer-events-auto inline-flex w-fit items-start gap-1.5 rounded-sm text-sm lg:text-base hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                    className="focus-visible:ring-ring pointer-events-auto inline-flex w-fit items-start gap-1.5 rounded-sm text-sm hover:underline focus-visible:ring-2 focus-visible:outline-none lg:text-base"
                 >
                     <MapPinIcon
                         aria-hidden="true"
@@ -155,92 +145,5 @@ function ListingCardBody({
                 </a>
             </div>
         </>
-    );
-}
-
-function ListingCardMenu({
-    listing,
-    isPublished,
-}: {
-    listing: ListingMine;
-    isPublished: boolean;
-}) {
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="size-9"
-                    aria-label="Opciones de la publicación"
-                >
-                    <EllipsisVertical />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                    <Link href={show(listing.id)}>Ver</Link>
-                </DropdownMenuItem>
-                {listing.can.update && (
-                    <DropdownMenuItem asChild>
-                        <Link href={edit(listing.id)}>Editar</Link>
-                    </DropdownMenuItem>
-                )}
-                {listing.can.publish &&
-                    (isPublished ? (
-                        <Form {...unpublish.form(listing.id)}>
-                            {({ processing }) => (
-                                <DropdownMenuItem
-                                    asChild
-                                    className="w-full"
-                                    disabled={processing}
-                                >
-                                    <button type="submit" disabled={processing}>
-                                        Ocultar
-                                    </button>
-                                </DropdownMenuItem>
-                            )}
-                        </Form>
-                    ) : (
-                        <Form {...publish.form(listing.id)}>
-                            {({ processing }) => (
-                                <DropdownMenuItem
-                                    asChild
-                                    className="w-full"
-                                    disabled={processing}
-                                >
-                                    <button type="submit" disabled={processing}>
-                                        Publicar
-                                    </button>
-                                </DropdownMenuItem>
-                            )}
-                        </Form>
-                    ))}
-                {listing.can.delete && (
-                    <Form
-                        {...destroy.form(listing.id)}
-                        onBefore={() =>
-                            confirm(
-                                '¿Borrar esta publicación? No se puede deshacer.',
-                            )
-                        }
-                    >
-                        {({ processing }) => (
-                            <DropdownMenuItem
-                                className="w-full"
-                                variant="destructive"
-                                asChild
-                                disabled={processing}
-                            >
-                                <button type="submit" disabled={processing}>
-                                    Eliminar
-                                </button>
-                            </DropdownMenuItem>
-                        )}
-                    </Form>
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
     );
 }

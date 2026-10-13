@@ -1,10 +1,9 @@
-import { Form, Head, Link, setLayoutProps } from '@inertiajs/react';
+import { Head, Link, setLayoutProps } from '@inertiajs/react';
 import {
     BathIcon,
     BedSingle,
     Car,
     Droplet,
-    EllipsisVertical,
     Flame,
     MapPinIcon,
     MessageCircle,
@@ -18,23 +17,10 @@ import {
     type LucideIcon,
 } from 'lucide-react';
 import { useState } from 'react';
-import {
-    destroy,
-    edit,
-    publish,
-    show,
-    unpublish,
-} from '@/actions/App/Http/Controllers/ListingController';
-import { FavoriteButton } from '@/components/favorite-button';
+import { show } from '@/actions/App/Http/Controllers/ListingController';
+import { ListingActionsMenu } from '@/components/listing-actions-menu';
 import { ListingCover } from '@/components/listing-cover';
-import { ShareListingButton } from '@/components/share-listing-button';
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
     formatListingAddress,
     formatRent,
@@ -94,7 +80,6 @@ export default function ListingsShow({
     const showWhatsApp = listing.contact_via_whatsapp && phoneNumber !== null;
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
     const includedAmenities = amenityChips.filter((chip) => listing[chip.name]);
-    const showOwnerActions = can.update || can.delete || can.publish;
     const address = formatListingAddress(
         listing.street_address,
         listing.zone,
@@ -135,29 +120,11 @@ export default function ListingsShow({
                                 <h1 className="min-w-0 text-lg font-semibold tracking-tight lg:text-xl">
                                     {listing.title}
                                 </h1>
-                                <div className="flex shrink-0 items-center gap-2">
-                                    {listing.is_published ? (
-                                        <ShareListingButton
-                                            listingId={listing.id}
-                                            title={listing.title}
-                                            text={`${formatRent(listing.rent_amount)} / mes\n${listing.zone}, ${listing.city}, ${listing.state}`}
-                                        />
-                                    ) : null}
-                                    {listing.is_published &&
-                                    !showOwnerActions ? (
-                                        <FavoriteButton
-                                            listingId={listing.id}
-                                            favorited={favorited}
-                                            variant="plain"
-                                        />
-                                    ) : null}
-                                    {showOwnerActions ? (
-                                        <ListingOwnerMenu
-                                            listing={listing}
-                                            can={can}
-                                        />
-                                    ) : null}
-                                </div>
+                                <ListingActionsMenu
+                                    listing={listing}
+                                    can={can}
+                                    favorited={favorited}
+                                />
                             </div>
                             <p className="text-base font-semibold lg:text-lg">
                                 {formatRent(listing.rent_amount)}
@@ -280,90 +247,6 @@ export default function ListingsShow({
                 </div>
             </article>
         </>
-    );
-}
-
-function ListingOwnerMenu({
-    listing,
-    can,
-}: {
-    listing: ListingShow;
-    can: ListingPermissions;
-}) {
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="size-9 shrink-0 shadow"
-                    aria-label="Opciones de la publicación"
-                >
-                    <EllipsisVertical className="size-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                {can.update && (
-                    <DropdownMenuItem asChild>
-                        <Link href={edit(listing.id)}>Editar</Link>
-                    </DropdownMenuItem>
-                )}
-                {can.publish &&
-                    (listing.is_published ? (
-                        <Form {...unpublish.form(listing.id)}>
-                            {({ processing }) => (
-                                <DropdownMenuItem
-                                    asChild
-                                    className="w-full"
-                                    disabled={processing}
-                                >
-                                    <button type="submit" disabled={processing}>
-                                        Ocultar
-                                    </button>
-                                </DropdownMenuItem>
-                            )}
-                        </Form>
-                    ) : (
-                        <Form {...publish.form(listing.id)}>
-                            {({ processing }) => (
-                                <DropdownMenuItem
-                                    asChild
-                                    className="w-full"
-                                    disabled={processing}
-                                >
-                                    <button type="submit" disabled={processing}>
-                                        Publicar
-                                    </button>
-                                </DropdownMenuItem>
-                            )}
-                        </Form>
-                    ))}
-                {can.delete && (
-                    <Form
-                        {...destroy.form(listing.id)}
-                        onBefore={() =>
-                            confirm(
-                                '¿Borrar esta publicación? No se puede deshacer.',
-                            )
-                        }
-                    >
-                        {({ processing }) => (
-                            <DropdownMenuItem
-                                className="w-full"
-                                variant="destructive"
-                                asChild
-                                disabled={processing}
-                            >
-                                <button type="submit" disabled={processing}>
-                                    Eliminar
-                                </button>
-                            </DropdownMenuItem>
-                        )}
-                    </Form>
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
     );
 }
 
