@@ -41,8 +41,9 @@ class ListingOpenGraph
         $amount = is_numeric($listing['rent_amount'] ?? null) ? (int) $listing['rent_amount'] : 0;
         $zone = is_string($listing['zone'] ?? null) ? $listing['zone'] : '';
         $city = is_string($listing['city'] ?? null) ? $listing['city'] : '';
+        $state = is_string($listing['state'] ?? null) ? $listing['state'] : '';
 
-        return '$'.number_format($amount, 0).' / mes · '.$zone.', '.$city;
+        return '$'.number_format($amount, 0)." / mes\n".$zone.', '.$city.', '.$state;
     }
 
     /**

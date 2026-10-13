@@ -273,7 +273,7 @@ describe('show', function () {
             'is_cover' => false,
         ]);
 
-        $description = '$3,500 / mes · Centro, '.$listing->city;
+        $description = '$3,500 / mes'."\n".'Centro, '.$listing->city.', '.$listing->state;
         $coverUrl = str_starts_with($cover->url(), 'http') ? $cover->url() : url($cover->url());
 
         $this->get(route('listings.show', $listing))

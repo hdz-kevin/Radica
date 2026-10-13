@@ -140,7 +140,7 @@ export default function ListingsShow({
                                         <ShareListingButton
                                             listingId={listing.id}
                                             title={listing.title}
-                                            text={`${formatRent(listing.rent_amount)} / mes · ${listing.zone}, ${listing.city}`}
+                                            text={`${formatRent(listing.rent_amount)} / mes\n${listing.zone}, ${listing.city}, ${listing.state}`}
                                         />
                                     ) : null}
                                     {listing.is_published &&
