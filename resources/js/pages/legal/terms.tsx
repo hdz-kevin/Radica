@@ -16,8 +16,7 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
         >
             <p>
                 Estos Términos y Condiciones regulan el uso de Radica. Al crear
-                una cuenta o usar la plataforma aceptas estos términos y
-                nuestro{' '}
+                una cuenta o usar la plataforma aceptas estos términos y nuestro{' '}
                 <TextLink href={privacy()}>Aviso de Privacidad</TextLink>. Si no
                 estás de acuerdo, por favor no uses Radica. Radica es operada
                 por <strong>{legal.owner_name}</strong> (en adelante,
@@ -34,10 +33,10 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
                 <p>
                     Radica <strong>no es una inmobiliaria</strong>, no actúa
                     como intermediario, agente ni representante de nadie y{' '}
-                    <strong>no es parte de ningún acuerdo o contrato</strong>{' '}
-                    de arrendamiento. No cobramos comisiones, no recibimos
-                    pagos, depósitos ni rentas, y no participamos en las
-                    negociaciones entre arrendadores e interesados.
+                    <strong>no es parte de ningún acuerdo o contrato</strong> de
+                    arrendamiento. No cobramos comisiones, no recibimos pagos,
+                    depósitos ni rentas, y no participamos en las negociaciones
+                    entre arrendadores e interesados.
                 </p>
             </LegalSection>
 
@@ -53,7 +52,9 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
                         toda la actividad que ocurra en tu cuenta. Avísanos si
                         detectas un uso no autorizado.
                     </li>
-                    <li>Cada cuenta es personal; no puedes venderla ni cederla.</li>
+                    <li>
+                        Cada cuenta es personal; no puedes venderla ni cederla.
+                    </li>
                 </ul>
             </LegalSection>
 
@@ -145,8 +146,8 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
                 </ul>
                 <p>
                     Si detectas un anuncio sospechoso, escríbenos a{' '}
-                    <LegalEmail email={legal.contact_email} /> con el enlace
-                    del anuncio.
+                    <LegalEmail email={legal.contact_email} /> con el enlace del
+                    anuncio.
                 </p>
             </LegalSection>
 
@@ -174,8 +175,8 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
                 <p>
                     Radica se ofrece &quot;tal cual&quot; y según su
                     disponibilidad, sin garantías de que funcione sin
-                    interrupciones o errores. En la medida permitida por la
-                    ley, Radica no es responsable de:
+                    interrupciones o errores. En la medida permitida por la ley,
+                    Radica no es responsable de:
                 </p>
                 <ul>
                     <li>
@@ -188,17 +189,17 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
                         interesados.
                     </li>
                     <li>
-                        Interrupciones del servicio o pérdida de información
-                        por causas fuera de nuestro control.
+                        Interrupciones del servicio o pérdida de información por
+                        causas fuera de nuestro control.
                     </li>
                 </ul>
             </LegalSection>
 
             <LegalSection title="9. Eliminar tu cuenta">
                 <p>
-                    Puedes eliminar tu cuenta en cualquier momento desde
-                    Ajustes &gt; Perfil. Al hacerlo se borran tus datos y tus
-                    anuncios de forma permanente, como se explica en el{' '}
+                    Puedes eliminar tu cuenta en cualquier momento desde Ajustes
+                    &gt; Perfil. Al hacerlo se borran tus datos y tus
+                    publicaciones de forma permanente, como se explica en el{' '}
                     <TextLink href={privacy()}>Aviso de Privacidad</TextLink>.
                 </p>
             </LegalSection>
@@ -207,11 +208,11 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
                 <p>
                     Podemos modificar estos términos para reflejar cambios en
                     Radica o en la ley. La versión vigente siempre estará en{' '}
-                    <TextLink href={terms()}>esta página</TextLink> con su
-                    fecha de actualización. Si el cambio es importante, te
-                    avisaremos dentro de la plataforma o por correo. Si sigues
-                    usando Radica después del cambio, se entiende que aceptas
-                    la nueva versión.
+                    <TextLink href={terms()}>esta página</TextLink> con su fecha
+                    de actualización. Si el cambio es importante, te avisaremos
+                    dentro de la plataforma o por correo. Si sigues usando
+                    Radica después del cambio, se entiende que aceptas la nueva
+                    versión.
                 </p>
             </LegalSection>
 
@@ -219,10 +220,10 @@ export default function Terms({ legal }: { legal: LegalDetails }) {
                 <p>
                     Estos términos se rigen por las leyes de los Estados Unidos
                     Mexicanos. Para cualquier controversia, las partes se
-                    someten a los tribunales competentes de{' '}
-                    {legal.jurisdiction}, renunciando a cualquier otro fuero
-                    que pudiera corresponderles, salvo que la ley aplicable
-                    disponga otra cosa.
+                    someten a los tribunales competentes de {legal.jurisdiction}
+                    , renunciando a cualquier otro fuero que pudiera
+                    corresponderles, salvo que la ley aplicable disponga otra
+                    cosa.
                 </p>
                 <p>
                     Para dudas sobre estos términos escríbenos a{' '}

@@ -13,15 +13,16 @@ import {
     type LucideIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { DigitsInput } from '@/components/digits-input';
 import InputError from '@/components/input-error';
 import { ListingImageUploader } from '@/components/listing-image-uploader';
+import { PhoneInput } from '@/components/phone-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { type ListingCategoryValue, type ListingFormData } from '@/lib/listing';
-import { nationalPhoneNumber } from '@/lib/phone';
 import { cn } from '@/lib/utils';
 import type { Auth } from '@/types';
 
@@ -61,10 +62,6 @@ export function ListingForm({
     const [category, setCategory] = useState<ListingCategoryValue>(
         listing?.category ?? 'apartment',
     );
-    const phoneDefault = nationalPhoneNumber(
-        listing ? listing.phone_number : auth.user?.phone_number,
-    );
-
     return (
         <Form
             action={action}
@@ -91,7 +88,6 @@ export function ListingForm({
                                 name="title"
                                 defaultValue={listing?.title}
                                 autoComplete="off"
-                                placeholder="Ingresa el título para tu publicación"
                             />
                             <InputError message={errors.title} />
                         </div>
@@ -103,7 +99,6 @@ export function ListingForm({
                                 name="description"
                                 rows={3}
                                 defaultValue={listing?.description}
-                                placeholder="Añade información más detallada para tu publicación"
                                 className="min-h-28 rounded-md"
                             />
                             <InputError message={errors.description} />
@@ -118,7 +113,7 @@ export function ListingForm({
                                     id="zone"
                                     name="zone"
                                     defaultValue={listing?.zone}
-                                    placeholder="Ejemplos: Centro, El Carmen, Francia, etc."
+                                    placeholder="Ej: Centro, El Carmen, etc."
                                 />
                                 <InputError message={errors.zone} />
                             </div>
@@ -135,7 +130,7 @@ export function ListingForm({
                                     id="street_address"
                                     name="street_address"
                                     defaultValue={listing?.street_address ?? ''}
-                                    placeholder="Av. Miguel Hidalgo #410"
+                                    placeholder="Calle y número"
                                 />
                                 <InputError message={errors.street_address} />
                             </div>
@@ -167,16 +162,16 @@ export function ListingForm({
 
                             <div className="grid gap-2">
                                 <Label htmlFor="rent_amount">
-                                    Renta mensual (MXN)
+                                    Renta mensual{' '}
+                                    <span className="text-muted-foreground">
+                                        (MXN)
+                                    </span>
                                 </Label>
-                                <Input
+                                <DigitsInput
                                     id="rent_amount"
                                     name="rent_amount"
-                                    type="number"
-                                    min={1}
-                                    step={1}
+                                    grouped
                                     defaultValue={listing?.rent_amount}
-                                    placeholder="2000"
                                 />
                                 <InputError message={errors.rent_amount} />
                             </div>
@@ -186,26 +181,20 @@ export function ListingForm({
                             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6">
                                 <div className="grid gap-2">
                                     <Label htmlFor="bedrooms">Recámaras</Label>
-                                    <Input
+                                    <DigitsInput
                                         id="bedrooms"
                                         name="bedrooms"
-                                        type="number"
-                                        min={1}
-                                        defaultValue={listing?.bedrooms ?? ''}
-                                        placeholder="2"
+                                        defaultValue={listing?.bedrooms}
                                     />
                                     <InputError message={errors.bedrooms} />
                                 </div>
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="bathrooms">Baños</Label>
-                                    <Input
+                                    <DigitsInput
                                         id="bathrooms"
                                         name="bathrooms"
-                                        type="number"
-                                        min={1}
-                                        defaultValue={listing?.bathrooms ?? ''}
-                                        placeholder="1"
+                                        defaultValue={listing?.bathrooms}
                                     />
                                     <InputError message={errors.bathrooms} />
                                 </div>
@@ -213,11 +202,8 @@ export function ListingForm({
                         )}
 
                         <fieldset className="grid gap-3">
-                            <legend className="text-sm font-medium lg:text-base">
-                                Amenidades y servicios
-                            </legend>
-                            <p className="text-muted-foreground mt-1 text-sm lg:text-base">
-                                Marca las amenidades incluidas en la renta
+                            <p className="text-sm font-medium lg:text-base">
+                                Marca los servicios y amenidades incluidos
                             </p>
                             <div className="flex flex-wrap gap-2.5">
                                 {amenityChips.map((chip) => (
@@ -244,13 +230,13 @@ export function ListingForm({
                         <fieldset className="grid gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="phone_number">Teléfono</Label>
-                                <Input
+                                <PhoneInput
                                     id="phone_number"
-                                    name="phone_number"
-                                    inputMode="numeric"
-                                    autoComplete="tel"
-                                    defaultValue={phoneDefault}
-                                    placeholder="232 123 4567"
+                                    defaultValue={
+                                        listing
+                                            ? listing.phone_number
+                                            : auth.user?.phone_number
+                                    }
                                     required
                                 />
                                 <InputError message={errors.phone_number} />
@@ -328,7 +314,7 @@ function ChipField({
             <Label
                 htmlFor={id}
                 className={cn(
-                    'border-input inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border px-4 font-medium transition-colors',
+                    'border-input inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border px-4 font-normal transition-colors',
                     'hover:bg-accent hover:text-accent-foreground',
                     'peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-checked:hover:bg-primary/90 peer-checked:hover:text-primary-foreground',
                     'peer-focus-visible:border-ring peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px]',

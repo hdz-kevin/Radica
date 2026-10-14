@@ -6,8 +6,8 @@ import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PhoneInput } from '@/components/phone-input';
 import { Label } from '@/components/ui/label';
-import { nationalPhoneNumber } from '@/lib/phone';
 import { edit } from '@/routes/profile';
 import type { Auth } from '@/types';
 import { send } from '@/routes/verification';
@@ -91,16 +91,10 @@ export default function Profile({
 
                             <div className="grid gap-2">
                                 <Label htmlFor="phone_number">Teléfono</Label>
-                                <Input
+                                <PhoneInput
                                     id="phone_number"
-                                    className="mt-1 block w-full"
-                                    defaultValue={nationalPhoneNumber(
-                                        auth.user?.phone_number,
-                                    )}
-                                    name="phone_number"
-                                    inputMode="numeric"
-                                    autoComplete="tel"
-                                    placeholder="232 123 4567"
+                                    className="mt-1"
+                                    defaultValue={auth.user?.phone_number}
                                 />
                                 <p className="text-muted-foreground text-sm lg:text-base">
                                     Este es tu número de teléfono por defecto
