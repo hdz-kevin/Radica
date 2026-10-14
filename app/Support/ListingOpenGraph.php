@@ -5,14 +5,18 @@ namespace App\Support;
 class ListingOpenGraph
 {
     /**
-     * Open Graph tags for a listing page. Crawlers read the first HTML
+     * Open Graph tags for a public page. Crawlers read the first HTML
      * response and do not run the React head tags.
      *
      * @param  array<string, mixed>  $page
-     * @return array{title: string, description: string, url: string, image: string|null}|null
+     * @return array{title: string, description: string, url: string, image: string|null, image_width?: int, image_height?: int}|null
      */
     public static function fromPage(array $page): ?array
     {
+        if (($page['component'] ?? null) === 'home') {
+            return self::forHome();
+        }
+
         if (($page['component'] ?? null) !== 'listings/show') {
             return null;
         }
@@ -28,6 +32,23 @@ class ListingOpenGraph
             'description' => self::description($listing),
             'url' => route('listings.show', $listing['id']),
             'image' => self::coverUrl($listing),
+        ];
+    }
+
+    /**
+     * A wide capture of the landing hero. Without it, crawlers use the site icon as the preview image.
+     *
+     * @return array{title: string, description: string, url: string, image: string, image_width: int, image_height: int}
+     */
+    private static function forHome(): array
+    {
+        return [
+            'title' => 'Rentas en Teziutlán',
+            'description' => 'Encuentra o publica cuartos, departamentos y casas en renta en Teziutlán. Publicar en Radica es gratis.',
+            'url' => route('home'),
+            'image' => url('/images/og-home.png'),
+            'image_width' => 1200,
+            'image_height' => 600,
         ];
     }
 

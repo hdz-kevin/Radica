@@ -19,7 +19,10 @@ test('the site icon is the navbar house', function () {
 test('the home page renders the public landing page', function () {
     $this->get(route('home'))
         ->assertOk()
-        ->assertDontSee('property="og:title"', false)
+        ->assertSee('<meta property="og:title" content="Rentas en Teziutlán">', false)
+        ->assertSee('<meta property="og:image" content="'.e(url('/images/og-home.png')).'">', false)
+        ->assertSee('<meta property="og:image:width" content="1200">', false)
+        ->assertDontSee('<meta property="og:image" content="'.e(url('/apple-touch-icon.png')).'">', false)
         ->assertInertia(fn (Assert $page) => $page
             ->component('home')
             ->has('featuredListings', 0)

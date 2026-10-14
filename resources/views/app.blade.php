@@ -51,6 +51,10 @@
             <meta property="og:url" content="{{ $openGraph['url'] }}">
             @if ($openGraph['image'])
                 <meta property="og:image" content="{{ $openGraph['image'] }}">
+                @if (! empty($openGraph['image_width']) && ! empty($openGraph['image_height']))
+                    <meta property="og:image:width" content="{{ $openGraph['image_width'] }}">
+                    <meta property="og:image:height" content="{{ $openGraph['image_height'] }}">
+                @endif
             @endif
         @endif
 
