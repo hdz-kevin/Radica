@@ -201,6 +201,9 @@ return [
                 'string' => 'La dirección no debe tener más de :max caracteres.',
             ],
         ],
+        'phone_number' => [
+            'required' => 'El teléfono es obligatorio.',
+        ],
         'category' => [
             'required' => 'La categoría es obligatoria.',
             'enum' => 'La categoría seleccionada no es válida.',

@@ -35,6 +35,7 @@ class ListingFormResource extends JsonResource
             'city' => $this->city,
             'zone' => $this->zone,
             'street_address' => $this->street_address,
+            'phone_number' => $this->phone_number,
             'contact_via_whatsapp' => $this->contact_via_whatsapp,
             'contact_via_phone' => $this->contact_via_phone,
             'images' => $this->images->map(fn (ListingImage $image): array => [

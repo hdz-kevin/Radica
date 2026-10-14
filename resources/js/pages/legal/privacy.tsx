@@ -25,14 +25,17 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                     El responsable del tratamiento de tus datos personales es{' '}
                     <strong>{legal.owner_name}</strong>, persona física, con
                     domicilio para oír y recibir notificaciones en{' '}
-                    {legal.jurisdiction}. Para cualquier asunto
-                    relacionado con tus datos puedes escribir a{' '}
+                    {legal.jurisdiction}. Para cualquier asunto relacionado con
+                    tus datos puedes escribir a{' '}
                     <LegalEmail email={legal.contact_email} />.
                 </p>
             </LegalSection>
 
             <LegalSection title="2. Datos personales que recabamos">
-                <p>Recabamos únicamente los datos que tú nos proporcionas o que se generan al usar Radica:</p>
+                <p>
+                    Recabamos únicamente los datos que tú nos proporcionas o que
+                    se generan al usar Radica:
+                </p>
                 <ul>
                     <li>
                         <strong>Datos de cuenta:</strong> nombre, correo
@@ -42,9 +45,11 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                         recibimos tu contraseña de Google.
                     </li>
                     <li>
-                        <strong>Datos de contacto:</strong> número de teléfono,
-                        si decides agregarlo en tu perfil. Es necesario para
-                        publicar inmuebles y ser contactado por las personas interesadas.
+                        <strong>Datos de contacto:</strong> un número de
+                        teléfono en cada publicación, necesario para que te contacten.
+                        También puedes guardar un número principal en tu perfil,
+                        este se usará por defecto en tus publicaciones pero puedes
+                        sobreescribirlo en cualquiera de ellas.
                     </li>
                     <li>
                         <strong>Datos de tus publicaciones:</strong> tipo de
@@ -70,14 +75,21 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
             </LegalSection>
 
             <LegalSection title="3. Para qué usamos tus datos">
-                <p>Usamos tus datos para las siguientes finalidades, que son necesarias para darte el servicio:</p>
+                <p>
+                    Usamos tus datos para las siguientes finalidades, que son
+                    necesarias para darte el servicio:
+                </p>
                 <ul>
-                    <li>Crear y administrar tu cuenta y permitirte iniciar sesión.</li>
-                    <li>Publicar, mostrar, editar y ocultar tus anuncios de renta.</li>
                     <li>
-                        Mostrar tu teléfono en tus publicaciones para que cualquier
-                        persona interesada pueda contactarte por llamada o
-                        WhatsApp según elijas.
+                        Crear y administrar tu cuenta y permitirte iniciar sesión.
+                    </li>
+                    <li>
+                        Publicar, mostrar, editar y ocultar tus publicaciones.
+                    </li>
+                    <li>
+                        Mostrar el teléfono de las publicaciones para que
+                        cualquier persona interesada pueda contactarte por
+                        llamada o WhatsApp, según elijas al publicar.
                     </li>
                     <li>Guardar tus publicaciones favoritas.</li>
                     <li>
@@ -109,10 +121,8 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                     <li>
                         <strong>Visible para cualquier persona:</strong> el
                         título, la descripción, el precio, las características,
-                        las fotos, la zona o colonia y, solo si la incluyes, la
-                        dirección del inmueble. También tu número de teléfono,
-                        en las publicaciones donde elijas ser contactado por
-                        llamada o WhatsApp.
+                        las fotos, la zona o colonia, el número de teléfono y,
+                        solo si la incluyes, la dirección exacta del inmueble.
                     </li>
                     <li>
                         <strong>Nunca público:</strong> tu correo electrónico,
@@ -135,7 +145,9 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                 </p>
                 <ul>
                     <li>
-                        <strong>Proveedor de hospedaje y almacenamiento:</strong>{' '}
+                        <strong>
+                            Proveedor de hospedaje y almacenamiento:
+                        </strong>{' '}
                         servidores donde viven la aplicación, la base de datos y
                         las fotos de las publicaciones.
                     </li>
@@ -163,16 +175,17 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                     <strong>Oponerte</strong> a su uso para fines específicos.
                     También puedes revocar el consentimiento que nos diste.
                 </p>
-                <p>
-                    Puedes hacerlo de dos formas:
-                </p>
+                <p>Puedes hacerlo de dos formas:</p>
                 <ul>
                     <li>
                         <strong>Directamente en Radica:</strong> en{' '}
-                        <TextLink href={profile()}>Ajustes &gt; Perfil</TextLink>{' '}
-                        puedes corregir tu nombre, correo y teléfono, y eliminar
-                        tu cuenta de forma permanente. Tus anuncios se pueden
-                        editar, ocultar o borrar desde <TextLink href={mine()}>Mis publicaciones</TextLink>.
+                        <TextLink href={profile()}>
+                            Ajustes &gt; Perfil
+                        </TextLink>{' '}
+                        puedes corregir tu nombre, correo y teléfono principal, y
+                        eliminar tu cuenta de forma permanente. Tus publicaciones
+                        se pueden editar, ocultar o borrar desde{' '}
+                        <TextLink href={mine()}>Mis publicaciones</TextLink>.
                     </li>
                     <li>
                         <strong>Por correo:</strong> escribe a{' '}
@@ -196,21 +209,19 @@ export default function Privacy({ legal }: { legal: LegalDetails }) {
                 <p>
                     Conservamos tus datos mientras tu cuenta exista. Cuando
                     eliminas tu cuenta, borramos tus datos de cuenta, tus
-                    publicaciones, sus fotos y tus favoritos.
-                    Podemos conservar registros técnicos
-                    por un tiempo limitado cuando sea necesario por seguridad o
-                    para cumplir obligaciones legales.
+                    publicaciones, sus fotos y tus favoritos. Podemos conservar
+                    registros técnicos por un tiempo limitado cuando sea
+                    necesario por seguridad o para cumplir obligaciones legales.
                 </p>
             </LegalSection>
 
             <LegalSection title="8. Cookies">
                 <p>
                     Radica usa únicamente cookies técnicas, necesarias para que
-                    puedas iniciar sesión, mantener tu sesión abierta,
-                    recordar tu preferencia de tema (claro u oscuro) y proteger
-                    los formularios contra ataques. No usamos cookies de
-                    publicidad ni herramientas de rastreo o analítica de
-                    terceros.
+                    puedas iniciar sesión, mantener tu sesión abierta, recordar
+                    tu preferencia de tema (claro u oscuro) y proteger los
+                    formularios contra ataques. No usamos cookies de publicidad
+                    ni herramientas de rastreo o analítica de terceros.
                 </p>
             </LegalSection>
 

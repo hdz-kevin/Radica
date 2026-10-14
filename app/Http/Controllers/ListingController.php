@@ -68,10 +68,6 @@ class ListingController extends Controller
      */
     public function store(StoreListingRequest $request, SyncListingImages $sync): RedirectResponse
     {
-        if (! $request->user()->hasPhone()) {
-            return back();
-        }
-
         // Create the listing and sync the images
         $listing = DB::transaction(function () use ($request, $sync): Listing {
             $listing = $request->user()->listings()->create([
@@ -98,7 +94,7 @@ class ListingController extends Controller
             abort(404);
         }
 
-        $listing->load(['user:id,phone_number', 'images']);
+        $listing->load('images');
 
         return Inertia::render('listings/show', [
             'listing' => ListingShowResource::make($listing),

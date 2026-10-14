@@ -69,6 +69,7 @@ export type ListingFormData = {
     city: string;
     zone: string;
     street_address: string | null;
+    phone_number: string | null;
     contact_via_whatsapp: boolean;
     contact_via_phone: boolean;
     images: ListingImagePreview[];
@@ -90,12 +91,10 @@ export type ListingShow = {
     city: string;
     zone: string;
     street_address: string | null;
+    phone_number: string | null;
     contact_via_whatsapp: boolean;
     contact_via_phone: boolean;
     images: ListingShowImage[];
-    user: {
-        phone_number: string | null;
-    };
 } & IncludedUtilities;
 
 export const listingCategories: ListingCategoryValue[] = [

@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\ListingCategory;
+use App\Rules\MexicanPhoneNumber;
 use Database\Factories\ListingFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +42,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string $city
  * @property string $zone
  * @property string|null $street_address
+ * @property string|null $phone_number
  * @property bool $contact_via_whatsapp
  * @property bool $contact_via_phone
  * @property bool $is_published
@@ -71,6 +74,7 @@ use Illuminate\Support\Facades\Storage;
     'city',
     'zone',
     'street_address',
+    'phone_number',
     'contact_via_whatsapp',
     'contact_via_phone',
     'published_at',
@@ -140,6 +144,16 @@ class Listing extends Model
             'bathrooms' => 'integer',
             'published_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Persist the 10 national digits with the WhatsApp prefix.
+     */
+    protected function phoneNumber(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value): ?string => MexicanPhoneNumber::forStorage($value),
+        );
     }
 
     /**

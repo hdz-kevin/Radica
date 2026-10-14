@@ -36,7 +36,7 @@ Listing::inZone() compares REPLACE(zone, ' ', '') with the search text after str
 Favorites are a listing_favorites pivot (user_id + listing_id unique, withTimestamps). No Favorite model and no public count. Listing::deleting detaches favorites because soft delete does not fire the FK cascade. Catalog, Favoritos, and Mis publicaciones flag the viewer with withFavoritedBy(); guests skip that subquery. Favoritos lists favoritedListings()->published() newest pivot created_at first. Unpublish keeps the row; it reappears when published again.
 
 ## Store profile phones as 521 plus 10 digits
-The profile form submits the 10 national digits. User persists phone_number as 521 plus those digits via MexicanPhoneNumber::forStorage, because WhatsApp links use that value unchanged. Values that already start with 521 are stored as-is. Do not ask the user to type 521.
+The profile and listing forms submit the 10 national digits. User and Listing persist phone_number as 521 plus those digits via MexicanPhoneNumber::forStorage, because WhatsApp links use that value unchanged. Values that already start with 521 are stored as-is. Do not ask the user to type 521. The profile number only prefills a new listing; it does not rewrite listings already saved.
 
 ## User deletion force deletes listings through Eloquent
 The listings.user_id FK cascade does not fire Listing::deleting, so photo files would be orphaned. User::deleting force deletes every listing withTrashed() first. Keep that hook when changing account deletion.

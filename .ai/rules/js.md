@@ -9,7 +9,7 @@ paths:
 Canonical spec: docs/mvp_plan.md. Frontend follows the same numbered slices. After each slice, explain Inertia/React architecture. Do not add Mapbox or a pin map; the catalog is cards. Do not implement the full MVP in one pass.
 
 ## Listing form phone and owner actions
-Do not collect phone_number on the listing form. Create shows a warning plus a link to the profile when auth.user.phone_number is null. Edit does not. Owner buttons on show use the sibling can prop from the server, never compare user ids.
+Collect phone_number on the listing form. Create prefills the 10 national digits from auth.user.phone_number when the profile has one. Edit shows that listing's number, not the profile. Owner buttons on show use the sibling can prop from the server, never compare user ids.
 
 ## Listing form uploads 1 to 15 photos
 Photo UI is ListingImageUploader at the start of ListingForm (mobile stacked, lg 7-column grid with images sticky left spanning 3 and fields spanning 4). Multipart images[] is rebuilt with DataTransfer from new File objects in visual order. Edit also posts image_order[] (existing id or the sentinel new). Cover is always the first item in that order; tapping a thumb only changes the large preview. Reorder with @dnd-kit (mouse distance, touch long-press). Copy is “1 a 15 fotos”. Cards use cover_url or the existing placeholder; show renders images in position order as a simple gallery.
@@ -30,10 +30,10 @@ Show and Mis publicaciones use ListingActionsMenu: one outline ellipsis button o
 The heart overlay is only on public catalog cards, with pointer-events-auto so it does not follow the card link. It is not on Mis publicaciones. Saving in the menu is the Guardar item. Compartir and Guardar are disabled while the listing is hidden. The card prefetches show; saving or removing a favorite invalidates that prefetch with listingShowCacheTag so the show menu matches the heart without a refresh. The server flashes La publicación se guardó en favoritos or La publicación se quitó de favoritos, and useFlashToast shows it. Guests still see Guardar on a published listing; the link is login.intended with return set to the current page, and the listing is not saved until they tap again after login. Main nav order is Catálogo, Favoritos, Publicar, Mis publicaciones. Favoritos reuses the public card. Share uses navigator.share and otherwise copies the absolute URL. Do not put share on catalog cards.
 
 ## Profile phone field shows 10 national digits
-The profile phone field shows and submits the 10 national digits. Strip a stored 521 prefix for display (nationalPhoneNumber). Do not put 521 in the placeholder or ask the user to type it. Listing WhatsApp links use the stored 521 value. Call links drop that extra 1 and use 52 plus the 10 national digits.
+The profile and listing phone fields show and submit the 10 national digits. Strip a stored 521 prefix for display with nationalPhoneNumber from @/lib/phone. Do not put 521 in the placeholder or ask the user to type it. Listing WhatsApp links use the stored 521 value. Call links drop that extra 1 and use 52 plus the 10 national digits.
 
 ## Contact buttons on show are public
-Llamar and WhatsApp render for guests too, from listing.user.phone_number and the contact_via flags. There is no "Inicia sesión para contactar" button. Keep the antifraud notice under them.
+Llamar and WhatsApp render for guests too, from listing.phone_number and the contact_via flags. There is no "Inicia sesión para contactar" button. Keep the antifraud notice under them.
 
 ## Guests go to login through login.intended
 Guest CTAs that should return to the current page (favorite heart) link to login.intended with query return=page.url (import { intended } from '@/routes/login'). favorites.login no longer exists. Run wayfinder:generate with --with-form, otherwise .form() helpers disappear.

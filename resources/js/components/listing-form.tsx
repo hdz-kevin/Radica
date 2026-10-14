@@ -1,4 +1,4 @@
-import { Form } from '@inertiajs/react';
+import { Form, usePage } from '@inertiajs/react';
 import {
     Car,
     Droplet,
@@ -21,7 +21,9 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { type ListingCategoryValue, type ListingFormData } from '@/lib/listing';
+import { nationalPhoneNumber } from '@/lib/phone';
 import { cn } from '@/lib/utils';
+import type { Auth } from '@/types';
 
 const selectClassName =
     'border-input flex h-10 lg:h-11 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-sm lg:text-base shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50';
@@ -55,8 +57,12 @@ export function ListingForm({
     listing,
     submitLabel,
 }: ListingFormProps) {
+    const { auth } = usePage<{ auth: Auth }>().props;
     const [category, setCategory] = useState<ListingCategoryValue>(
         listing?.category ?? 'apartment',
+    );
+    const phoneDefault = nationalPhoneNumber(
+        listing ? listing.phone_number : auth.user?.phone_number,
     );
 
     return (
@@ -64,7 +70,7 @@ export function ListingForm({
             action={action}
             method={method}
             encType="multipart/form-data"
-            className="flex flex-col gap-8 lg:mt-4 novalidate"
+            className="novalidate flex flex-col gap-8 lg:mt-4"
             noValidate
         >
             {({ processing, errors }) => (
@@ -105,7 +111,9 @@ export function ListingForm({
 
                         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="zone">Colonia de Teziutlán</Label>
+                                <Label htmlFor="zone">
+                                    Colonia de Teziutlán
+                                </Label>
                                 <Input
                                     id="zone"
                                     name="zone"
@@ -116,7 +124,13 @@ export function ListingForm({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="street_address">Dirección <span className='text-muted-foreground'> (opcional)</span></Label>
+                                <Label htmlFor="street_address">
+                                    Dirección{' '}
+                                    <span className="text-muted-foreground">
+                                        {' '}
+                                        (opcional)
+                                    </span>
+                                </Label>
                                 <Input
                                     id="street_address"
                                     name="street_address"
@@ -137,19 +151,24 @@ export function ListingForm({
                                     value={category}
                                     onChange={(event) =>
                                         setCategory(
-                                            event.target.value as ListingCategoryValue,
+                                            event.target
+                                                .value as ListingCategoryValue,
                                         )
                                     }
                                 >
                                     <option value="room">Cuarto</option>
-                                    <option value="apartment">Departamento</option>
+                                    <option value="apartment">
+                                        Departamento
+                                    </option>
                                     <option value="house">Casa</option>
                                 </select>
                                 <InputError message={errors.category} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="rent_amount">Renta mensual (MXN)</Label>
+                                <Label htmlFor="rent_amount">
+                                    Renta mensual (MXN)
+                                </Label>
                                 <Input
                                     id="rent_amount"
                                     name="rent_amount"
@@ -157,7 +176,7 @@ export function ListingForm({
                                     min={1}
                                     step={1}
                                     defaultValue={listing?.rent_amount}
-                                    placeholder='2000'
+                                    placeholder="2000"
                                 />
                                 <InputError message={errors.rent_amount} />
                             </div>
@@ -173,7 +192,7 @@ export function ListingForm({
                                         type="number"
                                         min={1}
                                         defaultValue={listing?.bedrooms ?? ''}
-                                        placeholder='2'
+                                        placeholder="2"
                                     />
                                     <InputError message={errors.bedrooms} />
                                 </div>
@@ -186,7 +205,7 @@ export function ListingForm({
                                         type="number"
                                         min={1}
                                         defaultValue={listing?.bathrooms ?? ''}
-                                        placeholder='1'
+                                        placeholder="1"
                                     />
                                     <InputError message={errors.bathrooms} />
                                 </div>
@@ -194,10 +213,10 @@ export function ListingForm({
                         )}
 
                         <fieldset className="grid gap-3">
-                            <legend className="text-sm lg:text-base font-medium">
+                            <legend className="text-sm font-medium lg:text-base">
                                 Amenidades y servicios
                             </legend>
-                            <p className="text-muted-foreground text-sm lg:text-base mt-1">
+                            <p className="text-muted-foreground mt-1 text-sm lg:text-base">
                                 Marca las amenidades incluidas en la renta
                             </p>
                             <div className="flex flex-wrap gap-2.5">
@@ -222,10 +241,23 @@ export function ListingForm({
                             ))}
                         </fieldset>
 
-                        <fieldset className="grid gap-3">
-                            <legend className="text-sm lg:text-base font-medium">Vías de contacto</legend>
-                            <p className="text-muted-foreground text-sm lg:text-base mt-1">
-                                Por dónde quieres ser contactado? Elige al menos una opción.
+                        <fieldset className="grid gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="phone_number">Teléfono</Label>
+                                <Input
+                                    id="phone_number"
+                                    name="phone_number"
+                                    inputMode="numeric"
+                                    autoComplete="tel"
+                                    defaultValue={phoneDefault}
+                                    placeholder="232 123 4567"
+                                    required
+                                />
+                                <InputError message={errors.phone_number} />
+                            </div>
+                            <p className="text-muted-foreground mt-1 text-sm lg:text-base">
+                                Por dónde quieres ser contactado? Elige al menos
+                                una opción.
                             </p>
                             <div className="flex flex-wrap gap-2.5">
                                 {contactChips.map((chip) => (
@@ -255,7 +287,7 @@ export function ListingForm({
                                 disabled={processing}
                                 className="w-full rounded-md sm:w-auto"
                             >
-                                {processing && <Spinner /> }
+                                {processing && <Spinner />}
                                 {submitLabel}
                             </Button>
                         </div>

@@ -76,7 +76,7 @@ export default function ListingsShow({
         ],
     });
 
-    const phoneNumber = listing.user.phone_number;
+    const phoneNumber = listing.phone_number;
     const showWhatsApp = listing.contact_via_whatsapp && phoneNumber !== null;
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
     const includedAmenities = amenityChips.filter((chip) => listing[chip.name]);

@@ -20,6 +20,6 @@ return [
 
     'jurisdiction' => env('LEGAL_JURISDICTION', 'Teziutlán, Puebla, México'),
 
-    'updated_at' => '2026-10-11',
+    'updated_at' => '2026-10-13',
 
 ];

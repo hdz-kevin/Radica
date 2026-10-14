@@ -38,6 +38,7 @@ function listingPayload(array $overrides = []): array
         'include_cable' => false,
         'contact_via_whatsapp' => true,
         'contact_via_phone' => true,
+        'phone_number' => '5512345678',
         'images' => [listingImage()],
         'image_order' => ['new'],
         ...$overrides,
@@ -223,8 +224,10 @@ describe('index', function () {
 
 describe('show', function () {
     test('renders a published listing for a guest', function () {
-        $owner = User::factory()->withPhone()->create();
-        $listing = Listing::factory()->for($owner)->create();
+        $owner = User::factory()->withPhone('5215599999999')->create();
+        $listing = Listing::factory()->for($owner)->create([
+            'phone_number' => '5215512345678',
+        ]);
 
         $this->get(route('listings.show', $listing))
             ->assertOk()
@@ -232,8 +235,8 @@ describe('show', function () {
                 ->component('listings/show')
                 ->where('listing.id', $listing->id)
                 ->where('listing.zone', $listing->zone)
-                ->where('listing.user.phone_number', $owner->phone_number)
-                ->missing('listing.user.email')
+                ->where('listing.phone_number', '5215512345678')
+                ->missing('listing.user')
                 ->has('listing.images', 0)
                 ->missing('listing.bathroom_type')
                 ->missing('listing.square_meters')
@@ -245,13 +248,16 @@ describe('show', function () {
             );
     });
 
-    test('sends a null phone number when the owner has none', function () {
-        $listing = Listing::factory()->for(User::factory()->create())->create();
+    test('sends a null phone number when the listing has none', function () {
+        $listing = Listing::factory()->create([
+            'phone_number' => null,
+        ]);
 
         $this->get(route('listings.show', $listing))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->where('listing.user.phone_number', null)
+                ->where('listing.phone_number', null)
+                ->missing('listing.user')
             );
     });
 
@@ -378,23 +384,62 @@ describe('store', function () {
             ->state->toBe(Listing::DEFAULT_STATE)
             ->city->toBe(Listing::DEFAULT_CITY)
             ->zone->toBe('Centro');
+        expect($listing->phone_number)->toBe('5215512345678');
         expect($user->fresh()->phone_number)->toBe('5215512345678');
 
         $this->assertAuthenticated();
         $this->get(route('listings.show', $listing))->assertOk();
     });
 
-    test('does not create a listing when the user has no phone', function () {
+    test('creates a listing when the user has no profile phone', function () {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('listings.store'), listingPayload([
+                'phone_number' => '2321234567',
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        expect($user->listings()->first()?->phone_number)->toBe('5212321234567');
+        expect($user->fresh()->phone_number)->toBeNull();
+    });
+
+    test('stores a listing phone that differs from the profile', function () {
+        $user = User::factory()->withPhone()->create();
+
+        $this->actingAs($user)
+            ->post(route('listings.store'), listingPayload([
+                'phone_number' => '2321234567',
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        expect($user->listings()->first()?->phone_number)->toBe('5212321234567');
+        expect($user->fresh()->phone_number)->toBe('5215512345678');
+    });
+
+    test('rejects a listing phone that is missing or not 10 digits', function (?string $phoneNumber, string $message) {
+        $this->app->setLocale('es');
+
         $user = User::factory()->create();
 
         $this->actingAs($user)
             ->from(route('listings.create'))
-            ->post(route('listings.store'), listingPayload())
-            ->assertRedirect(route('listings.create'));
+            ->post(route('listings.store'), listingPayload([
+                'phone_number' => $phoneNumber,
+            ]))
+            ->assertRedirect(route('listings.create'))
+            ->assertSessionHasErrors([
+                'phone_number' => $message,
+            ]);
 
         expect($user->listings()->count())->toBe(0);
-        expect($user->fresh()->phone_number)->toBeNull();
-    });
+    })->with([
+        'missing' => [null, 'El teléfono es obligatorio.'],
+        'empty' => ['', 'El teléfono es obligatorio.'],
+        'not ten digits' => ['5215512345678', 'El número de teléfono debe contener 10 dígitos.'],
+    ]);
 
     test('rejects a listing without a zone or a contact channel', function () {
         $user = User::factory()->withPhone()->create();
@@ -683,8 +728,10 @@ describe('edit', function () {
     });
 
     test('renders the edit form for the owner', function () {
-        $owner = User::factory()->create();
-        $listing = Listing::factory()->for($owner)->create();
+        $owner = User::factory()->withPhone('5215599999999')->create();
+        $listing = Listing::factory()->for($owner)->create([
+            'phone_number' => '5215512345678',
+        ]);
 
         $this->actingAs($owner)
             ->get(route('listings.edit', $listing))
@@ -693,6 +740,7 @@ describe('edit', function () {
                 ->component('listings/edit')
                 ->where('listing.id', $listing->id)
                 ->where('listing.title', $listing->title)
+                ->where('listing.phone_number', '5215512345678')
                 ->has('listing.images', 0)
             );
     });
@@ -762,6 +810,23 @@ describe('update', function () {
 
         expect($listing->fresh()->title)->toBe('Departamento renovado');
         expect($owner->fresh()->phone_number)->toBeNull();
+    });
+
+    test('updates the listing phone without changing the profile', function () {
+        $owner = User::factory()->withPhone()->create();
+        $listing = Listing::factory()->for($owner)->create([
+            'phone_number' => '5215512345678',
+        ]);
+
+        $this->actingAs($owner)
+            ->patch(route('listings.update', $listing), listingPayload([
+                'phone_number' => '2321234567',
+            ]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('listings.show', $listing));
+
+        expect($listing->fresh()->phone_number)->toBe('5212321234567');
+        expect($owner->fresh()->phone_number)->toBe('5215512345678');
     });
 
     test('rejects an update that would leave the listing without photos', function () {

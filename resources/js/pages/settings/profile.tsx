@@ -7,6 +7,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { nationalPhoneNumber } from '@/lib/phone';
 import { edit } from '@/routes/profile';
 import type { Auth } from '@/types';
 import { send } from '@/routes/verification';
@@ -14,14 +15,6 @@ import { send } from '@/routes/verification';
 type PageProps = {
     auth: Auth;
 };
-
-function nationalPhoneNumber(phoneNumber: string | null | undefined): string {
-    if (!phoneNumber?.startsWith('521')) {
-        return phoneNumber ?? '';
-    }
-
-    return phoneNumber.slice(3);
-}
 
 export default function Profile({
     mustVerifyEmail,
@@ -75,7 +68,9 @@ export default function Profile({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Correo electrónico</Label>
+                                <Label htmlFor="email">
+                                    Correo electrónico
+                                </Label>
 
                                 <Input
                                     id="email"
@@ -108,7 +103,7 @@ export default function Profile({
                                     placeholder="232 123 4567"
                                 />
                                 <p className="text-muted-foreground text-sm lg:text-base">
-                                    Número de teléfono al que podrán contactarte
+                                    Este es tu número de teléfono por defecto
                                 </p>
                                 <InputError
                                     className="mt-2"
@@ -127,13 +122,14 @@ export default function Profile({
                                                 as="button"
                                                 className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                             >
-                                                Haz clic aquí para reenviarte el correo de verificación.
+                                                Haz clic aquí para reenviarte el
+                                                correo de verificación.
                                             </Link>
                                         </p>
 
                                         {status ===
                                             'verification-link-sent' && (
-                                            <div className="mt-2 text-sm lg:text-base font-medium text-green-600">
+                                            <div className="mt-2 text-sm font-medium text-green-600 lg:text-base">
                                                 Te enviamos un nuevo enlace de
                                                 verificación a tu correo.
                                             </div>

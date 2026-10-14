@@ -40,14 +40,12 @@ class ListingShowResource extends JsonResource
             'street_address' => $this->street_address,
             'contact_via_whatsapp' => $this->contact_via_whatsapp,
             'contact_via_phone' => $this->contact_via_phone,
+            'phone_number' => $this->phone_number,
             'images' => $this->images->map(fn (ListingImage $image): array => [
                 'id' => $image->id,
                 'url' => $image->url(),
                 'is_cover' => $image->is_cover,
             ])->values()->all(),
-            'user' => [
-                'phone_number' => $this->user->phone_number,
-            ],
         ];
     }
 }

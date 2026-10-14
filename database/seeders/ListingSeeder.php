@@ -46,6 +46,7 @@ class ListingSeeder extends Seeder
 
             $model = $factory->create([
                 ...$listing['attributes'],
+                'phone_number' => $owners[$index]->phone_number,
                 'published_at' => now()->subDays($index),
             ]);
 

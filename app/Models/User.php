@@ -94,14 +94,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Whether the user has a contact phone number.
-     */
-    public function hasPhone(): bool
-    {
-        return filled($this->phone_number);
-    }
-
-    /**
      * Whether the user can sign in with a local password.
      */
     public function hasPassword(): bool

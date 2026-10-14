@@ -41,6 +41,7 @@ class ListingFactory extends Factory
             'city' => Listing::DEFAULT_CITY,
             'zone' => 'Centro',
             'street_address' => null,
+            'phone_number' => '5215512345678',
             'contact_via_whatsapp' => true,
             'contact_via_phone' => true,
             'is_published' => true,

@@ -171,6 +171,24 @@ test('phone number can be cleared on the profile', function () {
     expect($user->fresh()->phone_number)->toBeNull();
 });
 
+test('changing the profile phone does not change a listing phone', function () {
+    $user = User::factory()->withPhone()->create();
+    $listing = Listing::factory()->for($user)->create([
+        'phone_number' => '5212321234567',
+    ]);
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone_number' => '5512345678',
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($user->fresh()->phone_number)->toBe('5215512345678');
+    expect($listing->fresh()->phone_number)->toBe('5212321234567');
+});
+
 test('a user without a password can delete their account', function () {
     $user = User::factory()->create([
         'password' => null,

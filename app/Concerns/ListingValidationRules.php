@@ -5,6 +5,7 @@ namespace App\Concerns;
 use App\Enums\ListingCategory;
 use App\Models\Listing;
 use App\Models\ListingImage;
+use App\Rules\MexicanPhoneNumber;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
@@ -63,6 +64,7 @@ trait ListingValidationRules
             'rent_amount' => ['required', 'integer', 'min:1'],
             'zone' => ['required', 'string', 'max:255'],
             'street_address' => ['nullable', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', new MexicanPhoneNumber],
             'is_furnished' => ['required', 'boolean'],
             'pets_allowed' => ['required', 'boolean'],
             'has_parking' => ['required', 'boolean'],
