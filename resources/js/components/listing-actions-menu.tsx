@@ -24,7 +24,6 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
-    formatRent,
     listingShowCacheTag,
     type ListingPermissions,
 } from '@/lib/listing';
@@ -211,11 +210,10 @@ function ShareMenuItem({ listing }: { listing: ListingActionsListing }) {
 
 async function shareListing(listing: ListingActionsListing): Promise<void> {
     const url = absoluteListingUrl(listing.id);
-    const text = `${formatRent(listing.rent_amount)} / mes\n${listing.zone}, ${listing.city}, ${listing.state}`;
 
     if (typeof navigator.share === 'function') {
         try {
-            await navigator.share({ title: listing.title, text, url });
+            await navigator.share({ title: listing.title, url });
 
             return;
         } catch (error) {
