@@ -16,10 +16,10 @@ import {
     Zap,
     type LucideIcon,
 } from 'lucide-react';
-import { useState } from 'react';
 import { show } from '@/actions/App/Http/Controllers/ListingController';
 import { ListingActionsMenu } from '@/components/listing-actions-menu';
 import { ListingCover } from '@/components/listing-cover';
+import { ListingGallery } from '@/components/listing-gallery';
 import { Button } from '@/components/ui/button';
 import {
     formatListingAddress,
@@ -28,10 +28,8 @@ import {
     telUrl,
     type ListingPermissions,
     type ListingShow,
-    type ListingShowImage,
     whatsAppUrl,
 } from '@/lib/listing';
-import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { terms } from '@/routes/legal';
 import { index as listingsIndex } from '@/routes/listings';
@@ -102,6 +100,7 @@ export default function ListingsShow({
                     <div className="min-w-0 lg:sticky lg:top-4 lg:col-span-5">
                         {listing.images.length > 0 ? (
                             <ListingGallery
+                                key={listing.id}
                                 images={listing.images}
                                 title={listing.title}
                             />
@@ -247,64 +246,6 @@ export default function ListingsShow({
                 </div>
             </article>
         </>
-    );
-}
-
-function ListingGallery({
-    images,
-    title,
-}: {
-    images: ListingShowImage[];
-    title: string;
-}) {
-    const coverIndex = Math.max(
-        0,
-        images.findIndex((image) => image.is_cover),
-    );
-    const [activeIndex, setActiveIndex] = useState(coverIndex);
-    const active = images[activeIndex] ?? images[0];
-
-    return (
-        <div className="grid gap-3">
-            <div className="bg-muted overflow-hidden rounded-lg">
-                <img
-                    src={active.url}
-                    alt={title}
-                    className="aspect-video min-h-56 w-full object-cover lg:min-h-72"
-                />
-            </div>
-            {images.length > 1 ? (
-                <ul className="grid grid-cols-5 gap-2 lg:grid-cols-6">
-                    {images.map((image, index) => (
-                        <li key={image.id}>
-                            <button
-                                type="button"
-                                onClick={() => setActiveIndex(index)}
-                                aria-label={
-                                    image.is_cover
-                                        ? 'Portada'
-                                        : 'Seleccionar foto'
-                                }
-                                aria-current={
-                                    index === activeIndex ? 'true' : undefined
-                                }
-                                className={cn(
-                                    'overflow-hidden rounded-md border',
-                                    index === activeIndex &&
-                                        'ring-2 ring-gray-500',
-                                )}
-                            >
-                                <img
-                                    src={image.url}
-                                    alt=""
-                                    className="size-17 object-cover lg:size-20"
-                                />
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            ) : null}
-        </div>
     );
 }
 

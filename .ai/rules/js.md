@@ -12,7 +12,7 @@ Canonical spec: docs/mvp_plan.md. Frontend follows the same numbered slices. Aft
 Collect phone_number on the listing form. Create prefills the 10 national digits from auth.user.phone_number when the profile has one. Edit shows that listing's number, not the profile. Owner buttons on show use the sibling can prop from the server, never compare user ids.
 
 ## Listing form uploads 1 to 15 photos
-Photo UI is ListingImageUploader at the start of ListingForm (mobile stacked, lg 7-column grid with images sticky left spanning 3 and fields spanning 4). Multipart images[] is rebuilt with DataTransfer from new File objects in visual order. Edit also posts image_order[] (existing id or the sentinel new). Cover is always the first item in that order; tapping a thumb only changes the large preview. Reorder with @dnd-kit (mouse distance, touch long-press). Copy is “1 a 15 fotos”. Cards use cover_url or the existing placeholder; show renders images in position order as a simple gallery.
+Photo UI is ListingImageUploader at the start of ListingForm (mobile stacked, lg 7-column grid with images sticky left spanning 3 and fields spanning 4). Multipart images[] is rebuilt with DataTransfer from new File objects in visual order. Edit also posts image_order[] (existing id or the sentinel new). Cover is always the first item in that order; tapping a thumb only changes the large preview. Reorder with @dnd-kit (mouse distance, touch long-press). Copy is “1 a 15 fotos”. Cards use cover_url or the existing placeholder.
 
 ## Catalog live filters are Inertia visits
 The catalog filters with debounced router.get to listings.index at /listings, only listings and filters, preserveState, preserveScroll, and replace. Omit empty query keys. Do not use useHttp or a JSON search endpoint for this page.
@@ -46,3 +46,6 @@ Login, register, and forgot password use LandingHeader on every viewport and do 
 
 ## Landing uses a dedicated marketing header
 The home page uses LandingHeader: transparent, borderless, with brand and account entry actions. AppHeader remains unchanged for application pages. Add future marketing links to LandingHeader, not AppHeader.
+
+## Listing show photo carousel
+The listing show page keeps photos in position order. The large photo is a snap carousel: swipe below lg, with no arrow buttons and no counter on the page at any width. Thumbnails jump that carousel. Clicking the large photo opens a fullscreen dialog on the same photo. Clicking the black area outside that photo closes the dialog; clicking the photo does not. The dialog shows a counter when there is more than one photo. Below lg the dialog swipes; from lg it shows one photo with side arrow buttons (disabled on the first and last) and keyboard arrows. A single photo has no arrows and still opens the viewer.
