@@ -138,7 +138,7 @@ export default function ListingsShow({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={`Abrir ${address} en Google Maps`}
-                                className="focus-visible:ring-ring inline-flex w-fit items-center gap-2 rounded-sm text-sm hover:underline focus-visible:ring-2 focus-visible:outline-none lg:text-base"
+                                className="focus-visible:ring-ring inline-flex w-fit items-center gap-2 rounded-sm text-sm underline focus-visible:ring-2 focus-visible:outline-none lg:text-base"
                             >
                                 <MapPinIcon className="size-4 shrink-0 lg:size-5" />
                                 {address}
