@@ -98,7 +98,8 @@ export function ListingGallery({
                                 src={image.url}
                                 alt=""
                                 draggable={false}
-                                className="aspect-video min-h-56 w-full object-cover lg:min-h-72"
+                                // className="aspect-video min-h-56 w-full object-cover lg:min-h-72"
+                                className="aspect-[16/9.9225] min-h-[15.435rem] w-full object-cover lg:min-h-[24rem]"
                             />
                         </button>
                     ))}
