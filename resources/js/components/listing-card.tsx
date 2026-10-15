@@ -88,7 +88,7 @@ function ListingCardBody({
                 <ListingCover
                     url={listing.cover_url}
                     alt={variant === 'mine' ? '' : listing.title}
-                    className="rounded-none border-0"
+                    className="aspect-[16/9.65] rounded-none border-0"
                 />
                 <Badge
                     variant="outline"
