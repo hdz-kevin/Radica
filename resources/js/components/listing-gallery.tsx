@@ -369,7 +369,7 @@ function ListingLightbox({
                     </>
                 ) : null}
                 <DialogPrimitive.Close className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 text-white opacity-100 hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none">
-                    <XIcon className="size-4" />
+                    <XIcon className="size-6" />
                     <span className="sr-only">Cerrar</span>
                 </DialogPrimitive.Close>
                 </DialogPrimitive.Content>
