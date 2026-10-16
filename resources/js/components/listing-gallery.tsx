@@ -88,7 +88,7 @@ export function ListingGallery({
                 <div
                     ref={stripRef}
                     onScroll={handleStripScroll}
-                    className="bg-muted flex snap-x snap-mandatory overflow-x-auto rounded-lg [scrollbar-width:none] lg:overflow-hidden [&::-webkit-scrollbar]:hidden"
+                    className="bg-muted flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-lg [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                     {images.map((image, index) => (
                         <button
