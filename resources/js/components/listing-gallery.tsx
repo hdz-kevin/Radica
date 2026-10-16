@@ -174,6 +174,9 @@ function ListingLightbox({
     const scrollerRef = useRef<HTMLDivElement>(null);
     const indexRef = useRef(index);
     const pointerStart = useRef<{ x: number; y: number } | null>(null);
+    const dismissStart = useRef<{ x: number; y: number } | null>(null);
+    const [dismissY, setDismissY] = useState(0);
+    const [dismissDragging, setDismissDragging] = useState(false);
     const hasMany = images.length > 1;
     const active = images[index] ?? images[0];
 
@@ -276,6 +279,74 @@ function ListingLightbox({
 
     function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
         pointerStart.current = { x: event.clientX, y: event.clientY };
+        dismissStart.current = null;
+
+        if (window.matchMedia('(min-width: 64rem)').matches) {
+            return;
+        }
+
+        if (!(event.target instanceof Element) || event.target.closest('button')) {
+            return;
+        }
+
+        dismissStart.current = { x: event.clientX, y: event.clientY };
+    }
+
+    function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+        const start = dismissStart.current;
+
+        if (!start) {
+            return;
+        }
+
+        const dx = event.clientX - start.x;
+        const dy = event.clientY - start.y;
+
+        if (Math.abs(dx) > dy) {
+            dismissStart.current = null;
+            setDismissDragging(false);
+            setDismissY(0);
+
+            return;
+        }
+
+        if (dy < 12) {
+            return;
+        }
+
+        if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
+            try {
+                event.currentTarget.setPointerCapture(event.pointerId);
+            } catch {
+                // A pointer that already ended cannot be captured.
+            }
+        }
+
+        setDismissDragging(true);
+        setDismissY(dy);
+    }
+
+    function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
+        const start = dismissStart.current;
+
+        dismissStart.current = null;
+        setDismissDragging(false);
+
+        if (!start) {
+            return;
+        }
+
+        const dx = event.clientX - start.x;
+        const dy = event.clientY - start.y;
+
+        if (dy >= 80 && dy > Math.abs(dx)) {
+            setDismissY(0);
+            onOpenChange(false);
+
+            return;
+        }
+
+        setDismissY(0);
     }
 
     function handleBackdropClick(event: MouseEvent<HTMLDivElement>) {
@@ -309,9 +380,19 @@ function ListingLightbox({
                     style={{ animation: 'none' }}
                 />
                 <DialogPrimitive.Content
-                    className="fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center bg-black outline-none"
-                    style={{ animation: 'none' }}
+                    className="fixed inset-0 z-50 flex h-dvh w-screen touch-pan-x items-center justify-center bg-black outline-none lg:touch-auto"
+                    style={{
+                        animation: 'none',
+                        transform:
+                            dismissY > 0 ? `translateY(${dismissY}px)` : undefined,
+                        transition: dismissDragging
+                            ? 'none'
+                            : 'transform 180ms ease-out',
+                    }}
                     onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPointerCancel={handlePointerUp}
                     onClick={handleBackdropClick}
                 >
                 <DialogTitle className="sr-only">Fotos de {title}</DialogTitle>
