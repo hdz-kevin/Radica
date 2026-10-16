@@ -325,7 +325,7 @@ export function ListingImageUploader({
                             items={items.map((item) => item.key)}
                             strategy={rectSortingStrategy}
                         >
-                            <ul className="grid grid-cols-5 lg:grid-cols-6 gap-2">
+                            <ul className="flex flex-wrap gap-2 lg:gap-3">
                                 {items.map((item, index) => (
                                     <SortableThumb
                                         key={item.key}
@@ -341,7 +341,7 @@ export function ListingImageUploader({
                                         onClick={openPicker}
                                         aria-label="Añadir fotos"
                                         className={cn(
-                                            'flex size-17 lg:size-20 items-center justify-center rounded-md border-2 border-dashed',
+                                            'flex h-14 w-16 shrink-0 items-center justify-center rounded-md border-2 border-dashed lg:size-18',
                                             atMax
                                                 ? 'border-input text-muted-foreground/40'
                                                 : 'border-input text-foreground hover:bg-muted/40',
@@ -399,14 +399,14 @@ function SortableThumb({
                 aria-label={isCover ? 'Portada' : 'Seleccionar foto'}
                 aria-current={isSelected ? 'true' : undefined}
                 className={cn(
-                    'overflow-hidden rounded-md border',
+                    'block overflow-hidden rounded-md border',
                     isSelected && 'ring-2 ring-gray-500',
                 )}
             >
                 <img
                     src={photoUrl(item)}
                     alt=""
-                    className="size-17 lg:size-20 object-cover"
+                    className="h-14 w-16 object-cover lg:size-18"
                 />
             </button>
             {isCover ? (

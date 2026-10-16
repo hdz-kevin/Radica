@@ -106,7 +106,7 @@ export function ListingGallery({
                 </div>
             </div>
             {hasMany ? (
-                <ul className="grid grid-cols-5 gap-2 lg:grid-cols-6">
+                <ul className="flex flex-wrap gap-2 lg:gap-3">
                     {images.map((image, index) => (
                         <li key={image.id}>
                             <button
@@ -121,7 +121,7 @@ export function ListingGallery({
                                     index === activeIndex ? 'true' : undefined
                                 }
                                 className={cn(
-                                    'overflow-hidden rounded-md border',
+                                    'block overflow-hidden rounded-md border',
                                     index === activeIndex &&
                                         'ring-2 ring-gray-500',
                                 )}
@@ -129,7 +129,7 @@ export function ListingGallery({
                                 <img
                                     src={image.url}
                                     alt=""
-                                    className="size-17 object-cover lg:size-20"
+                                    className="h-14 w-16 object-cover lg:size-18"
                                 />
                             </button>
                         </li>
