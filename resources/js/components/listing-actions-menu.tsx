@@ -24,6 +24,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+    absoluteUrl,
     listingShowCacheTag,
     type ListingPermissions,
 } from '@/lib/listing';
@@ -232,11 +233,5 @@ async function shareListing(listing: ListingActionsListing): Promise<void> {
 }
 
 function absoluteListingUrl(listingId: number): string {
-    const path = show.url(listingId);
-
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-        return path;
-    }
-
-    return new URL(path, window.location.origin).href;
+    return absoluteUrl(show.url(listingId));
 }

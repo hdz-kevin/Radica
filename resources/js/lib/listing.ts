@@ -158,8 +158,25 @@ export function yesNo(value: boolean): string {
 
 const WHATSAPP_MOBILE_NUMBER = /^521\d{10}$/;
 
-export function whatsAppUrl(phoneNumber: string): string {
-    return `https://wa.me/${phoneNumber}`;
+const whatsAppInquiry =
+    'Hola, vi tu publicación en radicaMX. ¿Sigue disponible?';
+
+export function whatsAppUrl(phoneNumber: string, listingUrl: string): string {
+    const text = `${whatsAppInquiry}\n\n${listingUrl}`;
+
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
+}
+
+export function absoluteUrl(path: string): string {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        return path;
+    }
+
+    if (typeof window === 'undefined') {
+        return path;
+    }
+
+    return new URL(path, window.location.origin).href;
 }
 
 export function telUrl(phoneNumber: string): string {

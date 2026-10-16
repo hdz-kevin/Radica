@@ -1,4 +1,5 @@
 import { Head, Link, setLayoutProps } from '@inertiajs/react';
+import { useSyncExternalStore } from 'react';
 import {
     BathIcon,
     BedSingle,
@@ -22,6 +23,7 @@ import { ListingCover } from '@/components/listing-cover';
 import { ListingGallery } from '@/components/listing-gallery';
 import { Button } from '@/components/ui/button';
 import {
+    absoluteUrl,
     formatListingAddress,
     formatRent,
     googleMapsUrl,
@@ -75,6 +77,7 @@ export default function ListingsShow({
     });
 
     const phoneNumber = listing.phone_number;
+    const listingUrl = useAbsoluteUrl(show.url(listing.id));
     const showWhatsApp = listing.contact_via_whatsapp && phoneNumber !== null;
     const showPhone = listing.contact_via_phone && phoneNumber !== null;
     const includedAmenities = amenityChips.filter((chip) => listing[chip.name]);
@@ -217,7 +220,10 @@ export default function ListingsShow({
                                             className="w-full rounded-md sm:w-auto"
                                         >
                                             <a
-                                                href={whatsAppUrl(phoneNumber)}
+                                                href={whatsAppUrl(
+                                                    phoneNumber,
+                                                    listingUrl,
+                                                )}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >
@@ -247,6 +253,18 @@ export default function ListingsShow({
             </article>
         </>
     );
+}
+
+function useAbsoluteUrl(path: string): string {
+    return useSyncExternalStore(
+        subscribeToNothing,
+        () => absoluteUrl(path),
+        () => path,
+    );
+}
+
+function subscribeToNothing(): () => void {
+    return () => {};
 }
 
 function AmenityChip({

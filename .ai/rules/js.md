@@ -49,3 +49,6 @@ The home page uses LandingHeader: transparent, borderless, with brand and accoun
 
 ## Listing show photo carousel
 The listing show page keeps photos in position order. The large photo is a snap carousel: swipe below lg, with no arrow buttons and no counter on the page at any width. Thumbnails jump that carousel. Clicking the large photo opens a fullscreen dialog on the same photo. Clicking the black area outside that photo closes the dialog; clicking the photo does not. The dialog shows a counter when there is more than one photo. Below lg the dialog swipes; from lg it shows one photo with side arrow buttons (disabled on the first and last) and keyboard arrows. A single photo has no arrows and still opens the viewer.
+
+## WhatsApp inquiry includes the listing link
+The WhatsApp button on a listing opens wa.me with the stored 521 number and a prefilled message: "Hola, vi tu publicación en radicaMX. ¿Sigue disponible?" plus the absolute listing URL on its own line. WhatsApp builds the photo preview from that URL's Open Graph tags, the same preview as Compartir. Do not put the rent, address, or description in the message text.
