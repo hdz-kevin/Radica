@@ -30,11 +30,16 @@ export function ListingGallery({
     const [activeIndex, setActiveIndex] = useState(coverIndex);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const stripRef = useRef<HTMLDivElement>(null);
+    const thumbsRef = useRef<HTMLUListElement>(null);
     const pointerStart = useRef<number | null>(null);
 
     useLayoutEffect(() => {
         scrollStrip(stripRef.current, coverIndex, 'auto');
     }, [coverIndex]);
+
+    useLayoutEffect(() => {
+        scrollActiveThumb(thumbsRef.current, activeIndex, 'auto');
+    }, [activeIndex]);
 
     function showIndex(index: number, behavior: ScrollBehavior) {
         const next = clampIndex(index, images.length);
@@ -106,9 +111,12 @@ export function ListingGallery({
                 </div>
             </div>
             {hasMany ? (
-                <ul className="flex flex-wrap gap-2 lg:gap-3">
+                <ul
+                    ref={thumbsRef}
+                    className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain p-0.5 [scrollbar-width:none] lg:gap-3 [&::-webkit-scrollbar]:hidden"
+                >
                     {images.map((image, index) => (
-                        <li key={image.id}>
+                        <li key={image.id} className="shrink-0">
                             <button
                                 type="button"
                                 onClick={() => showIndex(index, 'smooth')}
@@ -400,6 +408,37 @@ function PhotoNavButton({
             <Icon className="size-5" />
         </button>
     );
+}
+
+function scrollActiveThumb(
+    list: HTMLUListElement | null,
+    index: number,
+    behavior: ScrollBehavior,
+) {
+    const thumb = list?.children.item(index);
+
+    if (!list || !(thumb instanceof HTMLElement) || list.clientWidth === 0) {
+        return;
+    }
+
+    const listRect = list.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
+    const style = getComputedStyle(list);
+    const visibleLeft = listRect.left + Number.parseFloat(style.paddingLeft);
+    const visibleRight = listRect.right - Number.parseFloat(style.paddingRight);
+    let delta = 0;
+
+    if (thumbRect.left < visibleLeft) {
+        delta = thumbRect.left - visibleLeft;
+    } else if (thumbRect.right > visibleRight) {
+        delta = thumbRect.right - visibleRight;
+    }
+
+    if (delta === 0) {
+        return;
+    }
+
+    list.scrollTo({ left: list.scrollLeft + delta, behavior });
 }
 
 function scrollStrip(

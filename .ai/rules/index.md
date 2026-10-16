@@ -5,6 +5,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | Applies to | Rule file |
 | --- | --- |
 | app/**, app/**/*.php | .ai/rules/app.md |
+| resources/js/components/listing-gallery.tsx | .ai/rules/components.md |
 | app/Http/Controllers/** | .ai/rules/controllers.md |
 | docs/** | .ai/rules/docs.md |
 | app/Actions/Fortify/** | .ai/rules/fortify.md |
